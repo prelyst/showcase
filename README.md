@@ -61,22 +61,25 @@ So this is currently a **high-fidelity frontend implementation of the product co
 - **React**
 - **TypeScript**
 - **Tailwind CSS**
+- **Supabase client SDK**
+- **Prisma**
+- **Zod**
 
 ### Recommended production stack
 
-For the real product, the best-fit stack is:
+For the real product, the current recommended stack is:
 
 - **Frontend:** Next.js + TypeScript + Tailwind CSS
 - **UI system:** shadcn/ui
-- **State/data fetching:** TanStack Query
-- **Backend:** Next.js route handlers for MVP, or a dedicated service layer later
-- **Database:** PostgreSQL
+- **Database:** Supabase Postgres
 - **ORM:** Prisma
-- **Auth:** Auth.js or Better Auth
-- **Realtime updates:** SSE or websockets
-- **Jobs/queues:** Trigger.dev or BullMQ
+- **Auth:** Supabase Auth
+- **Validation:** Zod
+- **Backend app layer:** Next.js server actions / route handlers + repository/service structure
+- **Realtime updates:** Supabase Realtime or SSE depending on feature needs
+- **Jobs/queues:** Trigger.dev
 - **Cache/queue backend:** Redis
-- **Storage:** S3 or Cloudflare R2
+- **Storage:** Supabase Storage or Cloudflare R2
 - **Analytics:** PostHog
 - **Email:** Resend
 
@@ -140,6 +143,35 @@ Under `app/showcase/`:
 - `components/showcase-shell.tsx`
   - shared shell for the internal app
   - includes sidebar navigation and page chrome
+
+- `components/showcase-ui.tsx`
+  - reusable presentation components for cards, rows, avatars, platform badges, and section blocks
+
+### Backend foundation
+
+- `prisma/schema.prisma`
+  - core relational schema for users, profiles, posts, targets, publish jobs, lane results, connected accounts, and notifications
+
+- `lib/db/prisma.ts`
+  - Prisma client singleton
+
+- `lib/supabase/client.ts`
+  - browser Supabase client factory
+
+- `lib/supabase/server.ts`
+  - server Supabase client factory
+
+- `lib/repositories/`
+  - DB access layer scaffolding for profiles, posts, notifications, and connected accounts
+
+- `lib/validators/`
+  - Zod validation schemas for profile, settings, and post operations
+
+- `lib/types/showcase.ts`
+  - typed frontend domain models
+
+- `lib/mock/showcase.ts`
+  - typed mock data used by the current UI until real reads replace it
 
 ---
 
@@ -228,10 +260,42 @@ Install dependencies:
 npm install
 ```
 
+Create local environment values from the template:
+
+```bash
+cp .env.example .env.local
+```
+
+Required variables:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `DATABASE_URL`
+- `DIRECT_URL`
+
 Run the app locally:
 
 ```bash
 npm run dev
+```
+
+Generate Prisma client:
+
+```bash
+npm run prisma:generate
+```
+
+Run local Prisma migration:
+
+```bash
+npm run prisma:migrate
+```
+
+Open Prisma Studio:
+
+```bash
+npm run prisma:studio
 ```
 
 Build for production:
@@ -262,44 +326,37 @@ npm run build
 
 ---
 
-## Suggested next steps
+## Phase roadmap
 
-The highest-value next steps are:
+### Phase 1, done
 
-1. **Refactor UI into reusable components**
-   - extract cards, headers, pills, stat rows, profile blocks, etc.
-   - reduce duplicated JSX between pages
+- extract shared Showcase UI components
+- move repeated static content into typed mock data
+- reduce page-level JSX duplication
 
-2. **Make the shell more prototype-accurate**
-   - replace placeholder symbols with exact SVG icons
-   - improve responsive sidebar behavior
-   - tighten spacing and interaction polish
+### Phase 2, in progress
 
-3. **Connect landing page and app flow more cleanly**
-   - ensure all CTA routes are intentional
-   - add a proper app entry experience
+Backend foundation with **Supabase + Prisma**:
 
-4. **Introduce data models**
-   - users
-   - creator profiles
-   - posts
-   - publish jobs
-   - publish lane results
-   - connected external accounts
+- Prisma schema for core product models
+- Supabase client scaffolding
+- Prisma client wrapper
+- repository layer scaffolding
+- Zod validators for core writes
+- environment template for Supabase/Postgres setup
 
-5. **Add authentication**
-   - sign in
-   - session handling
-   - profile ownership
+### Next steps after current Phase 2 foundation
 
-6. **Add backend publish orchestration**
-   - queue-based publishing
-   - lane-by-lane status tracking
-   - retry support
-   - failure logging
-
-7. **Replace mock data with real data sources**
-   - database-backed feed/profile/settings state
+1. connect a real Supabase project and Postgres connection string
+2. run Prisma generate and first migration
+3. add seed data for one local test user/profile
+4. wire real auth/session handling with Supabase Auth
+5. replace mock reads for:
+   - profile
+   - notifications
+   - settings / connected accounts
+6. add persisted draft creation and update flow for compose
+7. prepare Phase 3 publish orchestration with Trigger.dev
 
 ---
 

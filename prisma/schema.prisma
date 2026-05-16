@@ -1,0 +1,153 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Platform {
+  SHOWCASE
+  X
+  LINKEDIN
+  BLUESKY
+  REDDIT
+  YOUTUBE
+  THREADS
+}
+
+enum PostStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHING
+  PUBLISHED
+  FAILED
+}
+
+enum PublishLaneStatus {
+  PENDING
+  UPLOADING
+  PUBLISHED
+  FAILED
+}
+
+enum ConnectedAccountStatus {
+  ACTIVE
+  INACTIVE
+  ERROR
+}
+
+model User {
+  id                String             @id @default(cuid())
+  email             String             @unique
+  name              String?
+  username          String?            @unique
+  image             String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  profile           Profile?
+  posts             Post[]
+  notifications     Notification[]
+  connectedAccounts ConnectedAccount[]
+}
+
+model Profile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  displayName String
+  bio         String?
+  slug        String   @unique
+  location    String?
+  website     String?
+  isPublic    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  posts       Post[]
+}
+
+model Post {
+  id          String               @id @default(cuid())
+  authorId    String
+  profileId   String
+  content     String
+  status      PostStatus           @default(DRAFT)
+  visibility  String               @default("public")
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  publishedAt DateTime?
+  scheduledFor DateTime?
+  author      User                 @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  profile     Profile              @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  targets     PostPlatformTarget[]
+  publishJobs PublishJob[]
+}
+
+model PostPlatformTarget {
+  id        String   @id @default(cuid())
+  postId     String
+  platform   Platform
+  enabled    Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, platform])
+}
+
+model PublishJob {
+  id         String              @id @default(cuid())
+  postId      String
+  status      PostStatus          @default(PUBLISHING)
+  startedAt   DateTime?
+  finishedAt  DateTime?
+  createdAt   DateTime            @default(now())
+  post        Post                @relation(fields: [postId], references: [id], onDelete: Cascade)
+  laneResults PublishLaneResult[]
+}
+
+model PublishLaneResult {
+  id           String             @id @default(cuid())
+  publishJobId String
+  platform     Platform
+  status       PublishLaneStatus  @default(PENDING)
+  externalUrl  String?
+  externalId   String?
+  errorMessage String?
+  attemptCount Int                @default(0)
+  startedAt    DateTime?
+  finishedAt   DateTime?
+  publishJob   PublishJob         @relation(fields: [publishJobId], references: [id], onDelete: Cascade)
+
+  @@unique([publishJobId, platform])
+}
+
+model ConnectedAccount {
+  id             String                 @id @default(cuid())
+  userId         String
+  platform       Platform
+  accountHandle  String
+  accountName    String?
+  accessToken    String?
+  refreshToken   String?
+  tokenExpiresAt DateTime?
+  status         ConnectedAccountStatus @default(INACTIVE)
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+  user           User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, platform])
+}
+
+model Notification {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String
+  actorName   String?
+  actorHandle String?
+  actorAvatar String?
+  message     String
+  metadata    Json?
+  readAt      DateTime?
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
