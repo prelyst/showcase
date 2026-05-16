@@ -1,4 +1,6 @@
 import { ShowcaseShell } from '@/components/showcase-shell';
+import { Avatar, ComposeToolButton, PlatformBadge, PublishTargetChip } from '@/components/showcase-ui';
+import { composeTools, platforms, publishTargets } from '@/lib/mock/showcase';
 
 export default function ComposePage() {
   return (
@@ -11,9 +13,7 @@ export default function ComposePage() {
           </div>
           <div className="p-[22px]">
             <div className="mb-[18px] flex items-center gap-3">
-              <div className="grid h-11 w-11 place-items-center rounded-full border border-[#D9D3C4] bg-[#F5E5D3] text-[14px] font-semibold text-[#B8541F]">
-                MR
-              </div>
+              <Avatar avatar={{ initials: 'MR', className: 'bg-[#F5E5D3] text-[#B8541F]' }} size="sm" />
               <div>
                 <div className="text-[15px] font-medium text-[#1A1814]">Maya Rivera</div>
                 <div className="font-mono text-[12px] text-[#85806F]">@mayarivera</div>
@@ -27,10 +27,8 @@ export default function ComposePage() {
 
             <div className="mt-3 border-t border-[#E8E3D4] pt-[18px]">
               <div className="flex gap-1 text-[#85806F]">
-                {['🖼', '▶', '🔗', '#'].map((icon) => (
-                  <button key={icon} className="grid h-[34px] w-[34px] place-items-center rounded-[8px] hover:bg-[#EDE8DD] hover:text-[#1A1814]">
-                    {icon}
-                  </button>
+                {composeTools.map((tool) => (
+                  <ComposeToolButton key={tool.label} tool={tool} />
                 ))}
               </div>
             </div>
@@ -39,23 +37,8 @@ export default function ComposePage() {
           <div className="border-t border-[#E8E3D4] bg-[#EDE8DD] px-[22px] py-[18px]">
             <div className="mb-[10px] font-mono text-[10px] uppercase tracking-[0.08em] text-[#85806F]">Publishing to</div>
             <div className="flex flex-wrap gap-[6px]">
-              {([
-                ['S', 'Showcase', true, 'bg-[#B8541F] text-[#F4F1EA]'],
-                ['X', 'X', true, 'bg-[#1A1814] text-[#FBF9F4]'],
-                ['in', 'LinkedIn', true, 'bg-[#0A66C2] text-white'],
-                ['B', 'Bluesky', true, 'bg-[#1185FE] text-white'],
-                ['r', 'Reddit', false, 'bg-[#FF4500] text-white'],
-                ['@', 'Threads', false, 'bg-[#1A1814] text-[#FBF9F4]'],
-              ] as [string, string, boolean, string][]).map(([short, label, selected, tone]) => (
-                <div
-                  key={label}
-                  className={`flex items-center gap-[6px] rounded-full border px-[10px] py-[6px] text-[12px] font-medium ${
-                    selected ? 'border-[#1A1814] bg-[#1A1814] text-[#F4F1EA]' : 'border-[#D9D3C4] bg-[#FBF9F4] text-[#1A1814]'
-                  }`}
-                >
-                  <div className={`grid h-4 w-4 place-items-center rounded-[4px] font-mono text-[8px] font-bold ${tone}`}>{short}</div>
-                  <span>{label}</span>
-                </div>
+              {publishTargets.map((target) => (
+                <PublishTargetChip key={target.platform.key} platform={target.platform} selected={target.selected} />
               ))}
             </div>
           </div>
@@ -89,9 +72,7 @@ export default function ComposePage() {
 
             <div className="rounded-[14px] border border-[#D9D3C4] bg-[#FBF9F4] p-[18px]">
               <div className="mb-3 flex items-center gap-[10px]">
-                <div className="grid h-10 w-10 place-items-center rounded-full border border-[#D9D3C4] bg-[#F5E5D3] text-[14px] font-semibold text-[#B8541F]">
-                  MR
-                </div>
+                <Avatar avatar={{ initials: 'MR', className: 'bg-[#F5E5D3] text-[#B8541F]' }} size="sm" />
                 <div>
                   <div className="font-serif font-medium text-[#1A1814]">Maya Rivera</div>
                   <div className="font-mono text-[11px] text-[#85806F]">@mayarivera · now</div>
@@ -102,10 +83,8 @@ export default function ComposePage() {
               </div>
               <div className="mt-[10px] flex items-center gap-1 border-t border-dashed border-[#D9D3C4] pt-[10px]">
                 <span className="mr-1 font-mono text-[10px] uppercase tracking-[0.05em] text-[#85806F]">Also to</span>
-                {['X', 'in', 'B'].map((chip) => (
-                  <div key={chip} className="grid h-4 w-4 place-items-center rounded-[4px] bg-[#1A1814] font-mono text-[8px] font-bold text-[#FBF9F4]">
-                    {chip}
-                  </div>
+                {[platforms.x, platforms.linkedin, platforms.bluesky].map((platform) => (
+                  <PlatformBadge key={platform.key} platform={platform} />
                 ))}
               </div>
             </div>
