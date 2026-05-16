@@ -95,7 +95,7 @@ export default function Home() {
               <a href="#" className="hidden rounded-full px-[14px] py-2 text-[14px] font-medium text-[#4A453C] hover:text-[#1A1814] sm:inline-flex">
                 Sign in
               </a>
-              <Link href="/showcase-app.html" className="inline-flex items-center gap-[6px] rounded-full bg-[#1A1814] px-[18px] py-[9px] text-[14px] font-medium text-[#F4F1EA] transition hover:-translate-y-px hover:bg-[#B8541F]">
+              <Link href="/showcase/feed" className="inline-flex items-center gap-[6px] rounded-full bg-[#1A1814] px-[18px] py-[9px] text-[14px] font-medium text-[#F4F1EA] transition hover:-translate-y-px hover:bg-[#B8541F]">
                 Open app →
               </Link>
             </div>
@@ -123,7 +123,7 @@ export default function Home() {
                 Start publishing — it&apos;s free
                 <span>→</span>
               </a>
-              <Link href="/showcase-app.html" className="inline-flex items-center gap-2 rounded-full border border-[#D9D3C4] bg-[#FBF9F4] px-5 py-[14px] text-[15px] font-medium text-[#1A1814] transition hover:border-[#85806F] hover:bg-[#F4F1EA] max-md:w-full max-md:justify-center">
+              <Link href="/showcase/feed" className="inline-flex items-center gap-2 rounded-full border border-[#D9D3C4] bg-[#FBF9F4] px-5 py-[14px] text-[15px] font-medium text-[#1A1814] transition hover:border-[#85806F] hover:bg-[#F4F1EA] max-md:w-full max-md:justify-center">
                 See the app
               </Link>
             </div>
@@ -438,7 +438,7 @@ export default function Home() {
             <p className="mx-auto mb-10 max-w-[580px] text-[19px] leading-[1.55] text-[#4A453C]">Join 12,400 creators using Showcase to build a portfolio that grows every time they post. Free to start. Takes 90 seconds.</p>
             <div className="flex flex-wrap items-center justify-center gap-[10px] max-md:flex-col">
               <a href="#" className="inline-flex items-center gap-2 rounded-full bg-[#B8541F] px-[26px] py-[14px] text-[15px] font-medium text-[#F4F1EA] transition hover:-translate-y-px hover:bg-[#1A1814] max-md:w-full max-md:justify-center">Start publishing free →</a>
-              <Link href="/showcase-app.html" className="inline-flex items-center gap-2 rounded-full border border-[#D9D3C4] bg-[#FBF9F4] px-5 py-[14px] text-[15px] font-medium text-[#1A1814] transition hover:border-[#85806F] hover:bg-[#F4F1EA] max-md:w-full max-md:justify-center">Explore the app</Link>
+              <Link href="/showcase/feed" className="inline-flex items-center gap-2 rounded-full border border-[#D9D3C4] bg-[#FBF9F4] px-5 py-[14px] text-[15px] font-medium text-[#1A1814] transition hover:border-[#85806F] hover:bg-[#F4F1EA] max-md:w-full max-md:justify-center">Explore the app</Link>
             </div>
           </div>
         </section>

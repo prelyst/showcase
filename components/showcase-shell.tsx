@@ -2,18 +2,71 @@ import Link from 'next/link';
 import { ReactNode } from 'react';
 
 const browseNav = [
-  { href: '/showcase/feed', label: 'Feed', icon: '≡' },
-  { href: '/showcase/discover', label: 'Discover', icon: '⌕' },
-  { href: '/showcase/notifications', label: 'Notifications', icon: '◔', badge: '3' },
+  {
+    href: '/showcase/feed',
+    label: 'Feed',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <path d="M3 12h18M3 6h18M3 18h18" />
+      </svg>
+    ),
+  },
+  {
+    href: '/showcase/discover',
+    label: 'Discover',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <circle cx="11" cy="11" r="8" />
+        <path d="m21 21-4.3-4.3" />
+      </svg>
+    ),
+  },
+  {
+    href: '/showcase/notifications',
+    label: 'Notifications',
+    badge: '3',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+        <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+      </svg>
+    ),
+  },
 ];
 
 const yoursNav = [
-  { href: '/showcase/monitor', label: 'Publish monitor', icon: '∿' },
-  { href: '/showcase/profile', label: 'Profile', icon: '◯' },
-  { href: '/showcase/settings', label: 'Settings', icon: '⚙' },
+  {
+    href: '/showcase/monitor',
+    label: 'Publish monitor',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+      </svg>
+    ),
+  },
+  {
+    href: '/showcase/profile',
+    label: 'Profile',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
+      </svg>
+    ),
+  },
+  {
+    href: '/showcase/settings',
+    label: 'Settings',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <circle cx="12" cy="12" r="3" />
+        <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" />
+      </svg>
+    ),
+  },
 ];
 
-function NavLink({ href, label, icon, active, badge }: { href: string; label: string; icon: string; active?: boolean; badge?: string }) {
+function NavLink({ href, label, icon, active, badge }: { href: string; label: string; icon: ReactNode; active?: boolean; badge?: string }) {
   return (
     <Link
       href={href}
@@ -21,7 +74,9 @@ function NavLink({ href, label, icon, active, badge }: { href: string; label: st
         active ? 'bg-[#1A1814] text-[#F4F1EA]' : 'text-[#4A453C] hover:bg-[#EDE8DD] hover:text-[#1A1814]'
       }`}
     >
-      <span className={`grid h-[17px] w-[17px] place-items-center text-[12px] ${active ? 'opacity-100' : 'opacity-70'}`}>{icon}</span>
+      <span className={`grid h-[17px] w-[17px] place-items-center ${active ? 'opacity-100' : 'opacity-70'} [&>svg]:h-[17px] [&>svg]:w-[17px]`}>
+        {icon}
+      </span>
       <span>{label}</span>
       {badge ? (
         <span className="ml-auto rounded-full bg-[#B8541F] px-[6px] py-[2px] font-mono text-[10px] font-semibold text-[#F4F1EA]">
@@ -53,7 +108,9 @@ export function ShowcaseShell({ title, subtitle, active, children }: { title: Re
             href="/showcase/compose"
             className="mb-5 flex items-center justify-center gap-2 rounded-[10px] bg-[#B8541F] px-[14px] py-[11px] text-[14px] font-medium text-[#F4F1EA] transition hover:-translate-y-px hover:bg-[#1A1814]"
           >
-            <span className="text-[14px]">+</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-[14px] w-[14px]">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
             <span>New post</span>
           </Link>
 
