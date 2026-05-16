@@ -2,57 +2,98 @@
 
 Showcase is a social publishing web app concept focused on intentional posting and cross-platform distribution.
 
-## Overview
+## Vision
 
-This project currently contains a single HTML prototype that presents a polished product concept for a quieter, more deliberate social platform.
+Showcase is built around a simple idea: social platforms should reward intention instead of volume.
 
-The experience includes:
-- a feed for following creators
-- a discover page for trending hashtags and featured creators
-- a compose flow with live previews
-- a publish monitor for multi-platform delivery status
-- a profile page for creator identity and post history
-- a settings page for connected platform management and preferences
-
-## Product concept
-
-Showcase is built around the idea that social platforms should reward intention instead of volume.
-
-The UI and copy position it as a creator-focused publishing surface where users can:
+The product is designed as a creator-focused publishing app where users can:
 - write a post once
 - preview how it appears across platforms
 - selectively publish to channels like Showcase, X, LinkedIn, Bluesky, Reddit, and Threads
-- monitor cross-platform publishing status from one place
+- monitor publishing status from one place
+- manage connected accounts and creator settings
 
-## Design system
+## Recommended implementation stack
 
-The prototype uses:
-- warm editorial colors with paper-like backgrounds
-- serif typography for expressive content
-- sans-serif and monospace accents for interface structure
-- a sidebar application layout with multiple in-app views
-- lightweight client-side interactions in vanilla JavaScript
+For implementation, the best fit stack is:
 
-## File structure
+- **Frontend:** Next.js + TypeScript + Tailwind CSS
+- **UI system:** shadcn/ui
+- **Data fetching/state:** TanStack Query
+- **Backend:** Next.js route handlers for MVP
+- **Database:** PostgreSQL
+- **ORM:** Prisma
+- **Auth:** Auth.js or Better Auth
+- **Realtime updates:** SSE or websockets
+- **Background jobs:** Trigger.dev or BullMQ
+- **Queue/cache:** Redis
+- **Storage:** S3 or Cloudflare R2
+- **Analytics:** PostHog
+- **Email:** Resend
 
-Current key file:
-- `showcase-app.html` — single-file product prototype with HTML, CSS, and JavaScript
+## Current repository status
 
-## Current status
+This repository is now being transitioned from a static concept into a real frontend codebase.
 
-This is a front-end concept prototype, not yet a production application.
+At the moment it contains:
+- the original HTML prototype in `showcase-app.html`
+- a minimal Next.js frontend scaffold for implementation
 
-At the moment it is:
-- static
-- self-contained in one HTML file
-- suitable for design review, iteration, and conversion into a real app
+## Minimal frontend setup
 
-## Next possible steps
+The first implementation step focuses only on the frontend foundation.
 
-Good follow-up improvements would be:
-- split the prototype into reusable components
-- move styles into separate CSS files
-- extract JavaScript into dedicated modules
-- turn the prototype into a React, Next.js, or Vue application
-- connect the interface to real publishing and account APIs
-- add persistence, authentication, and backend services
+This includes:
+- Next.js app router setup
+- TypeScript configuration
+- Tailwind CSS setup
+- a basic homepage
+- a lightweight app shell structure for future Showcase pages
+
+## Planned app areas
+
+The product surface currently maps to these main views:
+- Feed
+- Discover
+- Notifications
+- Compose
+- Publish Monitor
+- Profile
+- Settings
+
+## Suggested next implementation steps
+
+After the minimal frontend setup, the next priorities should be:
+1. turn the static prototype into reusable React components
+2. build the persistent app shell and sidebar navigation
+3. implement page routes for each main product area
+4. define a database schema for users, posts, publish jobs, and connected accounts
+5. add authentication
+6. add background publishing job infrastructure
+
+## Development
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run the frontend locally:
+
+```bash
+npm run dev
+```
+
+Build for production:
+
+```bash
+npm run build
+```
+
+## Files
+
+- `showcase-app.html` — original single-file prototype
+- `app/` — Next.js application source
+- `components/` — reusable UI building blocks
+- `public/` — static assets
