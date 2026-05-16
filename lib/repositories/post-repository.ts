@@ -1,9 +1,13 @@
-import { Platform, Prisma } from '@prisma/client';
+import { Platform } from '@prisma/client';
 
 import { prisma } from '@/lib/db/prisma';
 import { CreateDraftPostInput, UpdateDraftPostInput, UpdatePostTargetsInput } from '@/lib/validators/post';
 
 export async function createDraftPost(input: CreateDraftPostInput, authorId: string) {
+  if (!prisma) {
+    return null;
+  }
+
   return prisma.post.create({
     data: {
       authorId,
@@ -11,10 +15,17 @@ export async function createDraftPost(input: CreateDraftPostInput, authorId: str
       content: input.content,
       status: 'DRAFT',
     },
+    include: {
+      targets: true,
+    },
   });
 }
 
 export async function updateDraftPost(input: UpdateDraftPostInput) {
+  if (!prisma) {
+    return null;
+  }
+
   return prisma.post.update({
     where: { id: input.postId },
     data: {
@@ -24,9 +35,15 @@ export async function updateDraftPost(input: UpdateDraftPostInput) {
 }
 
 export async function updatePostTargets(input: UpdatePostTargetsInput) {
-  return prisma.$transaction(
+  if (!prisma) {
+    return [];
+  }
+
+  const client = prisma;
+
+  return client.$transaction(
     input.targets.map((target) =>
-      prisma.postPlatformTarget.upsert({
+      client.postPlatformTarget.upsert({
         where: {
           postId_platform: {
             postId: input.postId,
@@ -47,6 +64,10 @@ export async function updatePostTargets(input: UpdatePostTargetsInput) {
 }
 
 export async function getPostsForProfile(profileId: string) {
+  if (!prisma) {
+    return [];
+  }
+
   return prisma.post.findMany({
     where: { profileId },
     orderBy: { createdAt: 'desc' },
@@ -57,6 +78,23 @@ export async function getPostsForProfile(profileId: string) {
           laneResults: true,
         },
       },
+    },
+  });
+}
+
+export async function getLatestDraftForProfile(profileId: string) {
+  if (!prisma) {
+    return null;
+  }
+
+  return prisma.post.findFirst({
+    where: {
+      profileId,
+      status: 'DRAFT',
+    },
+    orderBy: { updatedAt: 'desc' },
+    include: {
+      targets: true,
     },
   });
 }

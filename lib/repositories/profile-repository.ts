@@ -1,6 +1,10 @@
 import { prisma } from '@/lib/db/prisma';
 
 export async function getProfileBySlug(slug: string) {
+  if (!prisma) {
+    return null;
+  }
+
   return prisma.profile.findUnique({
     where: { slug },
     include: {
@@ -14,6 +18,10 @@ export async function getProfileBySlug(slug: string) {
 }
 
 export async function getProfileByUserId(userId: string) {
+  if (!prisma) {
+    return null;
+  }
+
   return prisma.profile.findUnique({
     where: { userId },
     include: {

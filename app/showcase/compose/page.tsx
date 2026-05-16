@@ -1,8 +1,10 @@
 import { ShowcaseShell } from '@/components/showcase-shell';
 import { Avatar, ComposeToolButton, PlatformBadge, PublishTargetChip } from '@/components/showcase-ui';
 import { composeTools, platforms, publishTargets } from '@/lib/mock/showcase';
+import { getComposePageData } from '@/lib/server/showcase-data';
 
-export default function ComposePage() {
+export default async function ComposePage() {
+  const draft = await getComposePageData();
   return (
     <ShowcaseShell title={<><span>New post </span><em className="font-light italic text-[#B8541F]">/ draft</em></>} active="/showcase/compose">
       <div className="grid max-w-[1200px] gap-7 xl:grid-cols-[1.1fr_1fr]">
@@ -15,13 +17,13 @@ export default function ComposePage() {
             <div className="mb-[18px] flex items-center gap-3">
               <Avatar avatar={{ initials: 'MR', className: 'bg-[#F5E5D3] text-[#B8541F]' }} size="sm" />
               <div>
-                <div className="text-[15px] font-medium text-[#1A1814]">Maya Rivera</div>
-                <div className="font-mono text-[12px] text-[#85806F]">@mayarivera</div>
+                <div className="text-[15px] font-medium text-[#1A1814]">{draft.authorName}</div>
+                <div className="font-mono text-[12px] text-[#85806F]">{draft.authorHandle}</div>
               </div>
             </div>
 
             <textarea
-              defaultValue="The thing I keep coming back to: most social platforms reward volume. The feeds that actually matter to me reward intention. Showcase is built on a simple bet — that when you only post things you meant to say, the feed quietly gets better. #building"
+              defaultValue={draft.content}
               className="min-h-[220px] w-full resize-none border-none bg-transparent font-serif text-[22px] leading-[1.4] text-[#1A1814] outline-none"
             />
 
@@ -38,7 +40,7 @@ export default function ComposePage() {
             <div className="mb-[10px] font-mono text-[10px] uppercase tracking-[0.08em] text-[#85806F]">Publishing to</div>
             <div className="flex flex-wrap gap-[6px]">
               {publishTargets.map((target) => (
-                <PublishTargetChip key={target.platform.key} platform={target.platform} selected={target.selected} />
+                <PublishTargetChip key={target.platform.key} platform={target.platform} selected={draft.selectedTargets.includes(target.platform.key)} />
               ))}
             </div>
           </div>
@@ -74,12 +76,12 @@ export default function ComposePage() {
               <div className="mb-3 flex items-center gap-[10px]">
                 <Avatar avatar={{ initials: 'MR', className: 'bg-[#F5E5D3] text-[#B8541F]' }} size="sm" />
                 <div>
-                  <div className="font-serif font-medium text-[#1A1814]">Maya Rivera</div>
-                  <div className="font-mono text-[11px] text-[#85806F]">@mayarivera · now</div>
+                  <div className="font-serif font-medium text-[#1A1814]">{draft.authorName}</div>
+                  <div className="font-mono text-[11px] text-[#85806F]">{draft.authorHandle} · now</div>
                 </div>
               </div>
               <div className="font-serif text-[17px] leading-[1.5] text-[#1A1814]">
-                The thing I keep coming back to: most social platforms reward volume. The feeds that actually matter to me reward intention. Showcase is built on a simple bet — that when you only post things you meant to say, the feed quietly gets better. <span className="italic text-[#B8541F]">#building</span>
+                {draft.content.replace(' #building', '')} <span className="italic text-[#B8541F]">#building</span>
               </div>
               <div className="mt-[10px] flex items-center gap-1 border-t border-dashed border-[#D9D3C4] pt-[10px]">
                 <span className="mr-1 font-mono text-[10px] uppercase tracking-[0.05em] text-[#85806F]">Also to</span>

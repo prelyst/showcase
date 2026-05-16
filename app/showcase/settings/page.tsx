@@ -1,19 +1,20 @@
 import { ShowcaseShell } from '@/components/showcase-shell';
 import { ConnectionRow, PreferenceRow, SectionCard } from '@/components/showcase-ui';
-import { connectedAccounts, preferences } from '@/lib/mock/showcase';
+import { getSettingsPageData } from '@/lib/server/showcase-data';
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
+  const { connectedPlatforms, preferenceRows } = await getSettingsPageData();
   return (
     <ShowcaseShell title="Settings" active="/showcase/settings">
       <div className="max-w-[820px] space-y-5">
         <SectionCard title="Connected platforms" subtitle="Accounts where Showcase can publish on your behalf.">
-          {connectedAccounts.map((item) => (
+          {connectedPlatforms.map((item) => (
             <ConnectionRow key={item.platform.key} item={item} />
           ))}
         </SectionCard>
 
         <SectionCard title="Preferences" subtitle="Control how Showcase behaves for you.">
-          {preferences.map((item) => (
+          {preferenceRows.map((item) => (
             <PreferenceRow key={item.label} item={item} />
           ))}
         </SectionCard>
