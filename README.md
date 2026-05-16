@@ -266,13 +266,23 @@ Create local environment values from the template:
 cp .env.example .env.local
 ```
 
+Important for Prisma 7:
+- Prisma Client must be generated before the app builds on a fresh machine
+- `npm install` now runs `prisma generate` automatically via `postinstall`
+- if generation ever needs to be rerun manually, use `npm run prisma:generate`
+
 Required variables:
 
+- `SHOWCASE_ENABLE_DB`
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `DATABASE_URL`
 - `DIRECT_URL`
+
+Recommended behavior during first deploy:
+- keep `SHOWCASE_ENABLE_DB=false` until Supabase Postgres is fully configured and migrations are applied
+- after database setup is working, switch it to `true` to enable DB-backed Showcase pages
 
 Run the app locally:
 
