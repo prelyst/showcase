@@ -1,22 +1,72 @@
 import { ConnectedAccountStatus, Platform, PostStatus } from '@prisma/client';
+import { createClient } from '@supabase/supabase-js';
 
 import { DEMO_PROFILE_SLUG, DEMO_USER_ID } from '@/lib/constants/demo-user';
 import { prisma } from '@/lib/db/prisma';
+
+const DEMO_EMAIL = 'maya@showcase.app';
+const DEMO_PASSWORD = 'showcase';
+
+async function ensureSupabaseAuthUser() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!url || !serviceRoleKey) {
+    throw new Error('Missing Supabase env for auth user seed: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required.');
+  }
+
+  const supabaseAdmin = createClient(url, serviceRoleKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  });
+
+  const { data: listed, error: listError } = await supabaseAdmin.auth.admin.listUsers();
+
+  if (listError) {
+    throw listError;
+  }
+
+  const existing = listed.users.find((user) => user.email === DEMO_EMAIL);
+
+  if (existing) {
+    return existing;
+  }
+
+  const { data, error } = await supabaseAdmin.auth.admin.createUser({
+    email: DEMO_EMAIL,
+    password: DEMO_PASSWORD,
+    email_confirm: true,
+    user_metadata: {
+      username: 'mayarivera',
+      full_name: 'Maya Rivera',
+    },
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return data.user;
+}
 
 async function main() {
   if (!prisma) {
     throw new Error('Prisma is not enabled. Set SHOWCASE_ENABLE_DB=true and provide a working DATABASE_URL before seeding.');
   }
 
+  const authUser = await ensureSupabaseAuthUser();
+
   const user = await prisma.user.upsert({
-    where: { email: 'maya@showcase.app' },
+    where: { email: DEMO_EMAIL },
     update: {
       name: 'Maya Rivera',
       username: 'mayarivera',
     },
     create: {
-      id: DEMO_USER_ID,
-      email: 'maya@showcase.app',
+      id: authUser?.id ?? DEMO_USER_ID,
+      email: DEMO_EMAIL,
       name: 'Maya Rivera',
       username: 'mayarivera',
       image: null,

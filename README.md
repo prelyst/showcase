@@ -281,8 +281,12 @@ Required variables:
 - `DIRECT_URL`
 
 Recommended behavior during first deploy:
-- keep `SHOWCASE_ENABLE_DB=false` until Supabase Postgres is fully configured and migrations are applied
-- after database setup is working, switch it to `true` to enable DB-backed Showcase pages
+- keep `SHOWCASE_ENABLE_DB=false` if you only want the app to deploy without touching DB
+- set `SHOWCASE_ENABLE_DB=true` when env is fully configured and you want build/deploy to automatically:
+  - run Prisma generate
+  - run Prisma migrate deploy
+  - run Prisma seed
+  - enable DB-backed Showcase pages
 
 Run the app locally:
 
@@ -313,6 +317,21 @@ Seed demo Showcase data:
 ```bash
 npm run prisma:seed
 ```
+
+Automatic deploy prep path:
+
+```bash
+npm run deploy:prep
+```
+
+This script is also called automatically by `npm run build`. When `SHOWCASE_ENABLE_DB=true`, it will:
+- generate Prisma client
+- apply Prisma migrations
+- run Prisma seed
+
+The seed now also ensures the demo Supabase Auth user exists:
+- email: `maya@showcase.app`
+- password: `showcase`
 
 Open Prisma Studio:
 
@@ -384,16 +403,14 @@ The app now has:
 ### Next steps after current Phase 3 slice
 
 1. connect a real Supabase project and Postgres connection string
-2. run first Prisma migration
-3. run `npm run prisma:seed`
-4. wire real auth/session handling with Supabase Auth
-5. replace demo auth bridge with real current user resolution
-6. add write actions for:
+2. set env vars only
+3. decide whether deployment should keep DB path off (`SHOWCASE_ENABLE_DB=false`) or automatically enable full DB path (`SHOWCASE_ENABLE_DB=true`)
+4. add write actions for:
    - settings
    - profile
    - draft update
    - platform target selection
-7. move publish monitor onto DB-backed publish jobs and lane results
+5. move publish monitor onto DB-backed publish jobs and lane results
 
 ---
 
