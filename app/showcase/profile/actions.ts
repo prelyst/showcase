@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 
 import { getProfileByUserId, isProfileSlugTaken, updateProfileByUserId } from '@/lib/repositories/profile-repository';
 import { updateProfileSchema } from '@/lib/validators/profile';
-import { getCurrentUserId } from '@/lib/server/auth';
+import { getCurrentUserId, updateCurrentAuthMetadata } from '@/lib/server/auth';
 
 function normalizeSlug(value: string) {
   return value
@@ -60,6 +60,11 @@ export async function updateProfileAction(formData: FormData) {
     location: data.location || null,
     website: data.website || null,
     isPublic: data.isPublic,
+  });
+
+  await updateCurrentAuthMetadata({
+    fullName: data.displayName,
+    username: data.slug,
   });
 
   revalidatePath('/showcase/profile');

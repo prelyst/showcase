@@ -247,12 +247,26 @@ Working well now:
 - draft save flow
 - DB-backed profile/settings/notifications/compose
 - more data-driven app routes
+- settings writes
+- notification lifecycle writes/read state
+- public profile route at `/u/[slug]`
+- publish job and lane record creation
+- connected account state scaffolding
+- auth metadata sync from profile edits
 
 Still not fully production-complete:
-- publish execution is still partial/stubbed
+- publish execution is still internal simulation, not real external delivery
 - discovery/trending/social graph is still lightweight
-- no real external platform publishing integrations yet
+- no real external platform OAuth/token exchange yet
 - some analytics/engagement numbers are still presentation-level
+- npm audit still reports moderate upstream ecosystem advisories that do not have a safe in-family auto-fix from the current dependency set
+
+## Security / hardening notes
+
+- rotate any Supabase/database secrets that were shared in chat during setup/debugging
+- keep migrations and seed outside normal Vercel build flow
+- prefer pooled `DATABASE_URL` for runtime and direct `DIRECT_URL` for Prisma migrations
+- avoid storing real third-party access tokens in plaintext once OAuth flows are added
 
 ---
 

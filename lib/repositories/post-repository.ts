@@ -1,4 +1,4 @@
-import { Platform } from '@prisma/client';
+import { Platform, PostStatus, PublishLaneStatus } from '@prisma/client';
 
 import { prisma } from '@/lib/db/prisma';
 import { CreateDraftPostInput, UpdateDraftPostInput, UpdatePostTargetsInput } from '@/lib/validators/post';
@@ -97,4 +97,46 @@ export async function getLatestDraftForProfile(profileId: string) {
       targets: true,
     },
   });
+}
+
+export async function publishPost(postId: string) {
+  if (!prisma) {
+    return null;
+  }
+
+  const post = await prisma.post.update({
+    where: { id: postId },
+    data: {
+      status: PostStatus.PUBLISHING,
+      publishedAt: new Date(),
+    },
+    include: {
+      targets: true,
+    },
+  });
+
+  const enabledTargets = post.targets.filter((target) => target.enabled);
+
+  const publishJob = await prisma.publishJob.create({
+    data: {
+      postId: post.id,
+      status: PostStatus.PUBLISHING,
+      startedAt: new Date(),
+      laneResults: {
+        create: enabledTargets.map((target, index) => ({
+          platform: target.platform,
+          status: index === 0 ? PublishLaneStatus.PUBLISHED : PublishLaneStatus.UPLOADING,
+          externalUrl: index === 0 ? `${target.platform.toString().toLowerCase()}://publish/${post.id}` : null,
+          attemptCount: 1,
+          startedAt: new Date(),
+          finishedAt: index === 0 ? new Date() : null,
+        })),
+      },
+    },
+    include: {
+      laneResults: true,
+    },
+  });
+
+  return publishJob;
 }

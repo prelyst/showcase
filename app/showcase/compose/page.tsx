@@ -2,7 +2,7 @@ import { ShowcaseShell } from '@/components/showcase-shell';
 import { Avatar, ComposeToolButton, PlatformBadge } from '@/components/showcase-ui';
 import { composeTools, platforms, publishTargets } from '@/lib/mock/showcase';
 import { getComposePageData } from '@/lib/server/showcase-data';
-import { saveDraftAction } from './actions';
+import { publishNowAction, saveDraftAction } from './actions';
 
 export default async function ComposePage({ searchParams }: { searchParams: Promise<{ error?: string; saved?: string }> }) {
   const draft = await getComposePageData();
@@ -66,7 +66,7 @@ export default async function ComposePage({ searchParams }: { searchParams: Prom
 
           <div className="flex justify-end gap-[10px] border-t border-[#E8E3D4] bg-[#EDE8DD] px-[22px] py-[18px]">
             <button type="submit" className="rounded-[10px] border border-[#D9D3C4] px-4 py-[9px] text-[13px] font-medium text-[#4A453C]">Save draft</button>
-            <button type="submit" className="rounded-[10px] bg-[#B8541F] px-[18px] py-[9px] text-[13px] font-medium text-[#F4F1EA]">Publish now</button>
+            <button formAction={publishNowAction} className="rounded-[10px] bg-[#B8541F] px-[18px] py-[9px] text-[13px] font-medium text-[#F4F1EA]">Publish now</button>
           </div>
         </form>
 

@@ -1,7 +1,7 @@
 import { createProfile, getProfileByUserId, isProfileSlugTaken } from '@/lib/repositories/profile-repository';
 import { getUserSettings, upsertUserSettings } from '@/lib/repositories/settings-repository';
 import { getUserById, upsertUserByAuth } from '@/lib/repositories/user-repository';
-import { getCurrentSessionUser } from '@/lib/server/auth';
+import { getCurrentSessionUser, type SessionUser } from '@/lib/server/auth';
 
 function slugify(value: string) {
   return value
@@ -10,6 +10,17 @@ function slugify(value: string) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 32) || 'creator';
+}
+
+function normalizeSessionIdentity(sessionUser: SessionUser) {
+  const baseUsername = sessionUser.username || sessionUser.email.split('@')[0] || 'creator';
+  const safeUsername = slugify(baseUsername).replace(/-/g, '') || 'creator';
+  const safeName = sessionUser.name?.trim() || safeUsername;
+
+  return {
+    username: safeUsername.slice(0, 24),
+    name: safeName,
+  };
 }
 
 async function getAvailableSlug(base: string, userId: string) {
@@ -36,11 +47,13 @@ export async function ensureCurrentUserBootstrapped() {
     return null;
   }
 
+  const normalizedIdentity = normalizeSessionIdentity(sessionUser);
+
   const appUser = await upsertUserByAuth({
     id: sessionUser.id,
     email: sessionUser.email,
-    name: sessionUser.name,
-    username: sessionUser.username,
+    name: normalizedIdentity.name,
+    username: normalizedIdentity.username,
     image: null,
   });
 
@@ -51,11 +64,11 @@ export async function ensureCurrentUserBootstrapped() {
   const existingProfile = await getProfileByUserId(appUser.id);
 
   if (!existingProfile) {
-    const slug = await getAvailableSlug(sessionUser.username || sessionUser.email.split('@')[0] || 'creator', appUser.id);
+    const slug = await getAvailableSlug(normalizedIdentity.username || sessionUser.email.split('@')[0] || 'creator', appUser.id);
 
     await createProfile({
       userId: appUser.id,
-      displayName: sessionUser.name || sessionUser.username,
+      displayName: normalizedIdentity.name,
       slug,
       bio: 'New to Showcase. Setting up my publishing space.',
       isPublic: true,

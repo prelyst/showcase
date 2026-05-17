@@ -1,6 +1,6 @@
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 
-type SessionUser = {
+export type SessionUser = {
   id: string;
   email: string;
   name: string;
@@ -50,4 +50,21 @@ export async function getCurrentSessionUser(): Promise<SessionUser | null> {
 export async function isAuthenticated() {
   const user = await getCurrentSessionUser();
   return Boolean(user);
+}
+
+export async function updateCurrentAuthMetadata(input: { fullName?: string; username?: string }) {
+  const supabase = await createSupabaseServerClient();
+
+  if (!supabase) {
+    return { error: 'supabase-not-configured' };
+  }
+
+  const { error } = await supabase.auth.updateUser({
+    data: {
+      ...(input.fullName ? { full_name: input.fullName } : {}),
+      ...(input.username ? { username: input.username } : {}),
+    },
+  });
+
+  return { error: error?.message ?? null };
 }

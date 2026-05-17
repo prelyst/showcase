@@ -58,6 +58,9 @@ export async function getProfileBySlug(slug: string) {
       posts: {
         orderBy: { createdAt: 'desc' },
         take: 12,
+        include: {
+          targets: true,
+        },
       },
     },
   });

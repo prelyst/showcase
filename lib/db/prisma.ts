@@ -11,6 +11,10 @@ function getPrismaConnectionString() {
   return process.env.DATABASE_URL || process.env.DIRECT_URL || '';
 }
 
+function isPrismaEnabled() {
+  return process.env.SHOWCASE_ENABLE_DB === 'true';
+}
+
 function createPrismaClient() {
   const connectionString = getPrismaConnectionString();
 
@@ -24,7 +28,7 @@ function createPrismaClient() {
   return new PrismaClient({ adapter });
 }
 
-export const prisma = process.env.SHOWCASE_ENABLE_DB === 'true'
+export const prisma = isPrismaEnabled()
   ? (global.__prisma ?? createPrismaClient())
   : null;
 

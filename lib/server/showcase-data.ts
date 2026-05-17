@@ -351,15 +351,33 @@ export async function getMonitorPageData(): Promise<MonitorData> {
     };
   }
 
-  const enabledTargets = latest.targets.filter((target) => target.enabled);
-  const lanes = enabledTargets.length
-    ? enabledTargets.map((target, index) => ({
-        id: `${latest.id}-${target.platform}`,
-        platform: platforms[target.platform.toLowerCase()],
-        detail: target.enabled ? `${target.platform.toLowerCase()} publish target saved for this draft` : 'Disabled',
-        status: index === 0 ? 'Published' as const : 'Uploading' as const,
-        elapsed: index === 0 ? '0.8s' : `${index + 1}.2s`,
-        pillTone: index === 0 ? 'bg-[#E5E8D4] text-[#5A6B3A]' : 'bg-[#F4E8C8] text-[#A67C1E]',
+  const latestJob = latest.publishJobs[0];
+
+  const lanes = latestJob?.laneResults.length
+    ? latestJob.laneResults.map((lane) => ({
+        id: lane.id,
+        platform: platforms[lane.platform.toLowerCase()],
+        detail:
+          lane.externalUrl ||
+          lane.errorMessage ||
+          `${lane.platform.toLowerCase()} lane ${lane.status.toLowerCase()}`,
+        status:
+          lane.status === 'PUBLISHED'
+            ? ('Published' as const)
+            : lane.status === 'FAILED'
+              ? ('Failed' as const)
+              : ('Uploading' as const),
+        elapsed: lane.finishedAt && lane.startedAt
+          ? `${Math.max(1, Math.round((lane.finishedAt.getTime() - lane.startedAt.getTime()) / 1000))}s`
+          : lane.startedAt
+            ? `${Math.max(1, Math.round((Date.now() - lane.startedAt.getTime()) / 1000))}s`
+            : '—',
+        pillTone:
+          lane.status === 'PUBLISHED'
+            ? 'bg-[#E5E8D4] text-[#5A6B3A]'
+            : lane.status === 'FAILED'
+              ? 'bg-[#F2DCD1] text-[#A0381F]'
+              : 'bg-[#F4E8C8] text-[#A67C1E]',
       }))
     : monitorLanes;
 
@@ -368,7 +386,7 @@ export async function getMonitorPageData(): Promise<MonitorData> {
 
   return {
     heroBody: `"${latest.content.slice(0, 140)}${latest.content.length > 140 ? '…' : ''}"`,
-    heroMeta: `${latest.status.toLowerCase()} · ${formatRelativeDate(latest.updatedAt)}`,
+    heroMeta: `${latestJob ? latestJob.status.toLowerCase() : latest.status.toLowerCase()} · ${formatRelativeDate(latest.updatedAt)}`,
     progressLabel: `${publishedCount} / ${Math.max(lanes.length, 1)}`,
     progressWidth: progress,
     lanes,
