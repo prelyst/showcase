@@ -1,4 +1,5 @@
 import { getProfileByUserId } from '@/lib/repositories/profile-repository';
+import { ensureCurrentUserBootstrapped } from '@/lib/server/bootstrap-user';
 import { getCurrentSessionUser } from '@/lib/server/auth';
 
 function toTitleCase(value: string) {
@@ -35,6 +36,8 @@ export async function getCurrentUserView() {
       hasProfile: false,
     };
   }
+
+  await ensureCurrentUserBootstrapped();
 
   const profile = await getProfileByUserId(sessionUser.id);
 

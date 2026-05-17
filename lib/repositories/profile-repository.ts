@@ -1,5 +1,51 @@
 import { prisma } from '@/lib/db/prisma';
 
+export async function isProfileSlugTaken(slug: string, excludeUserId?: string) {
+  if (!prisma) {
+    return false;
+  }
+
+  const existing = await prisma.profile.findUnique({
+    where: { slug },
+    select: { userId: true },
+  });
+
+  if (!existing) {
+    return false;
+  }
+
+  return excludeUserId ? existing.userId !== excludeUserId : true;
+}
+
+export async function createProfile(input: {
+  userId: string;
+  displayName: string;
+  slug: string;
+  bio?: string | null;
+  location?: string | null;
+  website?: string | null;
+  isPublic?: boolean;
+}) {
+  if (!prisma) {
+    return null;
+  }
+
+  return prisma.profile.create({
+    data: {
+      userId: input.userId,
+      displayName: input.displayName,
+      slug: input.slug,
+      bio: input.bio ?? null,
+      location: input.location ?? null,
+      website: input.website ?? null,
+      isPublic: input.isPublic ?? true,
+    },
+    include: {
+      user: true,
+    },
+  });
+}
+
 export async function getProfileBySlug(slug: string) {
   if (!prisma) {
     return null;
