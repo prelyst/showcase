@@ -1,9 +1,4 @@
-import { cookies } from 'next/headers';
-
-import { DEMO_USER_ID } from '@/lib/constants/demo-user';
-import { isSupabaseConfigured } from '@/lib/supabase/env';
-
-const AUTH_COOKIE_NAME = 'showcase-demo-auth';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
 
 type SessionUser = {
   id: string;
@@ -18,33 +13,41 @@ export async function getCurrentUserId() {
 }
 
 export async function getCurrentSessionUser(): Promise<SessionUser | null> {
-  const cookieStore = await cookies();
-  const authCookie = cookieStore.get(AUTH_COOKIE_NAME)?.value;
+  const supabase = await createSupabaseServerClient();
 
-  if (isSupabaseConfigured() && authCookie === 'demo') {
-    return {
-      id: DEMO_USER_ID,
-      email: 'maya@showcase.app',
-      name: 'Maya Rivera',
-      username: 'mayarivera',
-    };
+  if (!supabase) {
+    return null;
   }
 
-  if (authCookie === 'demo') {
-    return {
-      id: DEMO_USER_ID,
-      email: 'maya@showcase.app',
-      name: 'Maya Rivera',
-      username: 'mayarivera',
-    };
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return null;
   }
 
-  return null;
+  const username = typeof user.user_metadata?.username === 'string'
+    ? user.user_metadata.username
+    : typeof user.email === 'string'
+      ? user.email.split('@')[0]
+      : 'creator';
+
+  const name = typeof user.user_metadata?.full_name === 'string'
+    ? user.user_metadata.full_name
+    : typeof user.user_metadata?.name === 'string'
+      ? user.user_metadata.name
+      : username;
+
+  return {
+    id: user.id,
+    email: user.email ?? '',
+    name,
+    username,
+  };
 }
 
 export async function isAuthenticated() {
   const user = await getCurrentSessionUser();
   return Boolean(user);
 }
-
-export const authCookieName = AUTH_COOKIE_NAME;

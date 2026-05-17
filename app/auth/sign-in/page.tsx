@@ -1,18 +1,20 @@
 import Link from 'next/link';
 
 import { AuthCard } from '@/components/auth/auth-card';
+import { isSupabaseConfigured } from '@/lib/supabase/env';
 import { signInAction } from './actions';
 
 export default async function SignInPage({ searchParams }: { searchParams: Promise<{ error?: string; signed_out?: string }> }) {
   const params = await searchParams;
-  const error = params.error === 'missing-email';
+  const errorMessage = params.error ? decodeURIComponent(params.error) : null;
   const signedOut = params.signed_out === '1';
+  const configured = isSupabaseConfigured();
 
   return (
     <AuthCard
       eyebrow="Phase 3A · auth"
       title={<>A quieter place to <em className="italic text-[#B8541F]">publish</em>.</>}
-      description="Sign in to continue into your Showcase workspace. The auth flow is being introduced in-app first so it matches the product, not a generic template."
+      description="Sign in to continue into your Showcase workspace. The auth flow stays inside the product tone while now using real Supabase session exchange."
       footer={
         <div className="flex flex-wrap items-center justify-between gap-3 text-[13px] text-[#4A453C]">
           <span>Need the public site instead?</span>
@@ -32,14 +34,15 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
 
       <div className="mb-5 rounded-[16px] border border-[#E8E3D4] bg-[#F4F1EA] p-4">
         <div className="mb-1 font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">Current auth mode</div>
-        <div className="font-serif text-[22px] italic text-[#1A1814]">Demo session bridge</div>
+        <div className="font-serif text-[22px] italic text-[#1A1814]">Supabase session exchange</div>
         <div className="mt-2 text-[13px] leading-[1.55] text-[#4A453C]">
-          This is the themed Phase 3A auth surface. Real Supabase Auth session exchange is the next wiring step, but the product-facing sign-in flow already matches Showcase styling.
+          The visual language stays in Showcase, but the session path now expects real Supabase Auth credentials and stores a real authenticated session.
         </div>
       </div>
 
+      {!configured ? <div className="mb-4 rounded-[12px] border border-[#F2DCD1] bg-[#FBF1EC] px-4 py-3 text-[13px] text-[#A0381F]">Supabase auth is not configured yet. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY first.</div> : null}
       {signedOut ? <div className="mb-4 rounded-[12px] border border-[#D9D3C4] bg-[#F4F1EA] px-4 py-3 text-[13px] text-[#4A453C]">You were signed out.</div> : null}
-      {error ? <div className="mb-4 rounded-[12px] border border-[#F2DCD1] bg-[#FBF1EC] px-4 py-3 text-[13px] text-[#A0381F]">Enter an email to continue.</div> : null}
+      {errorMessage ? <div className="mb-4 rounded-[12px] border border-[#F2DCD1] bg-[#FBF1EC] px-4 py-3 text-[13px] text-[#A0381F]">{errorMessage}</div> : null}
 
       <form action={signInAction} className="space-y-4">
         <div>
@@ -52,6 +55,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
             type="email"
             placeholder="maya@showcase.app"
             defaultValue="maya@showcase.app"
+            autoComplete="email"
             className="w-full rounded-[12px] border border-[#D9D3C4] bg-[#FBF9F4] px-4 py-[14px] text-[15px] text-[#1A1814] outline-none placeholder:text-[#85806F] focus:border-[#B8541F]"
           />
         </div>
@@ -66,11 +70,12 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
             type="password"
             placeholder="••••••••"
             defaultValue="showcase"
+            autoComplete="current-password"
             className="w-full rounded-[12px] border border-[#D9D3C4] bg-[#FBF9F4] px-4 py-[14px] text-[15px] text-[#1A1814] outline-none placeholder:text-[#85806F] focus:border-[#B8541F]"
           />
         </div>
 
-        <button className="inline-flex w-full items-center justify-center rounded-[12px] bg-[#1A1814] px-5 py-[14px] text-[15px] font-medium text-[#F4F1EA] transition hover:bg-[#B8541F]">
+        <button disabled={!configured} className="inline-flex w-full items-center justify-center rounded-[12px] bg-[#1A1814] px-5 py-[14px] text-[15px] font-medium text-[#F4F1EA] transition hover:bg-[#B8541F] disabled:cursor-not-allowed disabled:opacity-50">
           Enter Showcase
         </button>
       </form>

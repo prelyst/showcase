@@ -1,15 +1,33 @@
-import { createClient } from '@supabase/supabase-js';
+import { cookies } from 'next/headers';
 
-function requireEnv(name: string) {
-  const value = process.env[name];
+import { createServerClient } from '@supabase/ssr';
 
-  if (!value) {
-    throw new Error(`Missing environment variable: ${name}`);
+import { getSupabaseEnv, isSupabaseConfigured } from '@/lib/supabase/env';
+
+export async function createSupabaseServerClient() {
+  if (!isSupabaseConfigured()) {
+    return null;
   }
 
-  return value;
-}
+  const cookieStore = await cookies();
+  const { url, anonKey } = getSupabaseEnv();
 
-export function createSupabaseServerClient() {
-  return createClient(requireEnv('NEXT_PUBLIC_SUPABASE_URL'), requireEnv('SUPABASE_SERVICE_ROLE_KEY'));
+  if (!url || !anonKey) {
+    return null;
+  }
+
+  return createServerClient(url, anonKey, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll();
+      },
+      setAll(cookiesToSet) {
+        try {
+          cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
+        } catch {
+          // Ignore cookie writes during rendering contexts.
+        }
+      },
+    },
+  });
 }
