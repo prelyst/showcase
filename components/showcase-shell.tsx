@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { ReactNode } from 'react';
 
+import { signOutAction } from '@/app/auth/sign-in/actions';
+
 const browseNav = [
   {
     href: '/showcase/feed',
@@ -137,10 +139,15 @@ export function ShowcaseShell({ title, subtitle, active, children }: { title: Re
               <div className="grid h-8 w-8 place-items-center rounded-full border border-[#D9D3C4] bg-[#F5E5D3] text-[12px] font-semibold text-[#B8541F]">
                 MR
               </div>
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 <div className="truncate text-[13px] font-medium text-[#1A1814]">Maya Rivera</div>
                 <div className="font-mono text-[11px] text-[#85806F]">@mayarivera</div>
               </div>
+              <form action={signOutAction}>
+                <button className="rounded-[8px] border border-[#D9D3C4] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.05em] text-[#4A453C] transition hover:bg-[#1A1814] hover:text-[#F4F1EA]">
+                  Sign out
+                </button>
+              </form>
             </div>
           </div>
         </aside>
