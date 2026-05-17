@@ -111,6 +111,7 @@ export async function ShowcaseShell({ title, subtitle, active, children }: { tit
 
           <Link
             href="/showcase/compose"
+            prefetch
             className="mb-5 flex items-center justify-center gap-2 rounded-[10px] bg-[#B8541F] px-[14px] py-[11px] text-[14px] font-medium text-[#F4F1EA] transition hover:-translate-y-px hover:bg-[#1A1814]"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-[14px] w-[14px]">
@@ -164,6 +165,7 @@ export async function ShowcaseShell({ title, subtitle, active, children }: { tit
               </div>
               <Link
                 href="/showcase/compose"
+                prefetch
                 className="rounded-[10px] border border-[#D9D3C4] bg-[#FBF9F4] px-4 py-2 text-[13px] font-medium text-[#4A453C] transition hover:bg-[#1A1814] hover:text-[#F4F1EA]"
               >
                 Compose
