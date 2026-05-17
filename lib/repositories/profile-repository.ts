@@ -75,3 +75,31 @@ export async function getProfileByUserId(userId: string) {
     },
   });
 }
+
+export async function updateProfileByUserId(userId: string, data: {
+  displayName: string;
+  slug: string;
+  bio?: string | null;
+  location?: string | null;
+  website?: string | null;
+  isPublic: boolean;
+}) {
+  if (!prisma) {
+    return null;
+  }
+
+  return prisma.profile.update({
+    where: { userId },
+    data: {
+      displayName: data.displayName,
+      slug: data.slug,
+      bio: data.bio ?? null,
+      location: data.location ?? null,
+      website: data.website ?? null,
+      isPublic: data.isPublic,
+    },
+    include: {
+      user: true,
+    },
+  });
+}

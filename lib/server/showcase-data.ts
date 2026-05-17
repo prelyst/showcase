@@ -12,7 +12,9 @@ export async function getProfilePageData(): Promise<{
   displayName: string;
   slug: string;
   bio: string;
+  location?: string | null;
   website?: string | null;
+  isPublic: boolean;
   initials: string;
   stats: ProfileStat[];
   posts: ProfilePost[];
@@ -25,6 +27,9 @@ export async function getProfilePageData(): Promise<{
       displayName: currentUser.displayName,
       slug: currentUser.slug,
       bio: currentUser.bio,
+      location: null,
+      website: currentUser.website,
+      isPublic: true,
       initials: currentUser.initials,
       stats: mockProfileStats,
       posts: mockProfilePosts,
@@ -38,6 +43,9 @@ export async function getProfilePageData(): Promise<{
       displayName: currentUser.displayName,
       slug: currentUser.slug,
       bio: currentUser.bio,
+      location: null,
+      website: currentUser.website,
+      isPublic: true,
       initials: currentUser.initials,
       stats: [
         { label: 'Followers', value: '0' },
@@ -54,7 +62,9 @@ export async function getProfilePageData(): Promise<{
     displayName: profile.displayName,
     slug: profile.slug,
     bio: profile.bio ?? 'No bio yet.',
+    location: profile.location,
     website: profile.website,
+    isPublic: profile.isPublic,
     initials: currentUser.initials,
     stats: [
       { label: 'Followers', value: '2,847' },
