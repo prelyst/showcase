@@ -1,11 +1,24 @@
-import { ConnectedAccountStatus, Platform, PostStatus } from '@prisma/client';
+import 'dotenv/config';
+
+import { ConnectedAccountStatus, Platform, PostStatus, PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { createClient } from '@supabase/supabase-js';
+import { Pool } from 'pg';
 
 import { DEMO_PROFILE_SLUG, DEMO_USER_ID } from '@/lib/constants/demo-user';
-import { prisma } from '@/lib/db/prisma';
 
 const DEMO_EMAIL = 'maya@showcase.app';
 const DEMO_PASSWORD = 'showcase';
+
+const connectionString = process.env.DATABASE_URL || process.env.DIRECT_URL;
+
+if (!connectionString) {
+  throw new Error('Missing DATABASE_URL or DIRECT_URL for Prisma seed.');
+}
+
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 async function ensureSupabaseAuthUser() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -52,10 +65,6 @@ async function ensureSupabaseAuthUser() {
 }
 
 async function main() {
-  if (!prisma) {
-    throw new Error('Prisma is not enabled. Set SHOWCASE_ENABLE_DB=true and provide a working DATABASE_URL before seeding.');
-  }
-
   const authUser = await ensureSupabaseAuthUser();
 
   const user = await prisma.user.upsert({
@@ -235,7 +244,6 @@ main()
     process.exit(1);
   })
   .finally(async () => {
-    if (prisma) {
-      await prisma.$disconnect();
-    }
+    await prisma.$disconnect();
+    await pool.end();
   });

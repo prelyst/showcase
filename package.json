@@ -17,10 +17,12 @@
     "schema:once": "tsx scripts/schema-once.ts"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.105.4",
     "next": "^16.2.6",
+    "pg": "^8.20.0",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "zod": "^4.4.3"
