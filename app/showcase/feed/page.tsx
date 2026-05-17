@@ -1,8 +1,10 @@
 import { ShowcaseShell } from '@/components/showcase-shell';
 import { CreatorCard, FeedPostCard, TrendingCard } from '@/components/showcase-ui';
-import { creatorSuggestions, feedPosts, trendingTopics } from '@/lib/mock/showcase';
+import { getFeedPageData } from '@/lib/server/showcase-data';
 
-export default function FeedPage() {
+export default async function FeedPage() {
+  const { posts, trending, suggestions } = await getFeedPageData();
+
   return (
     <ShowcaseShell title={<><span>Feed </span><em className="font-light italic text-[#B8541F]">/ following</em></>} active="/showcase/feed">
       <div className="grid max-w-[1100px] gap-10 xl:grid-cols-[1fr_320px]">
@@ -19,7 +21,7 @@ export default function FeedPage() {
           </div>
 
           <div>
-            {feedPosts.map((post) => (
+            {posts.map((post) => (
               <FeedPostCard key={post.id} post={post} />
             ))}
           </div>
@@ -32,7 +34,7 @@ export default function FeedPage() {
               <span className="text-[#B8541F]">↗</span>
             </div>
             <div>
-              {trendingTopics.map((topic) => (
+              {trending.map((topic) => (
                 <TrendingCard key={topic.tag} topic={topic} compact />
               ))}
             </div>
@@ -40,7 +42,7 @@ export default function FeedPage() {
 
           <div className="mb-5 rounded-[14px] border border-[#D9D3C4] bg-[#FBF9F4] p-5">
             <div className="mb-[14px] font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">Who to follow</div>
-            {creatorSuggestions.map((creator) => (
+            {suggestions.map((creator) => (
               <CreatorCard key={creator.id} creator={creator} compact />
             ))}
           </div>

@@ -1,8 +1,10 @@
 import { ShowcaseShell } from '@/components/showcase-shell';
 import { CreatorCard, TrendingCard } from '@/components/showcase-ui';
-import { featuredCreators, trendingTopics } from '@/lib/mock/showcase';
+import { getDiscoverPageData } from '@/lib/server/showcase-data';
 
-export default function DiscoverPage() {
+export default async function DiscoverPage() {
+  const { trending, creators } = await getDiscoverPageData();
+
   return (
     <ShowcaseShell title="Discover" active="/showcase/discover">
       <div className="max-w-[1100px]">
@@ -21,7 +23,7 @@ export default function DiscoverPage() {
           <button className="font-mono text-[11px] uppercase tracking-[0.05em] text-[#85806F]">View all →</button>
         </div>
         <div className="grid gap-[14px] md:grid-cols-2 xl:grid-cols-4">
-          {trendingTopics.map((topic) => (
+          {trending.map((topic) => (
             <TrendingCard key={topic.tag} topic={topic} />
           ))}
         </div>
@@ -33,7 +35,7 @@ export default function DiscoverPage() {
           <button className="font-mono text-[11px] uppercase tracking-[0.05em] text-[#85806F]">View all →</button>
         </div>
         <div className="grid gap-[14px] md:grid-cols-2 xl:grid-cols-4">
-          {featuredCreators.map((creator) => (
+          {creators.map((creator) => (
             <CreatorCard key={creator.id} creator={creator} />
           ))}
         </div>

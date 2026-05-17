@@ -63,6 +63,14 @@ export type PublishLane = {
   pillTone: string;
 };
 
+export type MonitorData = {
+  heroBody: string;
+  heroMeta: string;
+  progressLabel: string;
+  progressWidth: string;
+  lanes: PublishLane[];
+};
+
 export type ProfileStat = {
   label: string;
   value: string;

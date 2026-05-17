@@ -1,4 +1,4 @@
-import { connectedAccounts, notifications as mockNotifications, platforms, preferences as mockPreferences, profilePosts as mockProfilePosts, profileStats as mockProfileStats } from '@/lib/mock/showcase';
+import { connectedAccounts, creatorSuggestions, featuredCreators, feedPosts, monitorLanes, notifications as mockNotifications, platforms, preferences as mockPreferences, profilePosts as mockProfilePosts, profileStats as mockProfileStats, trendingTopics } from '@/lib/mock/showcase';
 import { getConnectedAccountsForUser } from '@/lib/repositories/connected-account-repository';
 import { getNotificationsForUser } from '@/lib/repositories/notification-repository';
 import { createDraftPost, getLatestDraftForProfile, getPostsForProfile, updatePostTargets } from '@/lib/repositories/post-repository';
@@ -6,7 +6,7 @@ import { getProfileByUserId } from '@/lib/repositories/profile-repository';
 import { getUserSettings } from '@/lib/repositories/settings-repository';
 import { getCurrentUserId } from '@/lib/server/auth';
 import { getCurrentUserView } from '@/lib/server/current-user';
-import { ConnectionItem, NotificationItem, PreferenceItem, ProfilePost, ProfileStat } from '@/lib/types/showcase';
+import { ConnectionItem, CreatorSuggestion, FeedPost, MonitorData, NotificationItem, PreferenceItem, ProfilePost, ProfileStat, TrendingTopic } from '@/lib/types/showcase';
 
 export async function getProfilePageData(): Promise<{
   displayName: string;
@@ -222,6 +222,156 @@ export async function getComposePageData() {
     authorInitials: currentUser.initials,
     content: draft?.content ?? '',
     selectedTargets: draft?.targets.filter((target) => target.enabled).map((target) => target.platform.toLowerCase()) ?? ['showcase', 'x', 'linkedin', 'bluesky'],
+  };
+}
+
+export async function getFeedPageData(): Promise<{
+  posts: FeedPost[];
+  trending: TrendingTopic[];
+  suggestions: CreatorSuggestion[];
+}> {
+  const currentUser = await getCurrentUserView();
+  const userId = currentUser.id;
+
+  if (!userId) {
+    return {
+      posts: feedPosts,
+      trending: trendingTopics,
+      suggestions: creatorSuggestions,
+    };
+  }
+
+  const profile = await getProfileByUserId(userId);
+
+  if (!profile) {
+    return {
+      posts: feedPosts,
+      trending: trendingTopics,
+      suggestions: creatorSuggestions,
+    };
+  }
+
+  const posts = await getPostsForProfile(profile.id);
+
+  const mappedPosts: FeedPost[] = posts.length
+    ? posts.slice(0, 8).map((post, index) => ({
+        id: post.id,
+        avatar: { initials: currentUser.initials, className: 'bg-[#F5E5D3] text-[#B8541F]' },
+        author: profile.displayName,
+        handle: `@${profile.slug}`,
+        time: formatRelativeDate(post.createdAt),
+        body: post.content,
+        socials: post.targets.filter((target) => target.enabled).map((target) => platforms[target.platform.toLowerCase()]).filter(Boolean),
+        stats: {
+          likes: String(Math.max(12, 96 - index * 7)),
+          comments: String(Math.max(3, 24 - index * 2)),
+          reposts: String(Math.max(1, 18 - index * 2)),
+        },
+      }))
+    : feedPosts;
+
+  return {
+    posts: mappedPosts,
+    trending: trendingTopics,
+    suggestions: creatorSuggestions,
+  };
+}
+
+export async function getDiscoverPageData(): Promise<{
+  trending: TrendingTopic[];
+  creators: CreatorSuggestion[];
+}> {
+  const userId = await getCurrentUserId();
+
+  if (!userId) {
+    return {
+      trending: trendingTopics,
+      creators: featuredCreators,
+    };
+  }
+
+  const accounts = await getConnectedAccountsForUser(userId);
+
+  const creators: CreatorSuggestion[] = accounts.length
+    ? accounts.slice(0, 6).map((account, index) => ({
+        id: account.id,
+        avatar: {
+          initials: account.accountName?.split(' ').map((part) => part[0]).slice(0, 2).join('').toUpperCase() || account.accountHandle.replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase() || 'SC',
+          className: index % 2 === 0 ? 'bg-[#F5E5D3] text-[#B8541F]' : 'bg-[#E5E8D4] text-[#5A6B3A]',
+        },
+        name: account.accountName || account.accountHandle.replace(/^@/, '') || account.platform,
+        handle: account.accountHandle.startsWith('@') ? account.accountHandle : `@${account.accountHandle}`,
+        bio: `${account.platform} account · ${account.status === 'ACTIVE' ? 'connected and ready to publish' : 'inactive connection'}`,
+        following: account.status === 'ACTIVE',
+      }))
+    : featuredCreators;
+
+  return {
+    trending: trendingTopics,
+    creators,
+  };
+}
+
+export async function getMonitorPageData(): Promise<MonitorData> {
+  const currentUser = await getCurrentUserView();
+  const userId = currentUser.id;
+
+  if (!userId) {
+    return {
+      heroBody: '"Shipping something quiet today. A better feed, by construction."',
+      heroMeta: 'Published just now',
+      progressLabel: '4 / 6',
+      progressWidth: '66%',
+      lanes: monitorLanes,
+    };
+  }
+
+  const profile = await getProfileByUserId(userId);
+
+  if (!profile) {
+    return {
+      heroBody: '"Your publishing monitor will light up as soon as you save and publish a post."',
+      heroMeta: 'No active jobs yet',
+      progressLabel: '0 / 1',
+      progressWidth: '12%',
+      lanes: monitorLanes,
+    };
+  }
+
+  const posts = await getPostsForProfile(profile.id);
+  const latest = posts[0];
+
+  if (!latest) {
+    return {
+      heroBody: '"Your publishing monitor will light up as soon as you save and publish a post."',
+      heroMeta: 'No active jobs yet',
+      progressLabel: '0 / 1',
+      progressWidth: '12%',
+      lanes: monitorLanes,
+    };
+  }
+
+  const enabledTargets = latest.targets.filter((target) => target.enabled);
+  const lanes = enabledTargets.length
+    ? enabledTargets.map((target, index) => ({
+        id: `${latest.id}-${target.platform}`,
+        platform: platforms[target.platform.toLowerCase()],
+        detail: target.enabled ? `${target.platform.toLowerCase()} publish target saved for this draft` : 'Disabled',
+        status: index === 0 ? 'Published' as const : 'Uploading' as const,
+        elapsed: index === 0 ? '0.8s' : `${index + 1}.2s`,
+        pillTone: index === 0 ? 'bg-[#E5E8D4] text-[#5A6B3A]' : 'bg-[#F4E8C8] text-[#A67C1E]',
+      }))
+    : monitorLanes;
+
+  const publishedCount = lanes.filter((lane) => lane.status === 'Published').length;
+  const progress = lanes.length ? `${Math.max(12, Math.round((publishedCount / lanes.length) * 100))}%` : '12%';
+
+  return {
+    heroBody: `"${latest.content.slice(0, 140)}${latest.content.length > 140 ? '…' : ''}"`,
+    heroMeta: `${latest.status.toLowerCase()} · ${formatRelativeDate(latest.updatedAt)}`,
+    progressLabel: `${publishedCount} / ${Math.max(lanes.length, 1)}`,
+    progressWidth: progress,
+    lanes,
   };
 }
 
