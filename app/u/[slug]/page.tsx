@@ -28,6 +28,14 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
     id: post.id,
     label: `Published to ${Math.max(post.targets?.length || 1, 1)} platforms`,
     time: new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(post.createdAt),
+    relativeTime: (() => {
+      const diffMs = Math.max(0, Date.now() - post.createdAt.getTime());
+      const diffMinutes = Math.max(1, Math.floor(diffMs / (1000 * 60)));
+      if (diffMinutes < 60) return `${diffMinutes}m`;
+      const diffHours = Math.max(1, Math.floor(diffMinutes / 60));
+      if (diffHours < 24) return `${diffHours}h`;
+      return `${Math.max(1, Math.floor(diffHours / 24))}d`;
+    })(),
     body: post.content,
     stats: [
       `${Math.max(12, 120 - index * 9)} likes`,

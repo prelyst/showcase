@@ -80,6 +80,7 @@ export type ProfilePost = {
   id: string;
   label: string;
   time: string;
+  relativeTime?: string;
   body: string;
   stats: string[];
 };

@@ -184,7 +184,7 @@ export function ProfilePostCard({ post }: { post: ProfilePost }) {
       <div className="mb-3 flex items-center gap-2">
         <PlatformBadge platform={{ key: 'showcase', label: 'Showcase', short: 'S', tone: 'bg-[#B8541F] text-[#F4F1EA]' }} />
         <span className="font-mono text-[10px] uppercase tracking-[0.05em] text-[#85806F]">{post.label}</span>
-        <span className="ml-auto font-mono text-[10px] text-[#85806F]">{post.time}</span>
+        <span className="ml-auto font-mono text-[10px] text-[#85806F]">{post.relativeTime ? `${post.time} · ${post.relativeTime}` : post.time}</span>
       </div>
       <div className="mb-[14px] font-serif text-[15px] leading-[1.5] text-[#1A1814]">{post.body}</div>
       <div className="flex gap-4 font-mono text-[11px] text-[#85806F]">

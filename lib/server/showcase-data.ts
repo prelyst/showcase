@@ -76,6 +76,7 @@ export async function getProfilePageData(): Promise<{
           id: post.id,
           label: `Published to ${Math.max(post.targets.filter((target) => target.enabled).length, 1)} platforms`,
           time: new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(post.createdAt),
+          relativeTime: formatRelativeDate(post.createdAt),
           body: post.content,
           stats: [
             `${312 - index * 18} likes`,
