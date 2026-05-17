@@ -302,6 +302,18 @@ Run local Prisma migration:
 npm run prisma:migrate
 ```
 
+Apply production-safe migrations:
+
+```bash
+npm run prisma:deploy
+```
+
+Seed demo Showcase data:
+
+```bash
+npm run prisma:seed
+```
+
 Open Prisma Studio:
 
 ```bash
@@ -355,18 +367,33 @@ Backend foundation with **Supabase + Prisma**:
 - Zod validators for core writes
 - environment template for Supabase/Postgres setup
 
-### Next steps after current Phase 2 foundation
+### Current Phase 3 progress
+
+The app now has:
+- DB-first loaders for profile, notifications, settings, and compose draft surfaces
+- a `UserSettings` Prisma model
+- safe Prisma gating for deployments via `SHOWCASE_ENABLE_DB`
+- a demo seed path for:
+  - user
+  - profile
+  - settings
+  - notifications
+  - connected accounts
+  - draft post
+
+### Next steps after current Phase 3 slice
 
 1. connect a real Supabase project and Postgres connection string
-2. run Prisma generate and first migration
-3. add seed data for one local test user/profile
+2. run first Prisma migration
+3. run `npm run prisma:seed`
 4. wire real auth/session handling with Supabase Auth
-5. replace mock reads for:
+5. replace demo auth bridge with real current user resolution
+6. add write actions for:
+   - settings
    - profile
-   - notifications
-   - settings / connected accounts
-6. add persisted draft creation and update flow for compose
-7. prepare Phase 3 publish orchestration with Trigger.dev
+   - draft update
+   - platform target selection
+7. move publish monitor onto DB-backed publish jobs and lane results
 
 ---
 
