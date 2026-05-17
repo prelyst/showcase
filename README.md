@@ -282,9 +282,14 @@ Required variables:
 
 Recommended behavior during first deploy:
 - keep `SHOWCASE_ENABLE_DB=false` while getting the app deployed and stable
-- do **not** run DB initialization inside the normal Vercel build
+- do **not** run DB initialization inside the normal Vercel build by default
 - initialize the database explicitly only when needed with `npm run db:init`
 - after DB setup is finished, switch `SHOWCASE_ENABLE_DB=true` to enable DB-backed Showcase pages
+
+Temporary first-schema option:
+- if you want Vercel to create the schema one time, set `SHOWCASE_SCHEMA_ONCE=true`
+- this temporarily makes `build` run `prisma migrate deploy`
+- after the first successful schema creation, set `SHOWCASE_SCHEMA_ONCE=false` again
 
 Run the app locally:
 
@@ -341,6 +346,11 @@ Build for production:
 ```bash
 npm run build
 ```
+
+Temporary schema-once behavior during build:
+- `SHOWCASE_SCHEMA_ONCE=false` → build is fast and only runs Next.js build
+- `SHOWCASE_SCHEMA_ONCE=true` → build first runs `prisma migrate deploy`, then continues
+- after schema exists, set `SHOWCASE_SCHEMA_ONCE=false` again
 
 ---
 
