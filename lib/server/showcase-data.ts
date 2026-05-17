@@ -186,42 +186,16 @@ export async function getComposePageData() {
     };
   }
 
-  let draft = await getLatestDraftForProfile(profile.id);
-
-  if (!draft) {
-    const createdDraft = await createDraftPost(
-      {
-        profileId: profile.id,
-        content:
-          'The thing I keep coming back to: most social platforms reward volume. The feeds that actually matter to me reward intention. Showcase is built on a simple bet — that when you only post things you meant to say, the feed quietly gets better. #building',
-      },
-      userId,
-    );
-
-    if (createdDraft) {
-      await updatePostTargets({
-        postId: createdDraft.id,
-        targets: [
-          { platform: 'SHOWCASE', enabled: true },
-          { platform: 'X', enabled: true },
-          { platform: 'LINKEDIN', enabled: true },
-          { platform: 'BLUESKY', enabled: true },
-          { platform: 'REDDIT', enabled: false },
-          { platform: 'YOUTUBE', enabled: false },
-          { platform: 'THREADS', enabled: false },
-        ],
-      });
-
-      draft = await getLatestDraftForProfile(profile.id);
-    }
-  }
+  const draft = await getLatestDraftForProfile(profile.id);
 
   return {
     draftId: draft?.id ?? null,
     authorName: profile.displayName,
     authorHandle: `@${profile.slug}`,
     authorInitials: currentUser.initials,
-    content: draft?.content ?? '',
+    content:
+      draft?.content ??
+      'The thing I keep coming back to: most social platforms reward volume. The feeds that actually matter to me reward intention. Showcase is built on a simple bet — that when you only post things you meant to say, the feed quietly gets better. #building',
     selectedTargets: draft?.targets.filter((target) => target.enabled).map((target) => target.platform.toLowerCase()) ?? ['showcase', 'x', 'linkedin', 'bluesky'],
   };
 }
