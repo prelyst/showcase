@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run deploy:prep && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
@@ -13,7 +13,7 @@
     "prisma:deploy": "prisma migrate deploy",
     "prisma:seed": "tsx prisma/seed.ts",
     "prisma:studio": "prisma studio",
-    "deploy:prep": "tsx scripts/deploy-prep.ts"
+    "db:init": "npm run prisma:deploy && npm run prisma:seed"
   },
   "dependencies": {
     "@prisma/client": "^7.8.0",

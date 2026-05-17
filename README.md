@@ -281,12 +281,10 @@ Required variables:
 - `DIRECT_URL`
 
 Recommended behavior during first deploy:
-- keep `SHOWCASE_ENABLE_DB=false` if you only want the app to deploy without touching DB
-- set `SHOWCASE_ENABLE_DB=true` when env is fully configured and you want build/deploy to automatically:
-  - run Prisma generate
-  - run Prisma migrate deploy
-  - run Prisma seed
-  - enable DB-backed Showcase pages
+- keep `SHOWCASE_ENABLE_DB=false` while getting the app deployed and stable
+- do **not** run DB initialization inside the normal Vercel build
+- initialize the database explicitly only when needed with `npm run db:init`
+- after DB setup is finished, switch `SHOWCASE_ENABLE_DB=true` to enable DB-backed Showcase pages
 
 Run the app locally:
 
@@ -318,18 +316,17 @@ Seed demo Showcase data:
 npm run prisma:seed
 ```
 
-Automatic deploy prep path:
+Initialize the database explicitly when needed:
 
 ```bash
-npm run deploy:prep
+npm run db:init
 ```
 
-This script is also called automatically by `npm run build`. When `SHOWCASE_ENABLE_DB=true`, it will:
-- generate Prisma client
-- apply Prisma migrations
-- run Prisma seed
+This runs:
+- `npm run prisma:deploy`
+- `npm run prisma:seed`
 
-The seed now also ensures the demo Supabase Auth user exists:
+The seed also ensures the demo Supabase Auth user exists:
 - email: `maya@showcase.app`
 - password: `showcase`
 
@@ -403,9 +400,12 @@ The app now has:
 ### Next steps after current Phase 3 slice
 
 1. connect a real Supabase project and Postgres connection string
-2. set env vars only
-3. decide whether deployment should keep DB path off (`SHOWCASE_ENABLE_DB=false`) or automatically enable full DB path (`SHOWCASE_ENABLE_DB=true`)
-4. add write actions for:
+2. set env vars in Vercel
+3. deploy app with `SHOWCASE_ENABLE_DB=false`
+4. run `npm run db:init` when ready to create schema and seed data
+5. switch `SHOWCASE_ENABLE_DB=true`
+6. redeploy
+7. add write actions for:
    - settings
    - profile
    - draft update
