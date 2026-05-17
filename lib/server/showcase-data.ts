@@ -394,12 +394,18 @@ export async function getMonitorPageData(): Promise<MonitorData> {
 }
 
 function formatRelativeDate(date: Date) {
-  const diffMs = Date.now() - date.getTime();
-  const diffHours = Math.max(1, Math.round(diffMs / (1000 * 60 * 60)));
+  const diffMs = Math.max(0, Date.now() - date.getTime());
+  const diffMinutes = Math.max(1, Math.floor(diffMs / (1000 * 60)));
+
+  if (diffMinutes < 60) {
+    return `${diffMinutes}m`;
+  }
+
+  const diffHours = Math.max(1, Math.floor(diffMinutes / 60));
 
   if (diffHours < 24) {
     return `${diffHours}h`;
   }
 
-  return `${Math.round(diffHours / 24)}d`;
+  return `${Math.max(1, Math.floor(diffHours / 24))}d`;
 }
