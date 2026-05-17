@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 
 export function PendingActionButton({
@@ -24,9 +24,16 @@ export function PendingActionButton({
   actionId?: string;
   formAction?: (formData: FormData) => void | Promise<void>;
 }) {
-  const { pending: isPending, data } = useFormStatus();
-  const activeAction = typeof data?.get === 'function' ? data.get('__action') : null;
-  const isActiveAction = isPending && actionId && activeAction === actionId;
+  const { pending: isPending } = useFormStatus();
+  const [clickedAction, setClickedAction] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isPending) {
+      setClickedAction(null);
+    }
+  }, [isPending]);
+
+  const isActiveAction = isPending && (!actionId || clickedAction === actionId);
   const isDisabled = disabled || isPending;
 
   return (
@@ -36,6 +43,7 @@ export function PendingActionButton({
       disabled={isDisabled}
       name={actionId ? '__action' : undefined}
       value={actionId}
+      onClick={() => setClickedAction(actionId ?? '__default__')}
       className={`${className} ${isActiveAction ? pendingClassName ?? '' : idleClassName ?? ''} disabled:cursor-not-allowed disabled:opacity-70`}
     >
       <span className="inline-flex items-center gap-2">
