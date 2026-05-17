@@ -161,6 +161,7 @@ export async function getComposePageData() {
 
   if (!userId) {
     return {
+      draftId: null,
       authorName: currentUser.displayName,
       authorHandle: `@${currentUser.username}`,
       authorInitials: currentUser.initials,
@@ -174,6 +175,7 @@ export async function getComposePageData() {
 
   if (!profile) {
     return {
+      draftId: null,
       authorName: currentUser.displayName,
       authorHandle: `@${currentUser.username}`,
       authorInitials: currentUser.initials,
@@ -214,6 +216,7 @@ export async function getComposePageData() {
   }
 
   return {
+    draftId: draft?.id ?? null,
     authorName: profile.displayName,
     authorHandle: `@${profile.slug}`,
     authorInitials: currentUser.initials,

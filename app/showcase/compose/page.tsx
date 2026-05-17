@@ -1,19 +1,26 @@
 import { ShowcaseShell } from '@/components/showcase-shell';
-import { Avatar, ComposeToolButton, PlatformBadge, PublishTargetChip } from '@/components/showcase-ui';
+import { Avatar, ComposeToolButton, PlatformBadge } from '@/components/showcase-ui';
 import { composeTools, platforms, publishTargets } from '@/lib/mock/showcase';
 import { getComposePageData } from '@/lib/server/showcase-data';
+import { saveDraftAction } from './actions';
 
-export default async function ComposePage() {
+export default async function ComposePage({ searchParams }: { searchParams: Promise<{ error?: string; saved?: string }> }) {
   const draft = await getComposePageData();
+  const params = await searchParams;
+  const errorMessage = params.error ? decodeURIComponent(params.error) : null;
+  const saved = params.saved === '1';
   return (
     <ShowcaseShell title={<><span>New post </span><em className="font-light italic text-[#B8541F]">/ draft</em></>} active="/showcase/compose">
       <div className="grid max-w-[1200px] gap-7 xl:grid-cols-[1.1fr_1fr]">
-        <div className="overflow-hidden rounded-[16px] border border-[#D9D3C4] bg-[#FBF9F4]">
+        <form action={saveDraftAction} className="overflow-hidden rounded-[16px] border border-[#D9D3C4] bg-[#FBF9F4]">
           <div className="flex items-center justify-between border-b border-[#E8E3D4] px-[22px] py-4">
             <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">Draft</span>
-            <span className="font-mono text-[11px] text-[#85806F]">247 / 3000</span>
+            <span className="font-mono text-[11px] text-[#85806F]">{draft.content.length} / 3000</span>
           </div>
           <div className="p-[22px]">
+            <input type="hidden" name="draftId" value={draft.draftId || ''} />
+            {saved ? <div className="mb-4 rounded-[12px] border border-[#D9D3C4] bg-[#F4F1EA] px-4 py-3 text-[13px] text-[#4A453C]">Draft saved.</div> : null}
+            {errorMessage ? <div className="mb-4 rounded-[12px] border border-[#F2DCD1] bg-[#FBF1EC] px-4 py-3 text-[13px] text-[#A0381F]">{errorMessage}</div> : null}
             <div className="mb-[18px] flex items-center gap-3">
               <Avatar avatar={{ initials: draft.authorInitials, className: 'bg-[#F5E5D3] text-[#B8541F]' }} size="sm" />
               <div>
@@ -23,6 +30,7 @@ export default async function ComposePage() {
             </div>
 
             <textarea
+              name="content"
               defaultValue={draft.content}
               className="min-h-[220px] w-full resize-none border-none bg-transparent font-serif text-[22px] leading-[1.4] text-[#1A1814] outline-none"
             />
@@ -38,18 +46,29 @@ export default async function ComposePage() {
 
           <div className="border-t border-[#E8E3D4] bg-[#EDE8DD] px-[22px] py-[18px]">
             <div className="mb-[10px] font-mono text-[10px] uppercase tracking-[0.08em] text-[#85806F]">Publishing to</div>
-            <div className="flex flex-wrap gap-[6px]">
-              {publishTargets.map((target) => (
-                <PublishTargetChip key={target.platform.key} platform={target.platform} selected={draft.selectedTargets.includes(target.platform.key)} />
-              ))}
+            <div className="flex flex-wrap gap-[8px]">
+              {publishTargets.map((target) => {
+                const checked = draft.selectedTargets.includes(target.platform.key);
+
+                return (
+                  <label
+                    key={target.platform.key}
+                    className={`flex cursor-pointer items-center gap-[6px] rounded-full border px-[10px] py-[6px] text-[12px] font-medium ${checked ? 'border-[#1A1814] bg-[#1A1814] text-[#F4F1EA]' : 'border-[#D9D3C4] bg-[#FBF9F4] text-[#1A1814]'}`}
+                  >
+                    <input type="checkbox" name={`target-${target.platform.key.toUpperCase()}`} defaultChecked={checked} className="sr-only" />
+                    <PlatformBadge platform={target.platform} />
+                    <span>{target.platform.label}</span>
+                  </label>
+                );
+              })}
             </div>
           </div>
 
           <div className="flex justify-end gap-[10px] border-t border-[#E8E3D4] bg-[#EDE8DD] px-[22px] py-[18px]">
-            <button className="rounded-[10px] border border-[#D9D3C4] px-4 py-[9px] text-[13px] font-medium text-[#4A453C]">Schedule</button>
-            <button className="rounded-[10px] bg-[#B8541F] px-[18px] py-[9px] text-[13px] font-medium text-[#F4F1EA]">Publish now</button>
+            <button type="submit" className="rounded-[10px] border border-[#D9D3C4] px-4 py-[9px] text-[13px] font-medium text-[#4A453C]">Save draft</button>
+            <button type="submit" className="rounded-[10px] bg-[#B8541F] px-[18px] py-[9px] text-[13px] font-medium text-[#F4F1EA]">Publish now</button>
           </div>
-        </div>
+        </form>
 
         <div className="overflow-hidden rounded-[16px] border border-[#D9D3C4] bg-[#FBF9F4]">
           <div className="flex items-center justify-between border-b border-[#E8E3D4] px-[22px] py-4">
