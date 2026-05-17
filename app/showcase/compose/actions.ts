@@ -130,8 +130,9 @@ export async function publishNowAction(formData: FormData) {
   revalidatePath('/showcase/compose');
   revalidatePath('/showcase/monitor');
   revalidatePath('/showcase/profile');
+  revalidatePath('/showcase/feed');
 
-  redirect('/showcase/monitor?published=1');
+  redirect('/showcase/feed?published=1');
 }
 
 export async function scheduleDraftAction(formData: FormData) {
