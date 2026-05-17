@@ -6,10 +6,10 @@ import { getProfilePageData } from '@/lib/server/showcase-data';
 export default async function ProfilePage() {
   const profile = await getProfilePageData();
   return (
-    <ShowcaseShell title="Profile" subtitle="showcase.app/@mayarivera" active="/showcase/profile">
+    <ShowcaseShell title="Profile" subtitle={`showcase.app/@${profile.slug}`} active="/showcase/profile">
       <div className="max-w-[1100px]">
         <div className="mb-6 grid gap-7 rounded-[20px] border border-[#D9D3C4] bg-[#FBF9F4] p-9 lg:grid-cols-[auto_1fr_auto] lg:items-center">
-          <Avatar avatar={{ initials: 'MR', className: 'bg-[#F5E5D3] text-[#B8541F]' }} size="lg" />
+          <Avatar avatar={{ initials: profile.initials, className: 'bg-[#F5E5D3] text-[#B8541F]' }} size="lg" />
           <div>
             <div className="mb-1 font-serif text-[34px] tracking-[-0.02em] text-[#1A1814]">{profile.displayName}</div>
             <div className="mb-3 font-mono text-[13px] text-[#85806F]">showcase.app/@{profile.slug}</div>

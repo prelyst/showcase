@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ReactNode } from 'react';
 
 import { signOutAction } from '@/app/auth/sign-in/actions';
+import { getCurrentUserView } from '@/lib/server/current-user';
 
 const browseNav = [
   {
@@ -89,7 +90,9 @@ function NavLink({ href, label, icon, active, badge }: { href: string; label: st
   );
 }
 
-export function ShowcaseShell({ title, subtitle, active, children }: { title: ReactNode; subtitle?: ReactNode; active: string; children: ReactNode }) {
+export async function ShowcaseShell({ title, subtitle, active, children }: { title: ReactNode; subtitle?: ReactNode; active: string; children: ReactNode }) {
+  const currentUser = await getCurrentUserView();
+
   return (
     <main className="min-h-screen bg-[#F4F1EA] text-[#1A1814]">
       <div
@@ -137,11 +140,11 @@ export function ShowcaseShell({ title, subtitle, active, children }: { title: Re
           <div className="mt-auto border-t border-[#E8E3D4] pt-5">
             <div className="flex items-center gap-[10px] rounded-[8px] px-[10px] py-2 hover:bg-[#EDE8DD]">
               <div className="grid h-8 w-8 place-items-center rounded-full border border-[#D9D3C4] bg-[#F5E5D3] text-[12px] font-semibold text-[#B8541F]">
-                MR
+                {currentUser.initials}
               </div>
               <div className="min-w-0 flex-1">
-                <div className="truncate text-[13px] font-medium text-[#1A1814]">Maya Rivera</div>
-                <div className="font-mono text-[11px] text-[#85806F]">@mayarivera</div>
+                <div className="truncate text-[13px] font-medium text-[#1A1814]">{currentUser.displayName}</div>
+                <div className="font-mono text-[11px] text-[#85806F]">@{currentUser.username}</div>
               </div>
               <form action={signOutAction}>
                 <button className="rounded-[8px] border border-[#D9D3C4] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.05em] text-[#4A453C] transition hover:bg-[#1A1814] hover:text-[#F4F1EA]">

@@ -15,7 +15,7 @@ export default async function ComposePage() {
           </div>
           <div className="p-[22px]">
             <div className="mb-[18px] flex items-center gap-3">
-              <Avatar avatar={{ initials: 'MR', className: 'bg-[#F5E5D3] text-[#B8541F]' }} size="sm" />
+              <Avatar avatar={{ initials: draft.authorInitials, className: 'bg-[#F5E5D3] text-[#B8541F]' }} size="sm" />
               <div>
                 <div className="text-[15px] font-medium text-[#1A1814]">{draft.authorName}</div>
                 <div className="font-mono text-[12px] text-[#85806F]">{draft.authorHandle}</div>
@@ -74,7 +74,7 @@ export default async function ComposePage() {
 
             <div className="rounded-[14px] border border-[#D9D3C4] bg-[#FBF9F4] p-[18px]">
               <div className="mb-3 flex items-center gap-[10px]">
-                <Avatar avatar={{ initials: 'MR', className: 'bg-[#F5E5D3] text-[#B8541F]' }} size="sm" />
+                <Avatar avatar={{ initials: draft.authorInitials, className: 'bg-[#F5E5D3] text-[#B8541F]' }} size="sm" />
                 <div>
                   <div className="font-serif font-medium text-[#1A1814]">{draft.authorName}</div>
                   <div className="font-mono text-[11px] text-[#85806F]">{draft.authorHandle} · now</div>

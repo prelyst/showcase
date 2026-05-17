@@ -5,6 +5,7 @@ import { createDraftPost, getLatestDraftForProfile, getPostsForProfile, updatePo
 import { getProfileByUserId } from '@/lib/repositories/profile-repository';
 import { getUserSettings } from '@/lib/repositories/settings-repository';
 import { getCurrentUserId } from '@/lib/server/auth';
+import { getCurrentUserView } from '@/lib/server/current-user';
 import { ConnectionItem, NotificationItem, PreferenceItem, ProfilePost, ProfileStat } from '@/lib/types/showcase';
 
 export async function getProfilePageData(): Promise<{
@@ -12,16 +13,19 @@ export async function getProfilePageData(): Promise<{
   slug: string;
   bio: string;
   website?: string | null;
+  initials: string;
   stats: ProfileStat[];
   posts: ProfilePost[];
 }> {
-  const userId = await getCurrentUserId();
+  const currentUser = await getCurrentUserView();
+  const userId = currentUser.id;
 
   if (!userId) {
     return {
-      displayName: 'Maya Rivera',
-      slug: 'mayarivera',
-      bio: 'Writer thinking about the quiet web. Books forthcoming. Slow is a feature.',
+      displayName: currentUser.displayName,
+      slug: currentUser.slug,
+      bio: currentUser.bio,
+      initials: currentUser.initials,
       stats: mockProfileStats,
       posts: mockProfilePosts,
     };
@@ -31,11 +35,16 @@ export async function getProfilePageData(): Promise<{
 
   if (!profile) {
     return {
-      displayName: 'Maya Rivera',
-      slug: 'mayarivera',
-      bio: 'Writer thinking about the quiet web. Books forthcoming. Slow is a feature.',
-      stats: mockProfileStats,
-      posts: mockProfilePosts,
+      displayName: currentUser.displayName,
+      slug: currentUser.slug,
+      bio: currentUser.bio,
+      initials: currentUser.initials,
+      stats: [
+        { label: 'Followers', value: '0' },
+        { label: 'Posts', value: '0' },
+        { label: 'Following', value: '0' },
+      ],
+      posts: [],
     };
   }
 
@@ -46,6 +55,7 @@ export async function getProfilePageData(): Promise<{
     slug: profile.slug,
     bio: profile.bio ?? 'No bio yet.',
     website: profile.website,
+    initials: currentUser.initials,
     stats: [
       { label: 'Followers', value: '2,847' },
       { label: 'Posts', value: String(posts.length) },
@@ -136,12 +146,14 @@ export async function getSettingsPageData(): Promise<{
 }
 
 export async function getComposePageData() {
-  const userId = await getCurrentUserId();
+  const currentUser = await getCurrentUserView();
+  const userId = currentUser.id;
 
   if (!userId) {
     return {
-      authorName: 'Maya Rivera',
-      authorHandle: '@mayarivera',
+      authorName: currentUser.displayName,
+      authorHandle: `@${currentUser.username}`,
+      authorInitials: currentUser.initials,
       content:
         'The thing I keep coming back to: most social platforms reward volume. The feeds that actually matter to me reward intention. Showcase is built on a simple bet — that when you only post things you meant to say, the feed quietly gets better. #building',
       selectedTargets: ['showcase', 'x', 'linkedin', 'bluesky'],
@@ -152,11 +164,12 @@ export async function getComposePageData() {
 
   if (!profile) {
     return {
-      authorName: 'Maya Rivera',
-      authorHandle: '@mayarivera',
+      authorName: currentUser.displayName,
+      authorHandle: `@${currentUser.username}`,
+      authorInitials: currentUser.initials,
       content:
-        'The thing I keep coming back to: most social platforms reward volume. The feeds that actually matter to me reward intention. Showcase is built on a simple bet — that when you only post things you meant to say, the feed quietly gets better. #building',
-      selectedTargets: ['showcase', 'x', 'linkedin', 'bluesky'],
+        'Tell your first story on Showcase.',
+      selectedTargets: ['showcase'],
     };
   }
 
@@ -193,6 +206,7 @@ export async function getComposePageData() {
   return {
     authorName: profile.displayName,
     authorHandle: `@${profile.slug}`,
+    authorInitials: currentUser.initials,
     content: draft?.content ?? '',
     selectedTargets: draft?.targets.filter((target) => target.enabled).map((target) => target.platform.toLowerCase()) ?? ['showcase', 'x', 'linkedin', 'bluesky'],
   };
