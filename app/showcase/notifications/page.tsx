@@ -1,3 +1,4 @@
+import { PendingActionButton } from '@/components/pending-action-button';
 import { ShowcaseShell } from '@/components/showcase-shell';
 import { NotificationRow } from '@/components/showcase-ui';
 import { getNotificationsPageData } from '@/lib/server/showcase-data';
@@ -14,7 +15,11 @@ export default async function NotificationsPage({ searchParams }: { searchParams
           {readState === '1' ? <div className="rounded-[12px] border border-[#D9D3C4] bg-[#F4F1EA] px-4 py-3 text-[13px] text-[#4A453C]">Notification marked as read.</div> : null}
           {readState === 'all' ? <div className="rounded-[12px] border border-[#D9D3C4] bg-[#F4F1EA] px-4 py-3 text-[13px] text-[#4A453C]">All notifications marked as read.</div> : null}
           <form action={markAllNotificationsReadAction} className="ml-auto">
-            <button className="rounded-[10px] border border-[#D9D3C4] bg-[#FBF9F4] px-4 py-[9px] text-[13px] font-medium text-[#4A453C] transition hover:bg-[#1A1814] hover:text-[#F4F1EA]">Mark all read</button>
+            <PendingActionButton
+              idle="Mark all read"
+              pending="Marking all..."
+              className="rounded-[10px] border border-[#D9D3C4] bg-[#FBF9F4] px-4 py-[9px] text-[13px] font-medium text-[#4A453C] transition hover:bg-[#1A1814] hover:text-[#F4F1EA]"
+            />
           </form>
         </div>
         <div className="overflow-hidden rounded-[16px] border border-[#D9D3C4] bg-[#FBF9F4]">

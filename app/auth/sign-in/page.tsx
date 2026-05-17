@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import { AuthCard } from '@/components/auth/auth-card';
+import { PendingActionButton } from '@/components/pending-action-button';
 import { isSupabaseConfigured } from '@/lib/supabase/env';
 import { signInAction } from './actions';
 
@@ -75,9 +76,12 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
           />
         </div>
 
-        <button disabled={!configured} className="inline-flex w-full items-center justify-center rounded-[12px] bg-[#1A1814] px-5 py-[14px] text-[15px] font-medium text-[#F4F1EA] transition hover:bg-[#B8541F] disabled:cursor-not-allowed disabled:opacity-50">
-          Enter Showcase
-        </button>
+        <PendingActionButton
+          disabled={!configured}
+          idle="Enter Showcase"
+          pending="Entering Showcase..."
+          className="inline-flex w-full items-center justify-center rounded-[12px] bg-[#1A1814] px-5 py-[14px] text-[15px] font-medium text-[#F4F1EA] transition hover:bg-[#B8541F]"
+        />
       </form>
 
       <div className="mt-5 text-center text-[13px] text-[#85806F]">

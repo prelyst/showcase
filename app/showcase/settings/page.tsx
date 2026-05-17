@@ -1,3 +1,4 @@
+import { PendingActionButton } from '@/components/pending-action-button';
 import { ShowcaseShell } from '@/components/showcase-shell';
 import { SectionCard } from '@/components/showcase-ui';
 import { getSettingsPageData } from '@/lib/server/showcase-data';
@@ -25,7 +26,11 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
               <form action={toggleConnectedAccountAction}>
                 <input type="hidden" name="platform" value={item.platform.key.toUpperCase()} />
                 <input type="hidden" name="action" value={item.action === 'Connect' ? 'connect' : 'disconnect'} />
-                <button className={`rounded-[10px] px-3 py-[6px] text-[12px] font-medium ${item.action === 'Connect' ? 'bg-[#B8541F] text-[#F4F1EA]' : 'border border-[#D9D3C4] text-[#4A453C]'}`}>{item.action}</button>
+                <PendingActionButton
+                  idle={item.action}
+                  pending={item.action === 'Connect' ? 'Connecting...' : 'Disconnecting...'}
+                  className={`rounded-[10px] px-3 py-[6px] text-[12px] font-medium ${item.action === 'Connect' ? 'bg-[#B8541F] text-[#F4F1EA]' : 'border border-[#D9D3C4] text-[#4A453C]'}`}
+                />
               </form>
             </div>
           ))}
@@ -57,7 +62,11 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
               );
             })}
             <div className="px-6 py-4">
-              <button className="rounded-[10px] bg-[#1A1814] px-4 py-[10px] text-[13px] font-medium text-[#F4F1EA] transition hover:bg-[#B8541F]">Save preferences</button>
+              <PendingActionButton
+                idle="Save preferences"
+                pending="Saving preferences..."
+                className="rounded-[10px] bg-[#1A1814] px-4 py-[10px] text-[13px] font-medium text-[#F4F1EA] transition hover:bg-[#B8541F]"
+              />
             </div>
           </form>
         </SectionCard>

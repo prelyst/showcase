@@ -1,3 +1,4 @@
+import { PendingActionButton } from '@/components/pending-action-button';
 import { ShowcaseShell } from '@/components/showcase-shell';
 import { Avatar, PlatformBadge, ProfilePostCard } from '@/components/showcase-ui';
 import { platforms, profileFilters } from '@/lib/mock/showcase';
@@ -98,7 +99,11 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
                 </select>
               </div>
 
-              <button className="inline-flex w-full items-center justify-center rounded-[12px] bg-[#1A1814] px-5 py-[14px] text-[15px] font-medium text-[#F4F1EA] transition hover:bg-[#B8541F]">Save profile</button>
+              <PendingActionButton
+                idle="Save profile"
+                pending="Saving profile..."
+                className="inline-flex w-full items-center justify-center rounded-[12px] bg-[#1A1814] px-5 py-[14px] text-[15px] font-medium text-[#F4F1EA] transition hover:bg-[#B8541F]"
+              />
             </form>
           </aside>
         </div>

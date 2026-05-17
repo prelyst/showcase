@@ -1,3 +1,4 @@
+import { PendingActionButton } from '@/components/pending-action-button';
 import { ShowcaseShell } from '@/components/showcase-shell';
 import { Avatar, ComposeToolButton, PlatformBadge } from '@/components/showcase-ui';
 import { composeTools, platforms, publishTargets } from '@/lib/mock/showcase';
@@ -65,8 +66,16 @@ export default async function ComposePage({ searchParams }: { searchParams: Prom
           </div>
 
           <div className="flex justify-end gap-[10px] border-t border-[#E8E3D4] bg-[#EDE8DD] px-[22px] py-[18px]">
-            <button type="submit" className="rounded-[10px] border border-[#D9D3C4] px-4 py-[9px] text-[13px] font-medium text-[#4A453C]">Save draft</button>
-            <button formAction={publishNowAction} className="rounded-[10px] bg-[#B8541F] px-[18px] py-[9px] text-[13px] font-medium text-[#F4F1EA]">Publish now</button>
+            <PendingActionButton
+              idle="Save draft"
+              pending="Saving draft..."
+              className="rounded-[10px] border border-[#D9D3C4] px-4 py-[9px] text-[13px] font-medium text-[#4A453C]"
+            />
+            <PendingActionButton
+              idle="Publish now"
+              pending="Publishing..."
+              className="rounded-[10px] bg-[#B8541F] px-[18px] py-[9px] text-[13px] font-medium text-[#F4F1EA]"
+            />
           </div>
         </form>
 
