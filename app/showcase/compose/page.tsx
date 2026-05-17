@@ -69,11 +69,14 @@ export default async function ComposePage({ searchParams }: { searchParams: Prom
             <PendingActionButton
               idle="Save draft"
               pending="Saving draft..."
+              actionId="save-draft"
               className="rounded-[10px] border border-[#D9D3C4] px-4 py-[9px] text-[13px] font-medium text-[#4A453C]"
             />
             <PendingActionButton
               idle="Publish now"
               pending="Publishing..."
+              actionId="publish-now"
+              formAction={publishNowAction}
               className="rounded-[10px] bg-[#B8541F] px-[18px] py-[9px] text-[13px] font-medium text-[#F4F1EA]"
             />
           </div>
