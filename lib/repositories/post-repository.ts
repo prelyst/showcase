@@ -1,6 +1,7 @@
 import { Platform, PostStatus, PublishLaneStatus } from '@prisma/client';
 
 import { prisma } from '@/lib/db/prisma';
+import { executePublishJob } from '@/lib/publish/executor';
 import { CreateDraftPostInput, UpdateDraftPostInput, UpdatePostTargetsInput } from '@/lib/validators/post';
 
 export async function createDraftPost(input: CreateDraftPostInput, authorId: string) {
@@ -121,15 +122,17 @@ export async function publishPost(postId: string) {
     data: {
       postId: post.id,
       status: PostStatus.PUBLISHING,
+      executionStatus: 'queued',
+      totalLanes: enabledTargets.length,
+      completedLanes: 0,
+      failedLanes: 0,
       startedAt: new Date(),
       laneResults: {
-        create: enabledTargets.map((target, index) => ({
+        create: enabledTargets.map((target) => ({
           platform: target.platform,
-          status: index === 0 ? PublishLaneStatus.PUBLISHED : PublishLaneStatus.UPLOADING,
-          externalUrl: index === 0 ? `${target.platform.toString().toLowerCase()}://publish/${post.id}` : null,
-          attemptCount: 1,
-          startedAt: new Date(),
-          finishedAt: index === 0 ? new Date() : null,
+          status: PublishLaneStatus.PENDING,
+          attemptCount: 0,
+          retryable: target.platform !== Platform.SHOWCASE,
         })),
       },
     },
@@ -138,5 +141,5 @@ export async function publishPost(postId: string) {
     },
   });
 
-  return publishJob;
+  return executePublishJob(publishJob.id);
 }

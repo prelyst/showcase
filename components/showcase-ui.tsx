@@ -171,6 +171,7 @@ export function PublishLaneRow({ lane }: { lane: PublishLane }) {
       <div>
         <div className="text-[14px] font-medium text-[#1A1814]">{lane.platform.label}</div>
         <div className={`mt-[2px] font-mono text-[11px] ${lane.status === 'Failed' ? 'text-[#A0381F]' : 'text-[#85806F]'}`}>{lane.detail}</div>
+        {lane.retryNote ? <div className="mt-[4px] text-[11px] text-[#85806F]">{lane.retryNote}</div> : null}
       </div>
       <span className={`rounded-full px-[10px] py-1 font-mono text-[10px] uppercase tracking-[0.05em] ${lane.pillTone}`}>{lane.status}</span>
       <span className="font-mono text-[11px] text-[#85806F] md:text-right">{lane.elapsed}</span>

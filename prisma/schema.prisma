@@ -96,28 +96,36 @@ model PostPlatformTarget {
 }
 
 model PublishJob {
-  id         String              @id @default(cuid())
-  postId      String
-  status      PostStatus          @default(PUBLISHING)
-  startedAt   DateTime?
-  finishedAt  DateTime?
-  createdAt   DateTime            @default(now())
-  post        Post                @relation(fields: [postId], references: [id], onDelete: Cascade)
-  laneResults PublishLaneResult[]
+  id              String              @id @default(cuid())
+  postId           String
+  status           PostStatus          @default(PUBLISHING)
+  executionStatus  String              @default("queued")
+  totalLanes       Int                 @default(0)
+  completedLanes   Int                 @default(0)
+  failedLanes      Int                 @default(0)
+  startedAt        DateTime?
+  finishedAt       DateTime?
+  createdAt        DateTime            @default(now())
+  post             Post                @relation(fields: [postId], references: [id], onDelete: Cascade)
+  laneResults      PublishLaneResult[]
 }
 
 model PublishLaneResult {
-  id           String             @id @default(cuid())
-  publishJobId String
-  platform     Platform
-  status       PublishLaneStatus  @default(PENDING)
-  externalUrl  String?
-  externalId   String?
-  errorMessage String?
-  attemptCount Int                @default(0)
-  startedAt    DateTime?
-  finishedAt   DateTime?
-  publishJob   PublishJob         @relation(fields: [publishJobId], references: [id], onDelete: Cascade)
+  id              String             @id @default(cuid())
+  publishJobId     String
+  platform         Platform
+  status           PublishLaneStatus  @default(PENDING)
+  externalUrl      String?
+  externalId       String?
+  errorMessage     String?
+  providerMessage  String?
+  attemptCount     Int                @default(0)
+  retryable        Boolean            @default(true)
+  lastAttemptAt    DateTime?
+  nextRetryAt      DateTime?
+  startedAt        DateTime?
+  finishedAt       DateTime?
+  publishJob       PublishJob         @relation(fields: [publishJobId], references: [id], onDelete: Cascade)
 
   @@unique([publishJobId, platform])
 }

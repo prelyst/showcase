@@ -14,6 +14,7 @@ export default async function MonitorPage() {
             <span>{monitor.heroMeta}</span>
             <div className="flex items-center gap-[10px]">
               <span>{monitor.progressLabel}</span>
+              <span className="text-[#E8D9C6]">{monitor.summary}</span>
               <div className="h-1 w-[120px] overflow-hidden rounded-full bg-[rgba(251,249,244,0.15)]">
                 <div className="h-full rounded-full bg-[#E87D3F]" style={{ width: monitor.progressWidth }} />
               </div>

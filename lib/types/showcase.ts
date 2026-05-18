@@ -58,9 +58,11 @@ export type PublishLane = {
   id: string;
   platform: PlatformChip;
   detail: string;
-  status: 'Published' | 'Uploading' | 'Failed';
+  status: 'Published' | 'Uploading' | 'Failed' | 'Queued';
   elapsed: string;
   pillTone: string;
+  attempts?: number;
+  retryNote?: string;
 };
 
 export type MonitorData = {
@@ -68,6 +70,7 @@ export type MonitorData = {
   heroMeta: string;
   progressLabel: string;
   progressWidth: string;
+  summary: string;
   lanes: PublishLane[];
 };
 

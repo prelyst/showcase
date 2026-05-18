@@ -256,20 +256,27 @@ export async function getFeedPageData(): Promise<{
   const posts = await getPostsForProfile(profile.id);
 
   const mappedPosts: FeedPost[] = posts.length
-    ? posts.slice(0, 8).map((post, index) => ({
-        id: post.id,
-        avatar: { initials: currentUser.initials, className: 'bg-[#F5E5D3] text-[#B8541F]' },
-        author: profile.displayName,
-        handle: `@${profile.slug}`,
-        time: formatRelativeDate(post.createdAt),
-        body: post.content,
-        socials: post.targets.filter((target) => target.enabled).map((target) => platforms[target.platform.toLowerCase()]).filter(Boolean),
-        stats: {
-          likes: String(Math.max(12, 96 - index * 7)),
-          comments: String(Math.max(3, 24 - index * 2)),
-          reposts: String(Math.max(1, 18 - index * 2)),
-        },
-      }))
+    ? posts.slice(0, 8).map((post, index) => {
+        const latestJob = post.publishJobs[0];
+        const publishedCount = latestJob?.laneResults.filter((lane) => lane.status === 'PUBLISHED').length ?? 0;
+        const totalCount = latestJob?.laneResults.length ?? post.targets.filter((target) => target.enabled).length;
+
+        return {
+          id: post.id,
+          avatar: { initials: currentUser.initials, className: 'bg-[#F5E5D3] text-[#B8541F]' },
+          author: profile.displayName,
+          handle: `@${profile.slug}`,
+          time: formatRelativeDate(post.createdAt),
+          body: post.content,
+          hashtags: latestJob?.failedLanes ? [`#${publishedCount}of${Math.max(totalCount, 1)}-lanes`] : undefined,
+          socials: post.targets.filter((target) => target.enabled).map((target) => platforms[target.platform.toLowerCase()]).filter(Boolean),
+          stats: {
+            likes: String(Math.max(12, 96 - index * 7)),
+            comments: String(Math.max(3, 24 - index * 2)),
+            reposts: String(Math.max(1, 18 - index * 2)),
+          },
+        };
+      })
     : feedPosts;
 
   return {
@@ -324,6 +331,7 @@ export async function getMonitorPageData(): Promise<MonitorData> {
       heroMeta: 'Published just now',
       progressLabel: '4 / 6',
       progressWidth: '66%',
+      summary: '1 failed · 1 in flight',
       lanes: monitorLanes,
     };
   }
@@ -336,6 +344,7 @@ export async function getMonitorPageData(): Promise<MonitorData> {
       heroMeta: 'No active jobs yet',
       progressLabel: '0 / 1',
       progressWidth: '12%',
+      summary: '0 failed · 0 in flight',
       lanes: monitorLanes,
     };
   }
@@ -349,6 +358,7 @@ export async function getMonitorPageData(): Promise<MonitorData> {
       heroMeta: 'No active jobs yet',
       progressLabel: '0 / 1',
       progressWidth: '12%',
+      summary: '0 failed · 0 in flight',
       lanes: monitorLanes,
     };
   }
@@ -361,6 +371,7 @@ export async function getMonitorPageData(): Promise<MonitorData> {
         platform: platforms[lane.platform.toLowerCase()],
         detail:
           lane.externalUrl ||
+          lane.providerMessage ||
           lane.errorMessage ||
           `${lane.platform.toLowerCase()} lane ${lane.status.toLowerCase()}`,
         status:
@@ -368,7 +379,9 @@ export async function getMonitorPageData(): Promise<MonitorData> {
             ? ('Published' as const)
             : lane.status === 'FAILED'
               ? ('Failed' as const)
-              : ('Uploading' as const),
+              : lane.status === 'PENDING'
+                ? ('Queued' as const)
+                : ('Uploading' as const),
         elapsed: lane.finishedAt && lane.startedAt
           ? `${Math.max(1, Math.round((lane.finishedAt.getTime() - lane.startedAt.getTime()) / 1000))}s`
           : lane.startedAt
@@ -379,18 +392,29 @@ export async function getMonitorPageData(): Promise<MonitorData> {
             ? 'bg-[#E5E8D4] text-[#5A6B3A]'
             : lane.status === 'FAILED'
               ? 'bg-[#F2DCD1] text-[#A0381F]'
-              : 'bg-[#F4E8C8] text-[#A67C1E]',
+              : lane.status === 'PENDING'
+                ? 'bg-[#E8E3D4] text-[#6F685B]'
+                : 'bg-[#F4E8C8] text-[#A67C1E]',
+        attempts: lane.attemptCount,
+        retryNote: lane.nextRetryAt
+          ? `Retry scheduled · ${formatRelativeDate(lane.nextRetryAt)}`
+          : lane.attemptCount > 1
+            ? `Recovered after ${lane.attemptCount} attempts`
+            : undefined,
       }))
     : monitorLanes;
 
   const publishedCount = lanes.filter((lane) => lane.status === 'Published').length;
+  const failedCount = lanes.filter((lane) => lane.status === 'Failed').length;
+  const queuedCount = lanes.filter((lane) => lane.status === 'Queued' || lane.status === 'Uploading').length;
   const progress = lanes.length ? `${Math.max(12, Math.round((publishedCount / lanes.length) * 100))}%` : '12%';
 
   return {
     heroBody: `"${latest.content.slice(0, 140)}${latest.content.length > 140 ? '…' : ''}"`,
-    heroMeta: `${latestJob ? latestJob.status.toLowerCase() : latest.status.toLowerCase()} · ${formatRelativeDate(latest.updatedAt)}`,
+    heroMeta: `${latestJob ? latestJob.executionStatus.replaceAll('_', ' ') : latest.status.toLowerCase()} · ${formatRelativeDate(latest.updatedAt)}`,
     progressLabel: `${publishedCount} / ${Math.max(lanes.length, 1)}`,
     progressWidth: progress,
+    summary: `${failedCount} failed · ${queuedCount} in flight`,
     lanes,
   };
 }
