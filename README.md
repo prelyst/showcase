@@ -60,6 +60,7 @@ This is no longer just a static frontend mock. It is now an early product founda
 - DB-backed draft loading and saving
 - DB-backed notifications/settings/profile/compose loaders
 - more data-driven feed/discover/monitor routes
+- OAuth connect scaffolding for external platform accounts
 
 ### Seeded demo account
 - email: `maya@showcase.app`
@@ -109,12 +110,32 @@ SUPABASE_SERVICE_ROLE_KEY=
 DATABASE_URL=
 DIRECT_URL=
 SHOWCASE_ENABLE_DB=true
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
 Notes:
 - `DATABASE_URL` should be the pooled connection string
 - `DIRECT_URL` should be the direct Postgres connection for Prisma migrations
 - `SHOWCASE_ENABLE_DB=true` enables DB-backed app behavior
+- `NEXT_PUBLIC_APP_URL` must match the deployed origin so OAuth callbacks resolve correctly
+
+Optional OAuth provider env vars for real connected-account flows:
+
+```env
+OAUTH_X_CLIENT_ID=
+OAUTH_X_CLIENT_SECRET=
+OAUTH_LINKEDIN_CLIENT_ID=
+OAUTH_LINKEDIN_CLIENT_SECRET=
+OAUTH_BLUESKY_CLIENT_ID=
+OAUTH_BLUESKY_CLIENT_SECRET=
+OAUTH_REDDIT_CLIENT_ID=
+OAUTH_REDDIT_CLIENT_SECRET=
+OAUTH_YOUTUBE_CLIENT_ID=
+OAUTH_YOUTUBE_CLIENT_SECRET=
+OAUTH_THREADS_CLIENT_ID=
+OAUTH_THREADS_CLIENT_SECRET=
+SHOWCASE_OAUTH_STATE_SECRET=
+```
 
 `SHOWCASE_SCHEMA_ONCE` is no longer part of the normal workflow.
 
@@ -257,7 +278,7 @@ Working well now:
 Still not fully production-complete:
 - publish execution is still internal simulation, not real external delivery
 - discovery/trending/social graph is still lightweight
-- no real external platform OAuth/token exchange yet
+- OAuth connection scaffolding now exists, but token exchange and provider API delivery are still placeholder/stubbed
 - some analytics/engagement numbers are still presentation-level
 - npm audit still reports moderate upstream ecosystem advisories that do not have a safe in-family auto-fix from the current dependency set
 

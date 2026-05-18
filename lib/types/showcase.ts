@@ -93,8 +93,10 @@ export type ProfileFilter = {
 export type ConnectionItem = {
   platform: PlatformChip;
   handle: string;
-  status: 'Active' | 'Inactive';
+  status: 'Active' | 'Inactive' | 'Error' | 'Setup required';
   action: 'Connect' | 'Disconnect';
+  actionHref?: string;
+  detail?: string;
 };
 
 export type PreferenceItem = {

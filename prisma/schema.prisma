@@ -128,9 +128,12 @@ model ConnectedAccount {
   platform       Platform
   accountHandle  String
   accountName    String?
+  externalId     String?
   accessToken    String?
   refreshToken   String?
   tokenExpiresAt DateTime?
+  scopes         String[]               @default([])
+  errorMessage   String?
   status         ConnectedAccountStatus @default(INACTIVE)
   createdAt      DateTime               @default(now())
   updatedAt      DateTime               @updatedAt
