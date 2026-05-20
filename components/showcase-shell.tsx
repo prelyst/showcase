@@ -90,7 +90,7 @@ function NavLink({ href, label, icon, active, badge }: { href: string; label: st
   );
 }
 
-export async function ShowcaseShell({ title, subtitle, active, children }: { title: ReactNode; subtitle?: ReactNode; active: string; children: ReactNode }) {
+export async function ShowcaseShell({ title, subtitle, active, children, loading = false }: { title: ReactNode; subtitle?: ReactNode; active?: string; children: ReactNode; loading?: boolean }) {
   const currentUser = await getCurrentUserView();
 
   return (
@@ -124,7 +124,7 @@ export async function ShowcaseShell({ title, subtitle, active, children }: { tit
             <div className="mb-[10px] px-[10px] font-mono text-[10px] uppercase tracking-[0.08em] text-[#85806F]">Browse</div>
             <div className="space-y-[2px]">
               {browseNav.map((item) => (
-                <NavLink key={item.href} {...item} active={active === item.href} />
+                <NavLink key={item.href} {...item} active={!loading && active === item.href} />
               ))}
             </div>
           </div>
@@ -133,7 +133,7 @@ export async function ShowcaseShell({ title, subtitle, active, children }: { tit
             <div className="mb-[10px] px-[10px] font-mono text-[10px] uppercase tracking-[0.08em] text-[#85806F]">Yours</div>
             <div className="space-y-[2px]">
               {yoursNav.map((item) => (
-                <NavLink key={item.href} {...item} active={active === item.href} />
+                <NavLink key={item.href} {...item} active={!loading && active === item.href} />
               ))}
             </div>
           </div>
@@ -178,7 +178,7 @@ export async function ShowcaseShell({ title, subtitle, active, children }: { tit
                   key={item.href}
                   href={item.href}
                   className={`whitespace-nowrap rounded-full border px-3 py-2 text-[12px] font-medium transition ${
-                    active === item.href
+                    !loading && active === item.href
                       ? 'border-[#1A1814] bg-[#1A1814] text-[#F4F1EA]'
                       : 'border-[#D9D3C4] bg-[#FBF9F4] text-[#4A453C]'
                   }`}
