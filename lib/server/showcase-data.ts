@@ -1,14 +1,10 @@
 import { ConnectedAccountStatus } from '@prisma/client';
 
 import { connectedAccounts, creatorSuggestions, featuredCreators, feedPosts, monitorLanes, notifications as mockNotifications, platforms, preferences as mockPreferences, profilePosts as mockProfilePosts, profileStats as mockProfileStats, trendingTopics } from '@/lib/mock/showcase';
-import { getConnectedAccountsForUser } from '@/lib/repositories/connected-account-repository';
-import { getNotificationsForUser } from '@/lib/repositories/notification-repository';
-import { createDraftPost, getLatestDraftForProfile, getPostsForProfile, updatePostTargets } from '@/lib/repositories/post-repository';
-import { getProfileByUserId } from '@/lib/repositories/profile-repository';
-import { getUserSettings } from '@/lib/repositories/settings-repository';
+import { createDraftPost, getLatestDraftForProfile, updatePostTargets } from '@/lib/repositories/post-repository';
 import { getOAuthProviderByPlatform, isOAuthProviderConfigured } from '@/lib/oauth/providers';
 import { getCurrentUserId } from '@/lib/server/auth';
-import { getCurrentUserView } from '@/lib/server/current-user';
+import { getShowcaseSessionData } from '@/lib/server/showcase-session';
 import { ConnectionItem, CreatorSuggestion, FeedPost, MonitorData, NotificationItem, PreferenceItem, ProfilePost, ProfileStat, TrendingTopic } from '@/lib/types/showcase';
 
 export async function getProfilePageData(): Promise<{
@@ -22,10 +18,9 @@ export async function getProfilePageData(): Promise<{
   stats: ProfileStat[];
   posts: ProfilePost[];
 }> {
-  const currentUser = await getCurrentUserView();
-  const userId = currentUser.id;
+  const { currentUser, profile, posts } = await getShowcaseSessionData();
 
-  if (!userId) {
+  if (!currentUser.id) {
     return {
       displayName: currentUser.displayName,
       slug: currentUser.slug,
@@ -38,8 +33,6 @@ export async function getProfilePageData(): Promise<{
       posts: mockProfilePosts,
     };
   }
-
-  const profile = await getProfileByUserId(userId);
 
   if (!profile) {
     return {
@@ -58,8 +51,6 @@ export async function getProfilePageData(): Promise<{
       posts: [],
     };
   }
-
-  const posts = await getPostsForProfile(profile.id);
 
   return {
     displayName: profile.displayName,
@@ -92,13 +83,11 @@ export async function getProfilePageData(): Promise<{
 }
 
 export async function getNotificationsPageData(): Promise<NotificationItem[]> {
-  const userId = await getCurrentUserId();
+  const { currentUser, notifications: rows } = await getShowcaseSessionData();
 
-  if (!userId) {
+  if (!currentUser.id) {
     return mockNotifications;
   }
-
-  const rows = await getNotificationsForUser(userId);
 
   if (!rows.length) {
     return mockNotifications;
@@ -121,19 +110,14 @@ export async function getSettingsPageData(): Promise<{
   connectedPlatforms: ConnectionItem[];
   preferenceRows: PreferenceItem[];
 }> {
-  const userId = await getCurrentUserId();
+  const { currentUser, connectedAccounts: accounts, settings } = await getShowcaseSessionData();
 
-  if (!userId) {
+  if (!currentUser.id) {
     return {
       connectedPlatforms: connectedAccounts,
       preferenceRows: mockPreferences,
     };
   }
-
-  const [accounts, settings] = await Promise.all([
-    getConnectedAccountsForUser(userId),
-    getUserSettings(userId),
-  ]);
 
   const connectedPlatforms: ConnectionItem[] = accounts.length
     ? accounts.map((account) => {
@@ -184,7 +168,7 @@ export async function getSettingsPageData(): Promise<{
 }
 
 export async function getComposePageData() {
-  const currentUser = await getCurrentUserView();
+  const { currentUser, profile } = await getShowcaseSessionData();
   const userId = currentUser.id;
 
   if (!userId) {
@@ -198,8 +182,6 @@ export async function getComposePageData() {
       selectedTargets: ['showcase', 'x', 'linkedin', 'bluesky'],
     };
   }
-
-  const profile = await getProfileByUserId(userId);
 
   if (!profile) {
     return {
@@ -232,7 +214,7 @@ export async function getFeedPageData(): Promise<{
   trending: TrendingTopic[];
   suggestions: CreatorSuggestion[];
 }> {
-  const currentUser = await getCurrentUserView();
+  const { currentUser, profile, posts } = await getShowcaseSessionData();
   const userId = currentUser.id;
 
   if (!userId) {
@@ -243,8 +225,6 @@ export async function getFeedPageData(): Promise<{
     };
   }
 
-  const profile = await getProfileByUserId(userId);
-
   if (!profile) {
     return {
       posts: feedPosts,
@@ -252,8 +232,6 @@ export async function getFeedPageData(): Promise<{
       suggestions: creatorSuggestions,
     };
   }
-
-  const posts = await getPostsForProfile(profile.id);
 
   const mappedPosts: FeedPost[] = posts.length
     ? posts.slice(0, 8).map((post, index) => {
@@ -290,16 +268,14 @@ export async function getDiscoverPageData(): Promise<{
   trending: TrendingTopic[];
   creators: CreatorSuggestion[];
 }> {
-  const userId = await getCurrentUserId();
+  const { currentUser, connectedAccounts: accounts } = await getShowcaseSessionData();
 
-  if (!userId) {
+  if (!currentUser.id) {
     return {
       trending: trendingTopics,
       creators: featuredCreators,
     };
   }
-
-  const accounts = await getConnectedAccountsForUser(userId);
 
   const creators: CreatorSuggestion[] = accounts.length
     ? accounts.slice(0, 6).map((account, index) => ({
@@ -322,7 +298,7 @@ export async function getDiscoverPageData(): Promise<{
 }
 
 export async function getMonitorPageData(): Promise<MonitorData> {
-  const currentUser = await getCurrentUserView();
+  const { currentUser, profile, posts } = await getShowcaseSessionData();
   const userId = currentUser.id;
 
   if (!userId) {
@@ -336,8 +312,6 @@ export async function getMonitorPageData(): Promise<MonitorData> {
     };
   }
 
-  const profile = await getProfileByUserId(userId);
-
   if (!profile) {
     return {
       heroBody: '"Your publishing monitor will light up as soon as you save and publish a post."',
@@ -349,7 +323,6 @@ export async function getMonitorPageData(): Promise<MonitorData> {
     };
   }
 
-  const posts = await getPostsForProfile(profile.id);
   const latest = posts[0];
 
   if (!latest) {
