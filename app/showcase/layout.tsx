@@ -1,16 +1,13 @@
 import { redirect } from 'next/navigation';
 
-import { isAuthenticated } from '@/lib/server/auth';
-import { ensureCurrentUserBootstrapped } from '@/lib/server/bootstrap-user';
+import { getCurrentSessionUser } from '@/lib/server/auth';
 
 export default async function ShowcaseLayout({ children }: { children: React.ReactNode }) {
-  const authenticated = await isAuthenticated();
+  const sessionUser = await getCurrentSessionUser();
 
-  if (!authenticated) {
+  if (!sessionUser) {
     redirect('/auth/sign-in');
   }
-
-  await ensureCurrentUserBootstrapped();
 
   return children;
 }
