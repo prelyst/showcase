@@ -158,6 +158,36 @@ export async function ShowcaseShell({ title, subtitle, active, children }: { tit
 
         <div className="min-h-screen">
           <header className="sticky top-0 z-10 border-b border-[#E8E3D4] bg-[rgba(244,241,234,0.88)] px-5 py-5 backdrop-blur-[12px] md:px-10">
+            <div className="mb-4 flex items-center justify-between lg:hidden">
+              <Link href="/showcase/feed" className="flex items-center gap-2 font-serif text-[20px] font-medium tracking-[-0.02em]">
+                <span className="h-[10px] w-[10px] rotate-45 rounded-[2px] bg-[#B8541F]" />
+                Showcase
+              </Link>
+              <Link
+                href="/showcase/compose"
+                prefetch
+                className="rounded-[10px] border border-[#D9D3C4] bg-[#FBF9F4] px-3 py-2 text-[12px] font-medium text-[#4A453C] transition hover:bg-[#1A1814] hover:text-[#F4F1EA]"
+              >
+                Compose
+              </Link>
+            </div>
+
+            <div className="mb-4 flex gap-2 overflow-x-auto pb-1 lg:hidden">
+              {[...browseNav, ...yoursNav].map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`whitespace-nowrap rounded-full border px-3 py-2 text-[12px] font-medium transition ${
+                    active === item.href
+                      ? 'border-[#1A1814] bg-[#1A1814] text-[#F4F1EA]'
+                      : 'border-[#D9D3C4] bg-[#FBF9F4] text-[#4A453C]'
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+
             <div className="flex items-end justify-between gap-5">
               <div>
                 <div className="font-serif text-[28px] font-normal tracking-[-0.02em] text-[#1A1814]">{title}</div>
@@ -166,7 +196,7 @@ export async function ShowcaseShell({ title, subtitle, active, children }: { tit
               <Link
                 href="/showcase/compose"
                 prefetch
-                className="rounded-[10px] border border-[#D9D3C4] bg-[#FBF9F4] px-4 py-2 text-[13px] font-medium text-[#4A453C] transition hover:bg-[#1A1814] hover:text-[#F4F1EA]"
+                className="hidden rounded-[10px] border border-[#D9D3C4] bg-[#FBF9F4] px-4 py-2 text-[13px] font-medium text-[#4A453C] transition hover:bg-[#1A1814] hover:text-[#F4F1EA] lg:inline-flex"
               >
                 Compose
               </Link>
