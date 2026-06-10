@@ -1,6 +1,6 @@
 import { ConnectedAccountStatus } from '@prisma/client';
 
-import { connectedAccounts, creatorSuggestions, featuredCreators, feedPosts, monitorLanes, notifications as mockNotifications, platforms, preferences as mockPreferences, profilePosts as mockProfilePosts, profileStats as mockProfileStats, trendingTopics } from '@/lib/mock/showcase';
+import { platforms } from '@/lib/mock/showcase';
 import { createDraftPost, getLatestDraftForProfile, updatePostTargets } from '@/lib/repositories/post-repository';
 import { getOAuthProviderByPlatform, isOAuthProviderConfigured } from '@/lib/oauth/providers';
 import { getCurrentUserId } from '@/lib/server/auth';
@@ -61,9 +61,9 @@ export async function getProfilePageData(): Promise<{
     isPublic: profile.isPublic,
     initials: currentUser.initials,
     stats: [
-      { label: 'Followers', value: '2,847' },
+      { label: 'Followers', value: '0' },
       { label: 'Posts', value: String(posts.length) },
-      { label: 'Following', value: '312' },
+      { label: 'Following', value: '0' },
     ],
     posts: posts.length
       ? posts.slice(0, 12).map((post, index) => ({
@@ -78,7 +78,7 @@ export async function getProfilePageData(): Promise<{
             `${89 - Math.min(index * 6, 54)} reposts`,
           ],
         }))
-      : mockProfilePosts,
+      : [],
   };
 }
 
@@ -86,11 +86,11 @@ export async function getNotificationsPageData(): Promise<NotificationItem[]> {
   const { currentUser, notifications: rows } = await getShowcaseSessionData();
 
   if (!currentUser) {
-    return mockNotifications;
+    return [];
   }
 
   if (!rows.length) {
-    return mockNotifications;
+    return [];
   }
 
   return rows.map((item, index) => ({
@@ -115,7 +115,7 @@ export async function getSettingsPageData(): Promise<{
   if (!currentUser) {
     return {
       connectedPlatforms: [],
-      preferenceRows: mockPreferences,
+      preferenceRows: [],
     };
   }
 
@@ -140,17 +140,7 @@ export async function getSettingsPageData(): Promise<{
           detail: account.errorMessage ?? (!isConfigured && provider ? `${provider.label} OAuth env vars are missing.` : undefined),
         };
       })
-    : connectedAccounts.map((item) => {
-        const provider = getOAuthProviderByPlatform(item.platform.key);
-        const isConfigured = provider ? isOAuthProviderConfigured(provider) : item.platform.key === 'showcase';
-
-        return {
-          ...item,
-          status: isConfigured ? item.status : ('Setup required' as const),
-          actionHref: item.action === 'Connect' && provider ? `/auth/oauth/${provider.key}/start` : undefined,
-          detail: !isConfigured && provider ? `${provider.label} OAuth env vars are missing.` : undefined,
-        };
-      });
+    : [];
 
   const preferenceRows: PreferenceItem[] = settings
     ? [
@@ -159,7 +149,7 @@ export async function getSettingsPageData(): Promise<{
         { label: 'Web push notifications', description: 'Real-time alerts for likes, comments, follows.', enabled: settings.webPushNotifications },
         { label: 'Daily digest email', description: 'One email each morning summarizing yesterday.', enabled: settings.dailyDigestEmail },
       ]
-    : mockPreferences;
+    : [];
 
   return {
     connectedPlatforms,
@@ -189,8 +179,7 @@ export async function getComposePageData() {
       authorName: currentUser.displayName,
       authorHandle: `@${currentUser.username}`,
       authorInitials: currentUser.initials,
-      content:
-        'Tell your first story on Showcase.',
+      content: 'Tell your first story on Showcase.',
       selectedTargets: ['showcase'],
     };
   }
@@ -202,10 +191,8 @@ export async function getComposePageData() {
     authorName: profile.displayName,
     authorHandle: `@${profile.slug}`,
     authorInitials: currentUser.initials,
-    content:
-      draft?.content ??
-      'The thing I keep coming back to: most social platforms reward volume. The feeds that actually matter to me reward intention. Showcase is built on a simple bet — that when you only post things you meant to say, the feed quietly gets better. #building',
-    selectedTargets: draft?.targets.filter((target) => target.enabled).map((target) => target.platform.toLowerCase()) ?? ['showcase', 'x', 'linkedin', 'bluesky'],
+    content: draft?.content ?? '',
+    selectedTargets: draft?.targets.filter((target) => target.enabled).map((target) => target.platform.toLowerCase()) ?? ['showcase'],
   };
 }
 
@@ -218,9 +205,9 @@ export async function getFeedPageData(): Promise<{
 
   if (!currentUser) {
     return {
-      posts: feedPosts,
-      trending: trendingTopics,
-      suggestions: creatorSuggestions,
+      posts: [],
+      trending: [],
+      suggestions: [],
     };
   }
 
@@ -228,9 +215,9 @@ export async function getFeedPageData(): Promise<{
 
   if (!profile) {
     return {
-      posts: feedPosts,
-      trending: trendingTopics,
-      suggestions: creatorSuggestions,
+      posts: [],
+      trending: [],
+      suggestions: [],
     };
   }
 
@@ -256,12 +243,12 @@ export async function getFeedPageData(): Promise<{
           },
         };
       })
-    : feedPosts;
+    : [];
 
   return {
     posts: mappedPosts,
-    trending: trendingTopics,
-    suggestions: creatorSuggestions,
+    trending: [],
+    suggestions: [],
   };
 }
 
@@ -273,8 +260,8 @@ export async function getDiscoverPageData(): Promise<{
 
   if (!currentUser) {
     return {
-      trending: trendingTopics,
-      creators: featuredCreators,
+      trending: [],
+      creators: [],
     };
   }
 
@@ -290,10 +277,10 @@ export async function getDiscoverPageData(): Promise<{
         bio: `${account.platform} account · ${account.status === 'ACTIVE' ? 'connected and ready to publish' : 'inactive connection'}`,
         following: account.status === 'ACTIVE',
       }))
-    : featuredCreators;
+    : [];
 
   return {
-    trending: trendingTopics,
+    trending: [],
     creators,
   };
 }
@@ -321,7 +308,7 @@ export async function getMonitorPageData(): Promise<MonitorData> {
       progressLabel: '0 / 1',
       progressWidth: '12%',
       summary: '0 failed · 0 in flight',
-      lanes: monitorLanes,
+      lanes: [],
     };
   }
 
@@ -334,7 +321,7 @@ export async function getMonitorPageData(): Promise<MonitorData> {
       progressLabel: '0 / 1',
       progressWidth: '12%',
       summary: '0 failed · 0 in flight',
-      lanes: monitorLanes,
+      lanes: [],
     };
   }
 
@@ -377,7 +364,7 @@ export async function getMonitorPageData(): Promise<MonitorData> {
             ? `Recovered after ${lane.attemptCount} attempts`
             : undefined,
       }))
-    : monitorLanes;
+    : [];
 
   const publishedCount = lanes.filter((lane) => lane.status === 'Published').length;
   const failedCount = lanes.filter((lane) => lane.status === 'Failed').length;

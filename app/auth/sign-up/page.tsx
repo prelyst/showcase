@@ -53,7 +53,7 @@ export default async function SignUpPage({ searchParams }: { searchParams: Promi
             id="fullName"
             name="fullName"
             type="text"
-            placeholder="Maya Rivera"
+            placeholder="Your full name"
             className="w-full rounded-[12px] border border-[#D9D3C4] bg-[#FBF9F4] px-4 py-[14px] text-[15px] text-[#1A1814] outline-none placeholder:text-[#85806F] focus:border-[#B8541F]"
           />
         </div>
@@ -66,7 +66,7 @@ export default async function SignUpPage({ searchParams }: { searchParams: Promi
             id="username"
             name="username"
             type="text"
-            placeholder="mayarivera"
+            placeholder="yourusername"
             className="w-full rounded-[12px] border border-[#D9D3C4] bg-[#FBF9F4] px-4 py-[14px] text-[15px] text-[#1A1814] outline-none placeholder:text-[#85806F] focus:border-[#B8541F]"
           />
         </div>
