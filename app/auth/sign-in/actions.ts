@@ -3,18 +3,17 @@
 import { redirect } from 'next/navigation';
 
 import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { signInSchema, signUpSchema } from '@/lib/validators/auth';
 
 export async function signInAction(formData: FormData) {
-  const email = String(formData.get('email') || '').trim();
-  const password = String(formData.get('password') || '');
+  const result = signInSchema.safeParse(Object.fromEntries(formData.entries()));
 
-  if (!email) {
-    redirect('/auth/sign-in?error=missing-email');
+  if (!result.success) {
+    const errorMsg = result.error.errors.map(e => e.message).join(', ');
+    redirect(`/auth/sign-in?error=${encodeURIComponent(errorMsg)}`);
   }
 
-  if (!password) {
-    redirect('/auth/sign-in?error=missing-password');
-  }
+  const { email, password } = result.data;
 
   const supabase = await createSupabaseServerClient();
 
@@ -35,26 +34,14 @@ export async function signInAction(formData: FormData) {
 }
 
 export async function signUpAction(formData: FormData) {
-  const email = String(formData.get('email') || '').trim();
-  const password = String(formData.get('password') || '');
-  const fullName = String(formData.get('fullName') || '').trim();
-  const username = String(formData.get('username') || '').trim();
+  const result = signUpSchema.safeParse(Object.fromEntries(formData.entries()));
 
-  if (!fullName) {
-    redirect('/auth/sign-up?error=missing-name');
+  if (!result.success) {
+    const errorMsg = result.error.errors.map(e => e.message).join(', ');
+    redirect(`/auth/sign-up?error=${encodeURIComponent(errorMsg)}`);
   }
 
-  if (!username) {
-    redirect('/auth/sign-up?error=missing-username');
-  }
-
-  if (!email) {
-    redirect('/auth/sign-up?error=missing-email');
-  }
-
-  if (!password) {
-    redirect('/auth/sign-up?error=missing-password');
-  }
+  const { email, password, fullName, username } = result.data;
 
   const supabase = await createSupabaseServerClient();
 
