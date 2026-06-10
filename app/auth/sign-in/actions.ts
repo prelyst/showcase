@@ -9,7 +9,7 @@ export async function signInAction(formData: FormData) {
   const result = signInSchema.safeParse(Object.fromEntries(formData.entries()));
 
   if (!result.success) {
-    const errorMsg = result.error.errors.map(e => e.message).join(', ');
+    const errorMsg = result.error.issues.map((e) => e.message).join(', ');
     redirect(`/auth/sign-in?error=${encodeURIComponent(errorMsg)}`);
   }
 
@@ -37,7 +37,7 @@ export async function signUpAction(formData: FormData) {
   const result = signUpSchema.safeParse(Object.fromEntries(formData.entries()));
 
   if (!result.success) {
-    const errorMsg = result.error.errors.map(e => e.message).join(', ');
+    const errorMsg = result.error.issues.map((e) => e.message).join(', ');
     redirect(`/auth/sign-up?error=${encodeURIComponent(errorMsg)}`);
   }
 
