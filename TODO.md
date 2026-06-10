@@ -1,25 +1,6 @@
 # TODO.md — Showcase Production Readiness
 
-> Last updated: 2026-06-10 · Session: 10 commits, all pushed
-
-## ✅ Completed Today
-
-- [x] Remove demo user auth bypass (`current-user.ts`)
-- [x] Fix slug creation race condition with retry loop (`bootstrap-user.ts`)
-- [x] Add DB error handling (try/catch throughout server layer)
-- [x] Create Zod validation schemas for auth (`lib/validators/auth.ts`)
-- [x] Integrate Zod into sign-in/sign-up server actions
-- [x] Add password visibility toggle (`components/auth/password-input.tsx`)
-- [x] Add confirm password field to sign-up
-- [x] Add forgot password link + page (`app/auth/forgot-password`)
-- [x] Remove hardcoded demo credentials from auth pages
-- [x] Purge all mock/fake Maya Rivera data → empty states
-- [x] Create custom 404 page (`app/not-found.tsx`)
-- [x] Create error boundary with Try Again (`app/error.tsx`)
-- [x] Create loading skeleton components (`components/loading-skeleton.tsx`)
-- [x] Generate bug audit report (`BUG_REPORT.md`)
-- [x] npm audit fix (hono CVE resolved)
-- [x] Fix sub-agent tool access (profile: full, native runtime)
+> Last updated: 2026-06-10 · 11 commits pushed
 
 ## 🔴 Before Deploy
 
@@ -60,11 +41,3 @@
 - [ ] Run `npm run db:init` against production Supabase
 - [ ] Set `SHOWCASE_ENABLE_DB=true` in production
 
----
-
-## Agent Setup Notes
-
-- `tools.profile`: full ✅
-- `sandbox.mode`: off ✅
-- Sub-agents: use `model: "opencode-go/deepseek-v4-pro"` for full write access
-- Git: token configured for `Prelyst/showcase`
