@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import { AuthCard } from '@/components/auth/auth-card';
+import { PasswordInput } from '@/components/auth/password-input';
 import { PendingActionButton } from '@/components/pending-action-button';
 import { isSupabaseConfigured } from '@/lib/supabase/env';
 import { signUpAction } from '../sign-in/actions';
@@ -88,13 +89,23 @@ export default async function SignUpPage({ searchParams }: { searchParams: Promi
           <label htmlFor="password" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">
             Password
           </label>
-          <input
+          <PasswordInput
             id="password"
             name="password"
-            type="password"
             placeholder="Create a password"
             autoComplete="new-password"
-            className="w-full rounded-[12px] border border-[#D9D3C4] bg-[#FBF9F4] px-4 py-[14px] text-[15px] text-[#1A1814] outline-none placeholder:text-[#85806F] focus:border-[#B8541F]"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="confirmPassword" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">
+            Confirm Password
+          </label>
+          <PasswordInput
+            id="confirmPassword"
+            name="confirmPassword"
+            placeholder="Confirm your password"
+            autoComplete="new-password"
           />
         </div>
 
