@@ -4,7 +4,7 @@ Showcase is a creator-first social publishing product focused on intentional pos
 
 It is designed around a simple idea:
 
-> social platforms should reward intention instead of volume.
+> social platforms should reward intention, not volume.
 
 A creator writes once inside Showcase, previews how the post will appear on multiple platforms, publishes selectively, tracks delivery lane by lane, and keeps a clean public archive at a single profile URL.
 
