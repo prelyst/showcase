@@ -91,7 +91,11 @@ function NavLink({ href, label, icon, active, badge }: { href: string; label: st
 }
 
 export async function ShowcaseShell({ title, subtitle, active, children, loading = false }: { title: ReactNode; subtitle?: ReactNode; active?: string; children: ReactNode; loading?: boolean }) {
-  const currentUser = await getCurrentUserView();
+  const { user: currentUser } = await getCurrentUserView();
+
+  if (!currentUser) {
+    return null;
+  }
 
   return (
     <main className="min-h-screen bg-[#F4F1EA] text-[#1A1814]">

@@ -20,39 +20,53 @@ function getInitials(name: string) {
   return parts.join('') || 'SC';
 }
 
-export async function getCurrentUserView() {
+interface CurrentUserView {
+  id: string;
+  email: string;
+  displayName: string;
+  username: string;
+  slug: string;
+  initials: string;
+  bio: string;
+  website: string | null;
+  hasProfile: boolean;
+}
+
+export async function getCurrentUserView(): Promise<{ user: CurrentUserView | null; reason?: string }> {
   const sessionUser = await getCurrentSessionUser();
 
   if (!sessionUser) {
-    return {
-      id: null,
-      email: '',
-      displayName: 'Maya Rivera',
-      username: 'mayarivera',
-      slug: 'mayarivera',
-      initials: 'MR',
-      bio: 'Writer thinking about the quiet web. Books forthcoming. Slow is a feature.',
-      website: null,
-      hasProfile: false,
-    };
+    return { user: null, reason: 'unauthenticated' };
   }
 
-  await ensureCurrentUserBootstrapped();
+  try {
+    await ensureCurrentUserBootstrapped();
+  } catch {
+    return { user: null, reason: 'bootstrap-failed' };
+  }
 
-  const profile = await getProfileByUserId(sessionUser.id);
+  let profile = null;
+
+  try {
+    profile = await getProfileByUserId(sessionUser.id);
+  } catch {
+    // Degrade gracefully — return user without profile
+  }
 
   const displayName = profile?.displayName || sessionUser.name || toTitleCase(sessionUser.username);
   const username = profile?.slug || sessionUser.username;
 
   return {
-    id: sessionUser.id,
-    email: sessionUser.email,
-    displayName,
-    username,
-    slug: profile?.slug || sessionUser.username,
-    initials: getInitials(displayName),
-    bio: profile?.bio || 'Your Showcase profile is ready. Add a bio to introduce your voice.',
-    website: profile?.website || null,
-    hasProfile: Boolean(profile),
+    user: {
+      id: sessionUser.id,
+      email: sessionUser.email,
+      displayName,
+      username,
+      slug: profile?.slug || sessionUser.username,
+      initials: getInitials(displayName),
+      bio: profile?.bio || 'Your Showcase profile is ready. Add a bio to introduce your voice.',
+      website: profile?.website || null,
+      hasProfile: Boolean(profile),
+    },
   };
 }

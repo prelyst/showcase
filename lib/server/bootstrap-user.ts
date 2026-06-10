@@ -40,6 +40,44 @@ async function getAvailableSlug(base: string, userId: string) {
   return `${normalized}-${Date.now().toString().slice(-6)}`;
 }
 
+async function tryCreateProfileWithRetry(
+  userId: string,
+  displayName: string,
+  baseSlug: string,
+  maxRetries = 3,
+) {
+  let slug = await getAvailableSlug(baseSlug, userId);
+
+  for (let attempt = 0; attempt < maxRetries; attempt += 1) {
+    try {
+      const profile = await createProfile({
+        userId,
+        displayName,
+        slug,
+        bio: 'New to Showcase. Setting up my publishing space.',
+        isPublic: true,
+      });
+
+      return profile;
+    } catch (error) {
+      const isUniqueConstraint =
+        error &&
+        typeof error === 'object' &&
+        'code' in error &&
+        error.code === 'P2002';
+
+      if (isUniqueConstraint && attempt < maxRetries - 1) {
+        slug = await getAvailableSlug(baseSlug, userId);
+        continue;
+      }
+
+      throw error;
+    }
+  }
+
+  return null;
+}
+
 export async function ensureCurrentUserBootstrapped() {
   const sessionUser = await getCurrentSessionUser();
 
@@ -49,42 +87,65 @@ export async function ensureCurrentUserBootstrapped() {
 
   const normalizedIdentity = normalizeSessionIdentity(sessionUser);
 
-  const appUser = await upsertUserByAuth({
-    id: sessionUser.id,
-    email: sessionUser.email,
-    name: normalizedIdentity.name,
-    username: normalizedIdentity.username,
-    image: null,
-  });
+  let appUser;
+  try {
+    appUser = await upsertUserByAuth({
+      id: sessionUser.id,
+      email: sessionUser.email,
+      name: normalizedIdentity.name,
+      username: normalizedIdentity.username,
+      image: null,
+    });
+  } catch {
+    return null;
+  }
 
   if (!appUser) {
     return null;
   }
 
-  const existingProfile = await getProfileByUserId(appUser.id);
+  let existingProfile;
+  try {
+    existingProfile = await getProfileByUserId(appUser.id);
+  } catch {
+    // Continue without profile — will try to create one below
+  }
 
   if (!existingProfile) {
-    const slug = await getAvailableSlug(normalizedIdentity.username || sessionUser.email.split('@')[0] || 'creator', appUser.id);
-
-    await createProfile({
-      userId: appUser.id,
-      displayName: normalizedIdentity.name,
-      slug,
-      bio: 'New to Showcase. Setting up my publishing space.',
-      isPublic: true,
-    });
+    try {
+      await tryCreateProfileWithRetry(
+        appUser.id,
+        normalizedIdentity.name,
+        normalizedIdentity.username || sessionUser.email.split('@')[0] || 'creator',
+      );
+    } catch {
+      // Profile creation failed — user can still use the app
+    }
   }
 
-  const settings = await getUserSettings(appUser.id);
+  let settings;
+  try {
+    settings = await getUserSettings(appUser.id);
+  } catch {
+    // Continue without settings — will try to create defaults below
+  }
 
   if (!settings) {
-    await upsertUserSettings(appUser.id, {
-      defaultAllPlatforms: true,
-      showShowcaseFooter: true,
-      webPushNotifications: false,
-      dailyDigestEmail: true,
-    });
+    try {
+      await upsertUserSettings(appUser.id, {
+        defaultAllPlatforms: true,
+        showShowcaseFooter: true,
+        webPushNotifications: false,
+        dailyDigestEmail: true,
+      });
+    } catch {
+      // Settings creation failed — user can still use the app
+    }
   }
 
-  return getUserById(appUser.id);
+  try {
+    return getUserById(appUser.id);
+  } catch {
+    return null;
+  }
 }

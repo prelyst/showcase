@@ -20,17 +20,17 @@ export async function getProfilePageData(): Promise<{
 }> {
   const { currentUser, profile, posts } = await getShowcaseSessionData();
 
-  if (!currentUser.id) {
+  if (!currentUser) {
     return {
-      displayName: currentUser.displayName,
-      slug: currentUser.slug,
-      bio: currentUser.bio,
+      displayName: 'Guest',
+      slug: 'guest',
+      bio: 'Sign in to create your Showcase profile.',
       location: null,
-      website: currentUser.website,
+      website: null,
       isPublic: true,
-      initials: currentUser.initials,
-      stats: mockProfileStats,
-      posts: mockProfilePosts,
+      initials: '?',
+      stats: [],
+      posts: [],
     };
   }
 
@@ -85,7 +85,7 @@ export async function getProfilePageData(): Promise<{
 export async function getNotificationsPageData(): Promise<NotificationItem[]> {
   const { currentUser, notifications: rows } = await getShowcaseSessionData();
 
-  if (!currentUser.id) {
+  if (!currentUser) {
     return mockNotifications;
   }
 
@@ -112,9 +112,9 @@ export async function getSettingsPageData(): Promise<{
 }> {
   const { currentUser, connectedAccounts: accounts, settings } = await getShowcaseSessionData();
 
-  if (!currentUser.id) {
+  if (!currentUser) {
     return {
-      connectedPlatforms: connectedAccounts,
+      connectedPlatforms: [],
       preferenceRows: mockPreferences,
     };
   }
@@ -169,19 +169,19 @@ export async function getSettingsPageData(): Promise<{
 
 export async function getComposePageData() {
   const { currentUser, profile } = await getShowcaseSessionData();
-  const userId = currentUser.id;
 
-  if (!userId) {
+  if (!currentUser) {
     return {
       draftId: null,
-      authorName: currentUser.displayName,
-      authorHandle: `@${currentUser.username}`,
-      authorInitials: currentUser.initials,
-      content:
-        'The thing I keep coming back to: most social platforms reward volume. The feeds that actually matter to me reward intention. Showcase is built on a simple bet — that when you only post things you meant to say, the feed quietly gets better. #building',
-      selectedTargets: ['showcase', 'x', 'linkedin', 'bluesky'],
+      authorName: 'Guest',
+      authorHandle: '@guest',
+      authorInitials: '?',
+      content: 'Sign in to start composing on Showcase.',
+      selectedTargets: ['showcase'],
     };
   }
+
+  const userId = currentUser.id;
 
   if (!profile) {
     return {
@@ -215,15 +215,16 @@ export async function getFeedPageData(): Promise<{
   suggestions: CreatorSuggestion[];
 }> {
   const { currentUser, profile, posts } = await getShowcaseSessionData();
-  const userId = currentUser.id;
 
-  if (!userId) {
+  if (!currentUser) {
     return {
       posts: feedPosts,
       trending: trendingTopics,
       suggestions: creatorSuggestions,
     };
   }
+
+  const userId = currentUser.id;
 
   if (!profile) {
     return {
@@ -270,7 +271,7 @@ export async function getDiscoverPageData(): Promise<{
 }> {
   const { currentUser, connectedAccounts: accounts } = await getShowcaseSessionData();
 
-  if (!currentUser.id) {
+  if (!currentUser) {
     return {
       trending: trendingTopics,
       creators: featuredCreators,
@@ -299,18 +300,19 @@ export async function getDiscoverPageData(): Promise<{
 
 export async function getMonitorPageData(): Promise<MonitorData> {
   const { currentUser, profile, posts } = await getShowcaseSessionData();
-  const userId = currentUser.id;
 
-  if (!userId) {
+  if (!currentUser) {
     return {
-      heroBody: '"Shipping something quiet today. A better feed, by construction."',
-      heroMeta: 'Published just now',
-      progressLabel: '4 / 6',
-      progressWidth: '66%',
-      summary: '1 failed · 1 in flight',
-      lanes: monitorLanes,
+      heroBody: '"Sign in to monitor your published posts."',
+      heroMeta: 'Unauthenticated view',
+      progressLabel: '0 / 1',
+      progressWidth: '12%',
+      summary: 'Sign in to track your delivery lanes',
+      lanes: [],
     };
   }
+
+  const userId = currentUser.id;
 
   if (!profile) {
     return {

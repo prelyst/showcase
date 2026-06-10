@@ -8,12 +8,11 @@ import { getUserSettings } from '@/lib/repositories/settings-repository';
 import { getCurrentUserView } from '@/lib/server/current-user';
 
 export const getShowcaseSessionData = cache(async () => {
-  const currentUser = await getCurrentUserView();
-  const userId = currentUser.id;
+  const { user: currentUser } = await getCurrentUserView();
 
-  if (!userId) {
+  if (!currentUser) {
     return {
-      currentUser,
+      currentUser: null,
       profile: null,
       posts: [],
       connectedAccounts: [],
@@ -22,6 +21,7 @@ export const getShowcaseSessionData = cache(async () => {
     };
   }
 
+  const userId = currentUser.id;
   const profile = await getProfileByUserId(userId);
   const profileId = profile?.id ?? null;
 
