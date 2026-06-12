@@ -45,7 +45,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
   }));
 
   return (
-    <main className="min-h-screen bg-surface text-[#1A1814]">
+    <main className="min-h-screen bg-surface text-ink">
       <div
         className="pointer-events-none fixed inset-0 z-[1] opacity-30"
         style={{
@@ -57,26 +57,26 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
       <div className="relative z-[2] px-5 py-8 md:px-8 md:py-10">
         <div className="mx-auto max-w-[1100px]">
           <div className="mb-8 flex items-center justify-between gap-4">
-            <Link href="/" className="inline-flex items-center gap-2 font-serif text-[22px] tracking-[-0.02em] text-[#1A1814]">
-              <span className="h-[10px] w-[10px] rotate-45 rounded-[2px] bg-[#B8541F]" />
+            <Link href="/" className="inline-flex items-center gap-2 font-serif text-[22px] tracking-[-0.02em] text-ink">
+              <span className="h-[10px] w-[10px] rotate-45 rounded-[2px] bg-accent" />
               Showcase
             </Link>
-            <Link href="/showcase/feed" className="rounded-full border border-border bg-card px-4 py-2 text-[13px] font-medium text-[#4A453C] transition hover:bg-[#1A1814] hover:text-white">
+            <Link href="/showcase/feed" className="rounded-full border border-border bg-card px-4 py-2 text-[13px] font-medium text-subtle transition hover:bg-ink hover:text-white">
               Open app
             </Link>
           </div>
 
           <section className="mb-7 rounded-[24px] border border-border bg-card p-8 md:p-10">
             <div className="grid gap-8 lg:grid-cols-[auto_1fr_auto] lg:items-center">
-              <div className="grid h-[88px] w-[88px] place-items-center rounded-full border border-border bg-[#F5E5D3] font-serif text-[34px] text-[#B8541F]">
+              <div className="grid h-[88px] w-[88px] place-items-center rounded-full border border-border bg-accent-tint font-serif text-[34px] text-accent">
                 {initials}
               </div>
               <div>
-                <div className="mb-1 font-serif text-[38px] tracking-[-0.03em] text-[#1A1814]">{profile.displayName}</div>
-                <div className="mb-3 font-mono text-[13px] text-[#85806F]">showcase.app/u/{profile.slug}</div>
-                <div className="max-w-[560px] text-[15px] leading-[1.6] text-[#4A453C]">{profile.bio || 'A creator building a quieter publishing archive on Showcase.'}</div>
+                <div className="mb-1 font-serif text-[38px] tracking-[-0.03em] text-ink">{profile.displayName}</div>
+                <div className="mb-3 font-mono text-[13px] text-muted">showcase.app/u/{profile.slug}</div>
+                <div className="max-w-[560px] text-[15px] leading-[1.6] text-subtle">{profile.bio || 'A creator building a quieter publishing archive on Showcase.'}</div>
                 <div className="mt-4 flex items-center gap-[6px]">
-                  <span className="mr-1 font-mono text-[10px] uppercase tracking-[0.05em] text-[#85806F]">Published via</span>
+                  <span className="mr-1 font-mono text-[10px] uppercase tracking-[0.05em] text-muted">Published via</span>
                   {[platforms.showcase, platforms.x, platforms.linkedin, platforms.bluesky].map((platform) => (
                     <PlatformBadge key={platform.key} platform={platform} />
                   ))}
@@ -84,20 +84,20 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
               </div>
               <div className="flex gap-6 max-lg:flex-wrap lg:text-right">
                 <div>
-                  <div className="font-serif text-[22px] tracking-[-0.02em] text-[#1A1814]">{profile.posts.length}</div>
-                  <div className="font-mono text-[10px] uppercase tracking-[0.05em] text-[#85806F]">Posts</div>
+                  <div className="font-serif text-[22px] tracking-[-0.02em] text-ink">{profile.posts.length}</div>
+                  <div className="font-mono text-[10px] uppercase tracking-[0.05em] text-muted">Posts</div>
                 </div>
                 <div>
-                  <div className="font-serif text-[22px] tracking-[-0.02em] text-[#1A1814]">2,847</div>
-                  <div className="font-mono text-[10px] uppercase tracking-[0.05em] text-[#85806F]">Followers</div>
+                  <div className="font-serif text-[22px] tracking-[-0.02em] text-ink">2,847</div>
+                  <div className="font-mono text-[10px] uppercase tracking-[0.05em] text-muted">Followers</div>
                 </div>
               </div>
             </div>
           </section>
 
           <section>
-            <div className="mb-5 font-serif text-[26px] tracking-[-0.02em] text-[#1A1814]">
-              Archive <em className="italic text-[#B8541F]">/ intentional posts</em>
+            <div className="mb-5 font-serif text-[26px] tracking-[-0.02em] text-ink">
+              Archive <em className="italic text-accent">/ intentional posts</em>
             </div>
 
             {posts.length ? (
@@ -107,7 +107,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
                 ))}
               </div>
             ) : (
-              <div className="rounded-[18px] border border-border bg-card p-8 text-[15px] leading-[1.6] text-[#4A453C]">
+              <div className="rounded-[18px] border border-border bg-card p-8 text-[15px] leading-[1.6] text-subtle">
                 No public posts yet.
               </div>
             )}

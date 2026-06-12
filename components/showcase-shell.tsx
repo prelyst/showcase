@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ReactNode } from 'react';
 
 import { signOutAction } from '@/app/auth/sign-in/actions';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { getCurrentUserView } from '@/lib/server/current-user';
 
 const browseNav = [
@@ -109,7 +110,7 @@ export async function ShowcaseShell({ title, subtitle, active, children, loading
         }}
       />
       <div className="relative z-[2] grid min-h-screen lg:grid-cols-[240px_1fr]">
-        <aside className="hidden h-screen border-r border-border bg-[rgba(250,244,234,0.6)] px-5 py-7 backdrop-blur-md lg:sticky lg:top-0 lg:flex lg:flex-col">
+        <aside className="hidden h-screen border-r border-border bg-surface/60 px-5 py-7 backdrop-blur-md lg:sticky lg:top-0 lg:flex lg:flex-col">
           <Link href="/" className="group mb-9 flex items-center gap-[10px] px-2 font-serif text-[23px] font-medium tracking-[-0.02em]">
             <span className="h-[12px] w-[12px] rotate-45 rounded-[3px] bg-accent shadow-[0_0_0_4px_rgba(184,84,31,0.14)] transition group-hover:rotate-[135deg]" />
             Showcase
@@ -127,7 +128,7 @@ export async function ShowcaseShell({ title, subtitle, active, children, loading
           </Link>
 
           <div className="mb-6">
-            <div className="mb-[10px] px-[10px] font-mono text-[10px] uppercase tracking-[0.08em] text-[#85806F]">Browse</div>
+            <div className="mb-[10px] px-[10px] font-mono text-[10px] uppercase tracking-[0.08em] text-muted">Browse</div>
             <div className="space-y-[2px]">
               {browseNav.map((item) => (
                 <NavLink key={item.href} {...item} active={!loading && active === item.href} />
@@ -136,7 +137,7 @@ export async function ShowcaseShell({ title, subtitle, active, children, loading
           </div>
 
           <div className="mb-6">
-            <div className="mb-[10px] px-[10px] font-mono text-[10px] uppercase tracking-[0.08em] text-[#85806F]">Yours</div>
+            <div className="mb-[10px] px-[10px] font-mono text-[10px] uppercase tracking-[0.08em] text-muted">Yours</div>
             <div className="space-y-[2px]">
               {yoursNav.map((item) => (
                 <NavLink key={item.href} {...item} active={!loading && active === item.href} />
@@ -146,15 +147,15 @@ export async function ShowcaseShell({ title, subtitle, active, children, loading
 
           <div className="mt-auto border-t border-divider pt-5">
             <div className="flex items-center gap-[10px] rounded-[8px] px-[10px] py-2 hover:bg-panel">
-              <div className="grid h-8 w-8 place-items-center rounded-full border border-border bg-[#F5E5D3] text-[12px] font-semibold text-[#B8541F]">
+              <div className="grid h-8 w-8 place-items-center rounded-full border border-border bg-accent-tint text-[12px] font-semibold text-accent">
                 {currentUser.initials}
               </div>
               <div className="min-w-0 flex-1">
-                <div className="truncate text-[13px] font-medium text-[#1A1814]">{currentUser.displayName}</div>
-                <div className="font-mono text-[11px] text-[#85806F]">@{currentUser.username}</div>
+                <div className="truncate text-[13px] font-medium text-ink">{currentUser.displayName}</div>
+                <div className="font-mono text-[11px] text-muted">@{currentUser.username}</div>
               </div>
               <form action={signOutAction}>
-                <button className="rounded-[8px] border border-border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.05em] text-[#4A453C] transition hover:bg-[#1A1814] hover:text-white">
+                <button className="rounded-[8px] border border-border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.05em] text-subtle transition hover:bg-ink hover:text-white">
                   Sign out
                 </button>
               </form>
@@ -163,16 +164,16 @@ export async function ShowcaseShell({ title, subtitle, active, children, loading
         </aside>
 
         <div className="min-h-screen">
-          <header className="sticky top-0 z-10 border-b border-border bg-[rgba(250,244,234,0.72)] px-5 py-5 backdrop-blur-[14px] md:px-10">
+          <header className="sticky top-0 z-10 border-b border-border bg-surface/70 px-5 py-5 backdrop-blur-[14px] md:px-10">
             <div className="mb-4 flex items-center justify-between lg:hidden">
               <Link href="/showcase/feed" className="flex items-center gap-2 font-serif text-[20px] font-medium tracking-[-0.02em]">
-                <span className="h-[10px] w-[10px] rotate-45 rounded-[2px] bg-[#B8541F]" />
+                <span className="h-[10px] w-[10px] rotate-45 rounded-[2px] bg-accent" />
                 Showcase
               </Link>
               <Link
                 href="/showcase/compose"
                 prefetch
-                className="rounded-[10px] border border-border bg-card px-3 py-2 text-[12px] font-medium text-[#4A453C] transition hover:bg-[#1A1814] hover:text-white"
+                className="rounded-[10px] border border-border bg-card px-3 py-2 text-[12px] font-medium text-subtle transition hover:bg-ink hover:text-white"
               >
                 Compose
               </Link>
@@ -185,8 +186,8 @@ export async function ShowcaseShell({ title, subtitle, active, children, loading
                   href={item.href}
                   className={`whitespace-nowrap rounded-full border px-3 py-2 text-[12px] font-medium transition ${
                     !loading && active === item.href
-                      ? 'border-[#1A1814] bg-[#1A1814] text-white'
-                      : 'border-border bg-card text-[#4A453C]'
+                      ? 'border-ink bg-ink text-white'
+                      : 'border-border bg-card text-subtle'
                   }`}
                 >
                   {item.label}
@@ -199,13 +200,16 @@ export async function ShowcaseShell({ title, subtitle, active, children, loading
                 <div className="font-serif text-[30px] font-normal leading-[1.1] tracking-[-0.02em] text-ink">{title}</div>
                 {subtitle ? <div className="mt-[6px] font-mono text-[11px] uppercase tracking-[0.06em] text-muted">{subtitle}</div> : null}
               </div>
-              <Link
-                href="/showcase/compose"
-                prefetch
-                className="hidden rounded-[10px] border border-border bg-card px-4 py-2 text-[13px] font-medium text-[#4A453C] transition hover:bg-[#1A1814] hover:text-white lg:inline-flex"
-              >
-                Compose
-              </Link>
+              <div className="flex items-center gap-2">
+                <ThemeToggle />
+                <Link
+                  href="/showcase/compose"
+                  prefetch
+                  className="hidden rounded-[10px] border border-border bg-card px-4 py-2 text-[13px] font-medium text-subtle transition hover:bg-ink hover:text-white lg:inline-flex"
+                >
+                  Compose
+                </Link>
+              </div>
             </div>
           </header>
 

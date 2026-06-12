@@ -29,7 +29,7 @@ const EMPTY_FILTERS = buildProfileFilters(0, new Map());
 /** Two-tone avatar palette used consistently across surfaces. */
 function avatarTone(seed: string, initials: string): AvatarTone {
   const code = seed.split('').reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
-  const className = code % 2 === 0 ? 'bg-[#F5E5D3] text-[#B8541F]' : 'bg-[#E5E8D4] text-[#5A6B3A]';
+  const className = code % 2 === 0 ? 'bg-accent-tint text-accent' : 'bg-sage-tint text-sage';
   return { initials: initials.toUpperCase() || 'SC', className };
 }
 
@@ -186,7 +186,7 @@ export async function getNotificationsPageData(): Promise<NotificationItem[]> {
     id: item.id,
     avatar: {
       initials: item.actorName?.split(' ').map((part) => part[0]).slice(0, 2).join('').toUpperCase() || 'SC',
-      className: index % 2 === 0 ? 'bg-[#F5E5D3] text-[#B8541F]' : 'bg-[#E5E8D4] text-[#5A6B3A]',
+      className: index % 2 === 0 ? 'bg-accent-tint text-accent' : 'bg-sage-tint text-sage',
     },
     title: item.message,
     detail: typeof item.metadata === 'object' && item.metadata && 'detail' in item.metadata ? String(item.metadata.detail) : item.actorHandle || 'New activity in Showcase.',
@@ -312,7 +312,7 @@ export async function getFeedPageData(): Promise<{
 
         return {
           id: post.id,
-          avatar: { initials: currentUser.initials, className: 'bg-[#F5E5D3] text-[#B8541F]' },
+          avatar: { initials: currentUser.initials, className: 'bg-accent-tint text-accent' },
           author: profile.displayName,
           handle: `@${profile.slug}`,
           time: formatRelativeDate(post.createdAt),
@@ -451,12 +451,12 @@ export async function getMonitorPageData(): Promise<MonitorData> {
             : '—',
         pillTone:
           lane.status === 'PUBLISHED'
-            ? 'bg-[#E5E8D4] text-[#5A6B3A]'
+            ? 'bg-sage-tint text-sage'
             : lane.status === 'FAILED'
-              ? 'bg-[#F2DCD1] text-[#A0381F]'
+              ? 'bg-danger-tint text-danger'
               : lane.status === 'PENDING'
-                ? 'bg-[#E8E3D4] text-[#6F685B]'
-                : 'bg-[#F4E8C8] text-[#A67C1E]',
+                ? 'bg-panel text-subtle'
+                : 'bg-[#F4E8C8] text-gold',
         attempts: lane.attemptCount,
         retryNote: lane.nextRetryAt
           ? `Retry scheduled · ${formatRelativeDate(lane.nextRetryAt)}`

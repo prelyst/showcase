@@ -1,9 +1,11 @@
 import type { Config } from 'tailwindcss';
 
 const config: Config = {
+  darkMode: 'class',
   content: [
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './lib/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
@@ -12,29 +14,27 @@ const config: Config = {
         mono: ['var(--font-geist-mono)', 'monospace'],
       },
       colors: {
-        // Surfaces — warm paper base with layered cream cards
-        surface: '#FAF4EA',
-        card: '#FFFCF6',
-        panel: '#F3EBDC',
-        skeleton: '#EFE6D6',
-        track: '#E0D5C2',
-        // Lines
-        border: '#E7DDCB',
-        divider: '#EFE7D8',
-        // Ink + text (warm, higher contrast)
-        ink: '#211C15',
-        subtle: '#5A5142',
-        muted: '#8C8270',
-        // Brand accent (terracotta) — deepened + extended
-        accent: '#B8541F',
-        'accent-deep': '#8F3D12',
-        'accent-bright': '#D9692B',
-        'accent-tint': '#F6E2CE',
-        sage: '#566B33',
-        'sage-tint': '#E4E9D2',
-        gold: '#A67C1E',
-        danger: '#A0381F',
-        'danger-tint': '#F2DCD1',
+        // Driven by CSS variables in globals.css so the .dark class can swap
+        // the whole palette. Channel triplets keep opacity modifiers working.
+        surface: 'rgb(var(--surface) / <alpha-value>)',
+        card: 'rgb(var(--card) / <alpha-value>)',
+        panel: 'rgb(var(--panel) / <alpha-value>)',
+        skeleton: 'rgb(var(--skeleton) / <alpha-value>)',
+        track: 'rgb(var(--track) / <alpha-value>)',
+        border: 'rgb(var(--border) / <alpha-value>)',
+        divider: 'rgb(var(--divider) / <alpha-value>)',
+        ink: 'rgb(var(--ink) / <alpha-value>)',
+        subtle: 'rgb(var(--subtle) / <alpha-value>)',
+        muted: 'rgb(var(--muted) / <alpha-value>)',
+        accent: 'rgb(var(--accent) / <alpha-value>)',
+        'accent-deep': 'rgb(var(--accent-deep) / <alpha-value>)',
+        'accent-bright': 'rgb(var(--accent-bright) / <alpha-value>)',
+        'accent-tint': 'rgb(var(--accent-tint) / <alpha-value>)',
+        sage: 'rgb(var(--sage) / <alpha-value>)',
+        'sage-tint': 'rgb(var(--sage-tint) / <alpha-value>)',
+        gold: 'rgb(var(--gold) / <alpha-value>)',
+        danger: 'rgb(var(--danger) / <alpha-value>)',
+        'danger-tint': 'rgb(var(--danger-tint) / <alpha-value>)',
       },
       boxShadow: {
         // Warm-tinted, layered elevation

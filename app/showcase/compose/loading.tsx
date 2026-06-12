@@ -2,7 +2,7 @@ import { ShowcaseShell } from '@/components/showcase-shell';
 
 export default function ComposeLoading() {
   return (
-    <ShowcaseShell title={<><span>New post </span><em className="font-light italic text-[#B8541F]">/ draft</em></>} active="/showcase/compose">
+    <ShowcaseShell title={<><span>New post </span><em className="font-light italic text-accent">/ draft</em></>} active="/showcase/compose">
       <div className="grid max-w-[1200px] gap-7 xl:grid-cols-[1.1fr_1fr] animate-pulse">
         <div className="overflow-hidden rounded-[16px] border border-border bg-card">
           <div className="flex items-center justify-between border-b border-divider px-[22px] py-4">
@@ -56,7 +56,7 @@ export default function ComposeLoading() {
             </div>
           </div>
           <div className="bg-panel p-[22px]">
-            <div className="mb-[14px] h-10 w-full rounded-[8px] bg-[#E5E8D4]" />
+            <div className="mb-[14px] h-10 w-full rounded-[8px] bg-sage-tint" />
             <div className="rounded-[14px] border border-border bg-card p-[18px]">
               <div className="mb-3 flex items-center gap-[10px]">
                 <div className="h-9 w-9 rounded-full bg-skeleton" />

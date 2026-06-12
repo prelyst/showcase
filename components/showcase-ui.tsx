@@ -95,19 +95,19 @@ export function FeedPostCard({ post }: { post: FeedPost }) {
         </div>
 
         {post.media ? (
-          <div className="mb-[14px] rounded-[12px] border border-border bg-panel px-8 py-11 text-center font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">
+          <div className="mb-[14px] rounded-[12px] border border-border bg-panel px-8 py-11 text-center font-mono text-[11px] uppercase tracking-[0.08em] text-muted">
             {post.media}
           </div>
         ) : null}
 
         <div className="flex items-center justify-between gap-5">
-          <div className="flex items-center gap-2 text-[#85806F]">
+          <div className="flex items-center gap-2 text-muted">
             <span
               className={`h-[6px] w-[6px] rounded-full ${
                 post.delivery.total > 0 && post.delivery.published >= post.delivery.total
-                  ? 'bg-[#5A6B3A]'
+                  ? 'bg-sage'
                   : post.delivery.published > 0
-                    ? 'bg-[#B8541F]'
+                    ? 'bg-accent'
                     : 'bg-track'
               }`}
             />
@@ -115,7 +115,7 @@ export function FeedPostCard({ post }: { post: FeedPost }) {
           </div>
           {post.socials.length ? (
             <div className="flex items-center gap-1">
-              <span className="mr-1 font-mono text-[10px] uppercase tracking-[0.05em] text-[#85806F]">Also on</span>
+              <span className="mr-1 font-mono text-[10px] uppercase tracking-[0.05em] text-muted">Also on</span>
               {post.socials.map((platform) => (
                 <PlatformBadge key={platform.key} platform={platform} />
               ))}
@@ -130,9 +130,9 @@ export function FeedPostCard({ post }: { post: FeedPost }) {
 export function TrendingCard({ topic, compact = false }: { topic: TrendingTopic; compact?: boolean }) {
   return compact ? (
     <div className="border-b border-divider py-[10px] last:border-b-0">
-      <div className="font-mono text-[10px] tracking-[0.05em] text-[#85806F]">{topic.rank}</div>
-      <div className="font-serif text-[17px] font-medium italic text-[#B8541F]">{topic.tag}</div>
-      <div className="text-[12px] text-[#85806F]">{topic.count}</div>
+      <div className="font-mono text-[10px] tracking-[0.05em] text-muted">{topic.rank}</div>
+      <div className="font-serif text-[17px] font-medium italic text-accent">{topic.tag}</div>
+      <div className="text-[12px] text-muted">{topic.count}</div>
     </div>
   ) : (
     <div className="group relative overflow-hidden rounded-[14px] border border-border bg-card p-[18px] shadow-card transition duration-300 hover:-translate-y-[3px] hover:border-accent hover:shadow-lift">
@@ -152,8 +152,8 @@ export function CreatorCard({ creator, compact = false }: { creator: CreatorSugg
     <div className="flex items-center gap-[10px] border-b border-divider py-[10px] last:border-b-0">
       <Avatar avatar={creator.avatar} size="sm" />
       <div className="min-w-0 flex-1">
-        <div className="text-[14px] font-medium text-[#1A1814]">{creator.name}</div>
-        <div className="font-mono text-[11px] text-[#85806F]">{creator.handle} · {creator.bio}</div>
+        <div className="text-[14px] font-medium text-ink">{creator.name}</div>
+        <div className="font-mono text-[11px] text-muted">{creator.handle} · {creator.bio}</div>
       </div>
       <FollowButton following={creator.following} />
     </div>
@@ -172,13 +172,13 @@ export function CreatorCard({ creator, compact = false }: { creator: CreatorSugg
 
 export function NotificationRow({ item }: { item: NotificationItem }) {
   return (
-    <div className={`grid grid-cols-[44px_1fr_auto] gap-4 border-b border-divider px-[18px] py-[14px] last:border-b-0 ${item.unread ? 'bg-[#F5E5D3]' : ''}`}>
+    <div className={`grid grid-cols-[44px_1fr_auto] gap-4 border-b border-divider px-[18px] py-[14px] last:border-b-0 ${item.unread ? 'bg-accent-tint' : ''}`}>
       <Avatar avatar={item.avatar} size="sm" />
       <div>
-        <div className="text-[14px] font-medium text-[#1A1814]">{item.title}</div>
-        <div className="mt-1 text-[13px] leading-[1.45] text-[#4A453C] italic">{item.detail}</div>
+        <div className="text-[14px] font-medium text-ink">{item.title}</div>
+        <div className="mt-1 text-[13px] leading-[1.45] text-subtle italic">{item.detail}</div>
       </div>
-      <div className="font-mono text-[11px] text-[#85806F]">{item.time}</div>
+      <div className="font-mono text-[11px] text-muted">{item.time}</div>
     </div>
   );
 }
@@ -192,7 +192,7 @@ export function ComposeToolButton({ tool }: { tool: ComposeTool }) {
   }[tool.icon];
 
   return (
-    <button aria-label={tool.label} className="grid h-[34px] w-[34px] place-items-center rounded-[8px] hover:bg-panel hover:text-[#1A1814]">
+    <button aria-label={tool.label} className="grid h-[34px] w-[34px] place-items-center rounded-[8px] hover:bg-panel hover:text-ink">
       {icon}
     </button>
   );
@@ -202,7 +202,7 @@ export function PublishTargetChip({ platform, selected }: { platform: PlatformCh
   return (
     <div
       className={`flex items-center gap-[6px] rounded-full border px-[10px] py-[6px] text-[12px] font-medium ${
-        selected ? 'border-[#1A1814] bg-[#1A1814] text-white' : 'border-border bg-card text-[#1A1814]'
+        selected ? 'border-ink bg-ink text-white' : 'border-border bg-card text-ink'
       }`}
     >
       <PlatformBadge platform={platform} />
@@ -216,12 +216,12 @@ export function PublishLaneRow({ lane }: { lane: PublishLane }) {
     <div className="grid items-center gap-4 border-b border-divider px-6 py-[18px] md:grid-cols-[36px_1fr_auto_auto] last:border-b-0">
       <PlatformBadge platform={lane.platform} large />
       <div>
-        <div className="text-[14px] font-medium text-[#1A1814]">{lane.platform.label}</div>
-        <div className={`mt-[2px] font-mono text-[11px] ${lane.status === 'Failed' ? 'text-[#A0381F]' : 'text-[#85806F]'}`}>{lane.detail}</div>
-        {lane.retryNote ? <div className="mt-[4px] text-[11px] text-[#85806F]">{lane.retryNote}</div> : null}
+        <div className="text-[14px] font-medium text-ink">{lane.platform.label}</div>
+        <div className={`mt-[2px] font-mono text-[11px] ${lane.status === 'Failed' ? 'text-danger' : 'text-muted'}`}>{lane.detail}</div>
+        {lane.retryNote ? <div className="mt-[4px] text-[11px] text-muted">{lane.retryNote}</div> : null}
       </div>
       <span className={`rounded-full px-[10px] py-1 font-mono text-[10px] uppercase tracking-[0.05em] ${lane.pillTone}`}>{lane.status}</span>
-      <span className="font-mono text-[11px] text-[#85806F] md:text-right">{lane.elapsed}</span>
+      <span className="font-mono text-[11px] text-muted md:text-right">{lane.elapsed}</span>
     </div>
   );
 }
@@ -249,11 +249,11 @@ export function ConnectionRow({ item }: { item: ConnectionItem }) {
     <div className="grid items-center gap-4 border-b border-divider px-6 py-4 md:grid-cols-[36px_1fr_auto_auto] last:border-b-0">
       <PlatformBadge platform={item.platform} large />
       <div>
-        <div className="text-[14px] font-medium text-[#1A1814]">{item.platform.label}</div>
-        <div className="font-mono text-[11px] text-[#85806F]">{item.handle}</div>
+        <div className="text-[14px] font-medium text-ink">{item.platform.label}</div>
+        <div className="font-mono text-[11px] text-muted">{item.handle}</div>
       </div>
-      <span className={`font-mono text-[10px] uppercase tracking-[0.05em] ${item.status === 'Active' ? 'text-[#5A6B3A]' : 'text-[#85806F]'}`}>{item.status}</span>
-      <button className={`rounded-[10px] px-3 py-[6px] text-[12px] font-medium ${item.action === 'Connect' ? 'bg-[#B8541F] text-white' : 'border border-border text-[#4A453C]'}`}>{item.action}</button>
+      <span className={`font-mono text-[10px] uppercase tracking-[0.05em] ${item.status === 'Active' ? 'text-sage' : 'text-muted'}`}>{item.status}</span>
+      <button className={`rounded-[10px] px-3 py-[6px] text-[12px] font-medium ${item.action === 'Connect' ? 'bg-accent text-white' : 'border border-border text-subtle'}`}>{item.action}</button>
     </div>
   );
 }
@@ -262,10 +262,10 @@ export function PreferenceRow({ item }: { item: PreferenceItem }) {
   return (
     <div className="flex items-center justify-between gap-4 border-b border-divider px-6 py-4 last:border-b-0">
       <div>
-        <div className="mb-[2px] text-[14px] font-medium text-[#1A1814]">{item.label}</div>
-        <div className="text-[12px] text-[#85806F]">{item.description}</div>
+        <div className="mb-[2px] text-[14px] font-medium text-ink">{item.label}</div>
+        <div className="text-[12px] text-muted">{item.description}</div>
       </div>
-      <div className={`relative h-[22px] w-10 rounded-full ${item.enabled ? 'bg-[#B8541F]' : 'bg-track'}`}>
+      <div className={`relative h-[22px] w-10 rounded-full ${item.enabled ? 'bg-accent' : 'bg-track'}`}>
         <div className={`absolute bottom-[3px] h-4 w-4 rounded-full bg-white shadow ${item.enabled ? 'left-[21px]' : 'left-[3px]'}`} />
       </div>
     </div>

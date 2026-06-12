@@ -14,13 +14,13 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
     <ShowcaseShell title="Profile" subtitle={`showcase.app/@${profile.slug}`} active="/showcase/profile">
       <div className="max-w-[1100px]">
         <div className="mb-6 grid gap-7 rounded-[20px] border border-border bg-card p-9 shadow-card lg:grid-cols-[auto_1fr_auto] lg:items-center">
-          <Avatar avatar={{ initials: profile.initials, className: 'bg-[#F5E5D3] text-[#B8541F]' }} size="lg" />
+          <Avatar avatar={{ initials: profile.initials, className: 'bg-accent-tint text-accent' }} size="lg" />
           <div>
-            <div className="mb-1 font-serif text-[34px] tracking-[-0.02em] text-[#1A1814]">{profile.displayName}</div>
-            <div className="mb-3 font-mono text-[13px] text-[#85806F]">showcase.app/@{profile.slug}</div>
-            <div className="mb-[14px] max-w-[460px] text-[15px] leading-[1.5] text-[#4A453C]">{profile.bio}</div>
+            <div className="mb-1 font-serif text-[34px] tracking-[-0.02em] text-ink">{profile.displayName}</div>
+            <div className="mb-3 font-mono text-[13px] text-muted">showcase.app/@{profile.slug}</div>
+            <div className="mb-[14px] max-w-[460px] text-[15px] leading-[1.5] text-subtle">{profile.bio}</div>
             <div className="flex items-center gap-[6px]">
-              <span className="mr-1 font-mono text-[10px] uppercase tracking-[0.05em] text-[#85806F]">Also on</span>
+              <span className="mr-1 font-mono text-[10px] uppercase tracking-[0.05em] text-muted">Also on</span>
               {[platforms.x, platforms.linkedin, platforms.bluesky, platforms.reddit, platforms.threads].map((platform) => (
                 <PlatformBadge key={platform.key} platform={platform} />
               ))}
@@ -30,8 +30,8 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
             <div className="flex gap-6 max-lg:flex-wrap lg:justify-end">
               {profile.stats.map((stat) => (
                 <div key={stat.label}>
-                  <div className="font-serif text-[22px] tracking-[-0.02em] text-[#1A1814]">{stat.value}</div>
-                  <div className="font-mono text-[10px] uppercase tracking-[0.05em] text-[#85806F]">{stat.label}</div>
+                  <div className="font-serif text-[22px] tracking-[-0.02em] text-ink">{stat.value}</div>
+                  <div className="font-mono text-[10px] uppercase tracking-[0.05em] text-muted">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -40,12 +40,12 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
 
         <div className="mb-6 grid gap-6 xl:grid-cols-[1.1fr_380px]">
           <div>
-            {saved ? <div className="mb-4 rounded-[12px] border border-border bg-surface px-4 py-3 text-[13px] text-[#4A453C]">Profile updated.</div> : null}
-            {errorMessage ? <div className="mb-4 rounded-[12px] border border-[#F2DCD1] bg-[#FBF1EC] px-4 py-3 text-[13px] text-[#A0381F]">{errorMessage}</div> : null}
+            {saved ? <div className="mb-4 rounded-[12px] border border-border bg-surface px-4 py-3 text-[13px] text-subtle">Profile updated.</div> : null}
+            {errorMessage ? <div className="mb-4 rounded-[12px] border border-danger-tint bg-accent-tint px-4 py-3 text-[13px] text-danger">{errorMessage}</div> : null}
 
             <div className="mb-6 flex gap-2 overflow-x-auto pb-1">
               {profile.filters.map((filter, index) => (
-                <button key={filter.label} className={`flex items-center gap-[6px] rounded-full border px-[14px] py-[7px] text-[13px] font-medium whitespace-nowrap transition ${index === 0 ? 'border-[#1A1814] bg-[#1A1814] text-white' : 'border-border bg-card text-[#4A453C] hover:border-[#85806F]'}`}>
+                <button key={filter.label} className={`flex items-center gap-[6px] rounded-full border px-[14px] py-[7px] text-[13px] font-medium whitespace-nowrap transition ${index === 0 ? 'border-ink bg-ink text-white' : 'border-border bg-card text-subtle hover:border-muted'}`}>
                   {filter.label}
                   <span className="font-mono text-[11px] opacity-60">{filter.count}</span>
                 </button>
@@ -69,39 +69,39 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
 
           <aside className="rounded-[20px] border border-border bg-card p-6">
             <div className="mb-5">
-              <div className="mb-1 font-serif text-[24px] tracking-[-0.02em] text-[#1A1814]">Edit profile</div>
-              <div className="text-[13px] leading-[1.5] text-[#4A453C]">Update how your identity appears across Showcase.</div>
+              <div className="mb-1 font-serif text-[24px] tracking-[-0.02em] text-ink">Edit profile</div>
+              <div className="text-[13px] leading-[1.5] text-subtle">Update how your identity appears across Showcase.</div>
             </div>
 
             <form action={updateProfileAction} className="space-y-4">
               <div>
-                <label htmlFor="displayName" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">Display name</label>
-                <input id="displayName" name="displayName" defaultValue={profile.displayName} className="w-full rounded-[12px] border border-border bg-card px-4 py-[14px] text-[15px] text-[#1A1814] outline-none focus:border-[#B8541F]" />
+                <label htmlFor="displayName" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.08em] text-muted">Display name</label>
+                <input id="displayName" name="displayName" defaultValue={profile.displayName} className="w-full rounded-[12px] border border-border bg-card px-4 py-[14px] text-[15px] text-ink outline-none focus:border-accent" />
               </div>
 
               <div>
-                <label htmlFor="slug" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">Profile slug</label>
-                <input id="slug" name="slug" defaultValue={profile.slug} className="w-full rounded-[12px] border border-border bg-card px-4 py-[14px] text-[15px] text-[#1A1814] outline-none focus:border-[#B8541F]" />
+                <label htmlFor="slug" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.08em] text-muted">Profile slug</label>
+                <input id="slug" name="slug" defaultValue={profile.slug} className="w-full rounded-[12px] border border-border bg-card px-4 py-[14px] text-[15px] text-ink outline-none focus:border-accent" />
               </div>
 
               <div>
-                <label htmlFor="bio" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">Bio</label>
-                <textarea id="bio" name="bio" defaultValue={profile.bio} className="min-h-[110px] w-full rounded-[12px] border border-border bg-card px-4 py-[14px] text-[15px] text-[#1A1814] outline-none focus:border-[#B8541F]" />
+                <label htmlFor="bio" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.08em] text-muted">Bio</label>
+                <textarea id="bio" name="bio" defaultValue={profile.bio} className="min-h-[110px] w-full rounded-[12px] border border-border bg-card px-4 py-[14px] text-[15px] text-ink outline-none focus:border-accent" />
               </div>
 
               <div>
-                <label htmlFor="location" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">Location</label>
-                <input id="location" name="location" defaultValue={profile.location || ''} className="w-full rounded-[12px] border border-border bg-card px-4 py-[14px] text-[15px] text-[#1A1814] outline-none focus:border-[#B8541F]" />
+                <label htmlFor="location" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.08em] text-muted">Location</label>
+                <input id="location" name="location" defaultValue={profile.location || ''} className="w-full rounded-[12px] border border-border bg-card px-4 py-[14px] text-[15px] text-ink outline-none focus:border-accent" />
               </div>
 
               <div>
-                <label htmlFor="website" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">Website</label>
-                <input id="website" name="website" defaultValue={profile.website || ''} className="w-full rounded-[12px] border border-border bg-card px-4 py-[14px] text-[15px] text-[#1A1814] outline-none focus:border-[#B8541F]" />
+                <label htmlFor="website" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.08em] text-muted">Website</label>
+                <input id="website" name="website" defaultValue={profile.website || ''} className="w-full rounded-[12px] border border-border bg-card px-4 py-[14px] text-[15px] text-ink outline-none focus:border-accent" />
               </div>
 
               <div>
-                <label htmlFor="isPublic" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">Visibility</label>
-                <select id="isPublic" name="isPublic" defaultValue={profile.isPublic ? 'true' : 'false'} className="w-full rounded-[12px] border border-border bg-card px-4 py-[14px] text-[15px] text-[#1A1814] outline-none focus:border-[#B8541F]">
+                <label htmlFor="isPublic" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.08em] text-muted">Visibility</label>
+                <select id="isPublic" name="isPublic" defaultValue={profile.isPublic ? 'true' : 'false'} className="w-full rounded-[12px] border border-border bg-card px-4 py-[14px] text-[15px] text-ink outline-none focus:border-accent">
                   <option value="true">Public profile</option>
                   <option value="false">Private profile</option>
                 </select>
@@ -110,7 +110,7 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
               <PendingActionButton
                 idle="Save profile"
                 pending="Saving profile..."
-                className="inline-flex w-full items-center justify-center rounded-[12px] bg-[#1A1814] px-5 py-[14px] text-[15px] font-medium text-white transition hover:bg-[#B8541F]"
+                className="inline-flex w-full items-center justify-center rounded-[12px] bg-ink px-5 py-[14px] text-[15px] font-medium text-white transition hover:bg-accent"
               />
             </form>
           </aside>

@@ -14,14 +14,14 @@ export default async function NotificationsPage({ searchParams }: { searchParams
     <ShowcaseShell title="Notifications" subtitle={subtitle} active="/showcase/notifications">
       <div className="max-w-[760px]">
         <div className="mb-4 flex items-center justify-between gap-4">
-          {readState === '1' ? <div className="rounded-[12px] border border-border bg-surface px-4 py-3 text-[13px] text-[#4A453C]">Notification marked as read.</div> : null}
-          {readState === 'all' ? <div className="rounded-[12px] border border-border bg-surface px-4 py-3 text-[13px] text-[#4A453C]">All notifications marked as read.</div> : null}
+          {readState === '1' ? <div className="rounded-[12px] border border-border bg-surface px-4 py-3 text-[13px] text-subtle">Notification marked as read.</div> : null}
+          {readState === 'all' ? <div className="rounded-[12px] border border-border bg-surface px-4 py-3 text-[13px] text-subtle">All notifications marked as read.</div> : null}
           {notifications.length ? (
             <form action={markAllNotificationsReadAction} className="ml-auto">
               <PendingActionButton
                 idle="Mark all read"
                 pending="Marking all..."
-                className="rounded-[10px] border border-border bg-card px-4 py-[9px] text-[13px] font-medium text-[#4A453C] transition hover:bg-[#1A1814] hover:text-white"
+                className="rounded-[10px] border border-border bg-card px-4 py-[9px] text-[13px] font-medium text-subtle transition hover:bg-ink hover:text-white"
               />
             </form>
           ) : null}

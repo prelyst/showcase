@@ -8,7 +8,7 @@ export default async function MonitorPage() {
   return (
     <ShowcaseShell title="Publish monitor" subtitle={monitor.lanes.length ? `Live · ${monitor.progressLabel} lanes complete` : 'No active jobs'} active="/showcase/monitor">
       <div className="max-w-[900px]">
-        <div className="mb-7 rounded-[16px] bg-[#1A1814] p-7 text-white">
+        <div className="mb-7 rounded-[16px] bg-ink p-7 text-white">
           <div className="mb-[14px] font-serif text-[22px] italic leading-[1.4]">{monitor.heroBody}</div>
           <div className="flex flex-wrap items-center justify-between gap-4 font-mono text-[11px] uppercase tracking-[0.05em] opacity-70">
             <span>{monitor.heroMeta}</span>

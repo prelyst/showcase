@@ -12,15 +12,15 @@ export default async function DiscoverPage() {
           <input
             type="text"
             placeholder="Search posts, creators, hashtags…"
-            className="w-full rounded-[10px] border border-border bg-surface px-[18px] py-[14px] text-[15px] text-[#1A1814] outline-none placeholder:text-[#85806F]"
+            className="w-full rounded-[10px] border border-border bg-surface px-[18px] py-[14px] text-[15px] text-ink outline-none placeholder:text-muted"
           />
         </div>
 
         <div className="mb-4 flex items-end justify-between">
-          <div className="font-serif text-[22px] tracking-[-0.01em] text-[#1A1814]">
-            Trending <em className="italic text-[#B8541F]">hashtags</em>
+          <div className="font-serif text-[22px] tracking-[-0.01em] text-ink">
+            Trending <em className="italic text-accent">hashtags</em>
           </div>
-          <button className="font-mono text-[11px] uppercase tracking-[0.05em] text-[#85806F]">View all →</button>
+          <button className="font-mono text-[11px] uppercase tracking-[0.05em] text-muted">View all →</button>
         </div>
         {trending.length ? (
           <div className="grid gap-[14px] md:grid-cols-2 xl:grid-cols-4">
@@ -33,10 +33,10 @@ export default async function DiscoverPage() {
         )}
 
         <div className="mb-4 mt-8 flex items-end justify-between">
-          <div className="font-serif text-[22px] tracking-[-0.01em] text-[#1A1814]">
-            Featured <em className="italic text-[#B8541F]">creators</em>
+          <div className="font-serif text-[22px] tracking-[-0.01em] text-ink">
+            Featured <em className="italic text-accent">creators</em>
           </div>
-          <button className="font-mono text-[11px] uppercase tracking-[0.05em] text-[#85806F]">View all →</button>
+          <button className="font-mono text-[11px] uppercase tracking-[0.05em] text-muted">View all →</button>
         </div>
         {creators.length ? (
           <div className="grid gap-[14px] md:grid-cols-2 xl:grid-cols-4">

@@ -15,7 +15,7 @@ export function AuthCard({
   footer?: ReactNode;
 }) {
   return (
-    <main className="min-h-screen bg-surface text-[#1A1814]">
+    <main className="min-h-screen bg-surface text-ink">
       <div
         className="pointer-events-none fixed inset-0 z-[1] opacity-30"
         style={{
@@ -27,21 +27,21 @@ export function AuthCard({
       <div className="relative z-[2] mx-auto flex min-h-screen max-w-[1120px] items-center px-5 py-10 md:px-8">
         <div className="grid w-full gap-8 lg:grid-cols-[1.1fr_520px] lg:items-center">
           <section className="hidden lg:block">
-            <Link href="/" className="mb-8 inline-flex items-center gap-2 font-serif text-[24px] tracking-[-0.02em] text-[#1A1814]">
-              <span className="h-[10px] w-[10px] rotate-45 rounded-[2px] bg-[#B8541F]" />
+            <Link href="/" className="mb-8 inline-flex items-center gap-2 font-serif text-[24px] tracking-[-0.02em] text-ink">
+              <span className="h-[10px] w-[10px] rotate-45 rounded-[2px] bg-accent" />
               Showcase
             </Link>
             <div className="max-w-[520px]">
-              <div className="mb-4 font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">{eyebrow}</div>
-              <h1 className="mb-4 font-serif text-[48px] leading-[1.05] tracking-[-0.03em] text-[#1A1814]">{title}</h1>
-              <p className="max-w-[460px] text-[16px] leading-[1.65] text-[#4A453C]">{description}</p>
+              <div className="mb-4 font-mono text-[11px] uppercase tracking-[0.08em] text-muted">{eyebrow}</div>
+              <h1 className="mb-4 font-serif text-[48px] leading-[1.05] tracking-[-0.03em] text-ink">{title}</h1>
+              <p className="max-w-[460px] text-[16px] leading-[1.65] text-subtle">{description}</p>
             </div>
           </section>
 
           <section className="overflow-hidden rounded-[24px] border border-border bg-card shadow-[0_18px_60px_rgba(26,24,20,0.08)]">
             <div className="border-b border-divider px-6 py-5 md:hidden">
-              <Link href="/" className="inline-flex items-center gap-2 font-serif text-[22px] tracking-[-0.02em] text-[#1A1814]">
-                <span className="h-[10px] w-[10px] rotate-45 rounded-[2px] bg-[#B8541F]" />
+              <Link href="/" className="inline-flex items-center gap-2 font-serif text-[22px] tracking-[-0.02em] text-ink">
+                <span className="h-[10px] w-[10px] rotate-45 rounded-[2px] bg-accent" />
                 Showcase
               </Link>
             </div>

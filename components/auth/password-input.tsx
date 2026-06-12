@@ -22,12 +22,12 @@ export function PasswordInput({ id, name, placeholder, autoComplete, defaultValu
         placeholder={placeholder}
         autoComplete={autoComplete}
         defaultValue={defaultValue}
-        className="w-full rounded-[12px] border border-border bg-card px-4 py-[14px] pr-12 text-[15px] text-[#1A1814] outline-none placeholder:text-[#85806F] focus:border-[#B8541F]"
+        className="w-full rounded-[12px] border border-border bg-card px-4 py-[14px] pr-12 text-[15px] text-ink outline-none placeholder:text-muted focus:border-accent"
       />
       <button
         type="button"
         onClick={() => setShowPassword(!showPassword)}
-        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#85806F] hover:text-[#1A1814] transition-colors"
+        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-ink transition-colors"
         aria-label={showPassword ? 'Hide password' : 'Show password'}
       >
         {showPassword ? (

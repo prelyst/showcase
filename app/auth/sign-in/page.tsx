@@ -15,40 +15,40 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
   return (
     <AuthCard
       eyebrow="Phase 3A · auth"
-      title={<>A quieter place to <em className="italic text-[#B8541F]">publish</em>.</>}
+      title={<>A quieter place to <em className="italic text-accent">publish</em>.</>}
       description="Sign in to continue into your Showcase workspace. The auth flow stays inside the product tone while now using real Supabase session exchange."
       footer={
-        <div className="flex flex-wrap items-center justify-between gap-3 text-[13px] text-[#4A453C]">
+        <div className="flex flex-wrap items-center justify-between gap-3 text-[13px] text-subtle">
           <span>Need the public site instead?</span>
-          <Link href="/" className="font-medium text-[#B8541F] hover:text-[#1A1814]">
+          <Link href="/" className="font-medium text-accent hover:text-ink">
             Back to homepage
           </Link>
         </div>
       }
     >
       <div className="mb-6 md:hidden">
-        <div className="mb-2 font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">Phase 3A · auth</div>
-        <h1 className="mb-2 font-serif text-[34px] leading-[1.08] tracking-[-0.03em] text-[#1A1814]">
-          A quieter place to <em className="italic text-[#B8541F]">publish</em>.
+        <div className="mb-2 font-mono text-[11px] uppercase tracking-[0.08em] text-muted">Phase 3A · auth</div>
+        <h1 className="mb-2 font-serif text-[34px] leading-[1.08] tracking-[-0.03em] text-ink">
+          A quieter place to <em className="italic text-accent">publish</em>.
         </h1>
-        <p className="text-[14px] leading-[1.6] text-[#4A453C]">Sign in to continue into your Showcase workspace.</p>
+        <p className="text-[14px] leading-[1.6] text-subtle">Sign in to continue into your Showcase workspace.</p>
       </div>
 
       <div className="mb-5 rounded-[16px] border border-divider bg-surface p-4">
-        <div className="mb-1 font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">Current auth mode</div>
-        <div className="font-serif text-[22px] italic text-[#1A1814]">Supabase session exchange</div>
-        <div className="mt-2 text-[13px] leading-[1.55] text-[#4A453C]">
+        <div className="mb-1 font-mono text-[11px] uppercase tracking-[0.08em] text-muted">Current auth mode</div>
+        <div className="font-serif text-[22px] italic text-ink">Supabase session exchange</div>
+        <div className="mt-2 text-[13px] leading-[1.55] text-subtle">
           The visual language stays in Showcase, but the session path now expects real Supabase Auth credentials and stores a real authenticated session.
         </div>
       </div>
 
-      {!configured ? <div className="mb-4 rounded-[12px] border border-[#F2DCD1] bg-[#FBF1EC] px-4 py-3 text-[13px] text-[#A0381F]">Supabase auth is not configured yet. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY first.</div> : null}
-      {signedOut ? <div className="mb-4 rounded-[12px] border border-border bg-surface px-4 py-3 text-[13px] text-[#4A453C]">You were signed out.</div> : null}
-      {errorMessage ? <div className="mb-4 rounded-[12px] border border-[#F2DCD1] bg-[#FBF1EC] px-4 py-3 text-[13px] text-[#A0381F]">{errorMessage}</div> : null}
+      {!configured ? <div className="mb-4 rounded-[12px] border border-danger-tint bg-accent-tint px-4 py-3 text-[13px] text-danger">Supabase auth is not configured yet. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY first.</div> : null}
+      {signedOut ? <div className="mb-4 rounded-[12px] border border-border bg-surface px-4 py-3 text-[13px] text-subtle">You were signed out.</div> : null}
+      {errorMessage ? <div className="mb-4 rounded-[12px] border border-danger-tint bg-accent-tint px-4 py-3 text-[13px] text-danger">{errorMessage}</div> : null}
 
       <form action={signInAction} className="space-y-4">
         <div>
-          <label htmlFor="email" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">
+          <label htmlFor="email" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.08em] text-muted">
             Email
           </label>
           <input
@@ -57,12 +57,12 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
             type="email"
             placeholder="you@example.com"
             autoComplete="email"
-            className="w-full rounded-[12px] border border-border bg-card px-4 py-[14px] text-[15px] text-[#1A1814] outline-none placeholder:text-[#85806F] focus:border-[#B8541F]"
+            className="w-full rounded-[12px] border border-border bg-card px-4 py-[14px] text-[15px] text-ink outline-none placeholder:text-muted focus:border-accent"
           />
         </div>
 
         <div>
-          <label htmlFor="password" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">
+          <label htmlFor="password" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.08em] text-muted">
             Password
           </label>
           <PasswordInput
@@ -71,7 +71,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
             placeholder="Enter your password"
             autoComplete="current-password"
           />
-          <Link href="/auth/forgot-password" className="mt-2 inline-block text-[13px] text-[#85806F] hover:text-[#B8541F]">
+          <Link href="/auth/forgot-password" className="mt-2 inline-block text-[13px] text-muted hover:text-accent">
             Forgot password?
           </Link>
         </div>
@@ -80,13 +80,13 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
           disabled={!configured}
           idle="Enter Showcase"
           pending="Entering Showcase..."
-          className="inline-flex w-full items-center justify-center rounded-[12px] bg-[#1A1814] px-5 py-[14px] text-[15px] font-medium text-white transition hover:bg-[#B8541F]"
+          className="inline-flex w-full items-center justify-center rounded-[12px] bg-ink px-5 py-[14px] text-[15px] font-medium text-white transition hover:bg-accent"
         />
       </form>
 
-      <div className="mt-5 text-center text-[13px] text-[#85806F]">
+      <div className="mt-5 text-center text-[13px] text-muted">
         No account yet?{' '}
-        <Link href="/auth/sign-up" className="font-medium text-[#B8541F] hover:text-[#1A1814]">
+        <Link href="/auth/sign-up" className="font-medium text-accent hover:text-ink">
           Create one here
         </Link>
       </div>

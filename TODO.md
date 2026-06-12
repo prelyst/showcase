@@ -27,12 +27,12 @@
 
 ## 🔵 Nice-to-Have
 
-- [ ] Dark mode support (currently beige/light theme only)
-- [ ] Loading states on all async page transitions
-- [ ] Skeleton components integrated into pages
-- [ ] PWA / offline support
-- [ ] Rate limiting on auth endpoints
-- [ ] CSP headers
+- [x] Dark mode support — CSS-variable token system + .dark class, no-flash script, header toggle (persists to localStorage, respects system pref)
+- [x] Loading states on all async page transitions — per-route loading.tsx for feed/discover/profile/settings/monitor/notifications
+- [x] Skeleton components integrated into pages — re-themed loading-skeleton.tsx to warm tokens, used across loading routes
+- [x] PWA / offline support — web manifest, icons, service worker (offline fallback + asset caching), SW registration
+- [x] Rate limiting on auth endpoints — fixed-window limiter by IP on sign-in/sign-up
+- [x] CSP headers — full CSP + X-Frame-Options/HSTS/Referrer-Policy/Permissions-Policy in next.config.ts
 - [ ] Automated tests
 
 ## 🚀 Deploy

@@ -2,10 +2,19 @@
 
 import { redirect } from 'next/navigation';
 
+import { limitAuthAttempt } from '@/lib/server/rate-limit';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { signInSchema, signUpSchema } from '@/lib/validators/auth';
 
+const TOO_MANY = (path: string, retry: number) =>
+  `${path}?error=${encodeURIComponent(`Too many attempts. Try again in ${retry}s.`)}`;
+
 export async function signInAction(formData: FormData) {
+  const limit = await limitAuthAttempt('sign-in');
+  if (!limit.success) {
+    redirect(TOO_MANY('/auth/sign-in', limit.retryAfterSeconds));
+  }
+
   const result = signInSchema.safeParse(Object.fromEntries(formData.entries()));
 
   if (!result.success) {
@@ -34,6 +43,11 @@ export async function signInAction(formData: FormData) {
 }
 
 export async function signUpAction(formData: FormData) {
+  const limit = await limitAuthAttempt('sign-up');
+  if (!limit.success) {
+    redirect(TOO_MANY('/auth/sign-up', limit.retryAfterSeconds));
+  }
+
   const result = signUpSchema.safeParse(Object.fromEntries(formData.entries()));
 
   if (!result.success) {

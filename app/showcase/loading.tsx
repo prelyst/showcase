@@ -40,13 +40,13 @@ function FeedCard() {
 export default function ShowcaseLoading() {
   return (
     <ShowcaseShell
-      title={<><span>Loading </span><em className="font-light italic text-[#B8541F]">/ content</em></>}
+      title={<><span>Loading </span><em className="font-light italic text-accent">/ content</em></>}
       loading
     >
       <div className="grid max-w-[1100px] gap-10 xl:grid-cols-[1fr_320px] animate-pulse">
         <div>
           <div className="mb-6 flex border-b border-border">
-            <div className="-mb-px h-10 w-24 border-b-2 border-[#B8541F] opacity-40" />
+            <div className="-mb-px h-10 w-24 border-b-2 border-accent opacity-40" />
             <div className="ml-4 h-10 w-20" />
             <div className="ml-4 h-10 w-24" />
           </div>

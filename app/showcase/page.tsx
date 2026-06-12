@@ -12,12 +12,12 @@ const pages = [
 
 export default function ShowcaseIndexPage() {
   return (
-    <main className="min-h-screen bg-surface px-6 py-16 text-[#1A1814] md:px-10">
+    <main className="min-h-screen bg-surface px-6 py-16 text-ink md:px-10">
       <div className="mx-auto max-w-5xl">
         <div className="mb-10">
-          <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-[#B8541F]">Showcase app</p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-accent">Showcase app</p>
           <h1 className="mt-4 font-serif text-5xl tracking-[-0.03em] md:text-6xl">App routes</h1>
-          <p className="mt-4 max-w-2xl text-lg leading-8 text-[#4A453C]">
+          <p className="mt-4 max-w-2xl text-lg leading-8 text-subtle">
             We are converting the app prototype into real pages. Start from any screen below.
           </p>
         </div>
@@ -27,10 +27,10 @@ export default function ShowcaseIndexPage() {
             <Link
               key={page.href}
               href={page.href}
-              className="rounded-[20px] border border-border bg-card p-6 transition hover:-translate-y-0.5 hover:border-[#85806F]"
+              className="rounded-[20px] border border-border bg-card p-6 transition hover:-translate-y-0.5 hover:border-muted"
             >
-              <div className="font-serif text-2xl tracking-[-0.02em] text-[#1A1814]">{page.label}</div>
-              <div className="mt-3 font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">
+              <div className="font-serif text-2xl tracking-[-0.02em] text-ink">{page.label}</div>
+              <div className="mt-3 font-mono text-[11px] uppercase tracking-[0.08em] text-muted">
                 Open page →
               </div>
             </Link>
