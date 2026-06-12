@@ -14,6 +14,16 @@ export async function getNotificationsForUser(userId: string) {
   });
 }
 
+export async function getUnreadNotificationCount(userId: string) {
+  if (!prisma) {
+    return 0;
+  }
+
+  return prisma.notification.count({
+    where: { userId, readAt: null },
+  });
+}
+
 export async function createNotification(input: {
   userId: string;
   type: string;

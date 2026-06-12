@@ -3,7 +3,10 @@ import { ReactNode } from 'react';
 
 import { signOutAction } from '@/app/auth/sign-in/actions';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { getUnreadNotificationCount } from '@/lib/repositories/notification-repository';
 import { getCurrentUserView } from '@/lib/server/current-user';
+
+const NOTIFICATIONS_HREF = '/showcase/notifications';
 
 const browseNav = [
   {
@@ -28,7 +31,6 @@ const browseNav = [
   {
     href: '/showcase/notifications',
     label: 'Notifications',
-    badge: '3',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
         <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
@@ -70,7 +72,16 @@ const yoursNav = [
   },
 ];
 
-function NavLink({ href, label, icon, active, badge }: { href: string; label: string; icon: ReactNode; active?: boolean; badge?: string }) {
+function UnreadDot({ onDark = false }: { onDark?: boolean }) {
+  return (
+    <span className="relative ml-auto flex h-[9px] w-[9px]" aria-label="Unread notifications" role="status">
+      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60 motion-reduce:hidden" />
+      <span className={`relative inline-flex h-[9px] w-[9px] rounded-full bg-accent ring-2 ${onDark ? 'ring-ink' : 'ring-card'}`} />
+    </span>
+  );
+}
+
+function NavLink({ href, label, icon, active, dot }: { href: string; label: string; icon: ReactNode; active?: boolean; dot?: boolean }) {
   return (
     <Link
       href={href}
@@ -84,11 +95,7 @@ function NavLink({ href, label, icon, active, badge }: { href: string; label: st
         {icon}
       </span>
       <span>{label}</span>
-      {badge ? (
-        <span className="ml-auto rounded-full bg-accent px-[7px] py-[2px] font-mono text-[10px] font-semibold text-white shadow-[0_0_0_3px_rgba(184,84,31,0.16)]">
-          {badge}
-        </span>
-      ) : null}
+      {dot ? <UnreadDot onDark={active} /> : null}
     </Link>
   );
 }
@@ -99,6 +106,8 @@ export async function ShowcaseShell({ title, subtitle, active, children, loading
   if (!currentUser) {
     return null;
   }
+
+  const hasUnread = (await getUnreadNotificationCount(currentUser.id)) > 0;
 
   return (
     <main className="min-h-screen bg-transparent text-ink">
@@ -120,7 +129,12 @@ export async function ShowcaseShell({ title, subtitle, active, children, loading
             <div className="mb-[10px] px-[10px] font-mono text-[10px] uppercase tracking-[0.08em] text-muted">Browse</div>
             <div className="space-y-[2px]">
               {browseNav.map((item) => (
-                <NavLink key={item.href} {...item} active={!loading && active === item.href} />
+                <NavLink
+                  key={item.href}
+                  {...item}
+                  active={!loading && active === item.href}
+                  dot={item.href === NOTIFICATIONS_HREF && hasUnread}
+                />
               ))}
             </div>
           </div>
