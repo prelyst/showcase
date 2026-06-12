@@ -42,12 +42,12 @@ const faqItems = [
 ];
 
 const platforms = [
-  { label: 'X', short: 'X', className: 'bg-[#1A1814] text-[#FBF9F4]' },
+  { label: 'X', short: 'X', className: 'bg-[#1A1814] text-white' },
   { label: 'LinkedIn', short: 'in', className: 'bg-[#0A66C2] text-white' },
   { label: 'Bluesky', short: 'B', className: 'bg-[#1185FE] text-white' },
   { label: 'Reddit', short: 'r', className: 'bg-[#FF4500] text-white' },
   { label: 'YouTube', short: '▶', className: 'bg-[#FF0033] text-white' },
-  { label: 'Threads', short: '@', className: 'bg-[#1A1814] text-[#FBF9F4] border border-[#FBF9F4]' },
+  { label: 'Threads', short: '@', className: 'bg-[#1A1814] text-white border border-card' },
   { label: 'Instagram', short: 'IG', className: 'bg-[linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)] text-white', soon: true },
   { label: 'TikTok', short: 'TT', className: 'bg-black text-white border border-cyan-300', soon: true },
 ];
@@ -69,7 +69,7 @@ export default function Home() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-[#F4F1EA] font-sans text-[#1A1814]">
+    <main className="min-h-screen overflow-x-hidden bg-surface font-sans text-[#1A1814]">
       <div
         className="pointer-events-none fixed inset-0 z-[1] opacity-30"
         style={{
@@ -80,7 +80,7 @@ export default function Home() {
 
       <div className="relative z-[2]">
         <nav className="fixed left-1/2 top-5 z-[100] w-[calc(100%-40px)] max-w-[1100px] -translate-x-1/2">
-          <div className="flex items-center justify-between rounded-full border border-[#D9D3C4] bg-[rgba(251,249,244,0.82)] px-[22px] py-[14px] shadow-[0_10px_40px_-20px_rgba(26,24,20,0.15)] backdrop-blur-[16px]">
+          <div className="flex items-center justify-between rounded-full border border-border bg-[rgba(251,249,244,0.82)] px-[22px] py-[14px] shadow-[0_10px_40px_-20px_rgba(26,24,20,0.15)] backdrop-blur-[16px]">
             <a href="#" className="flex items-center gap-2 font-serif text-[20px] font-medium tracking-[-0.02em]">
               <span className="h-[10px] w-[10px] rotate-45 rounded-[2px] bg-[#B8541F]" />
               Showcase
@@ -95,7 +95,7 @@ export default function Home() {
               <a href="#" className="hidden rounded-full px-[14px] py-2 text-[14px] font-medium text-[#4A453C] hover:text-[#1A1814] sm:inline-flex">
                 Sign in
               </a>
-              <Link href="/showcase/feed" className="inline-flex items-center gap-[6px] rounded-full bg-[#1A1814] px-[18px] py-[9px] text-[14px] font-medium text-[#F4F1EA] transition hover:-translate-y-px hover:bg-[#B8541F]">
+              <Link href="/showcase/feed" className="inline-flex items-center gap-[6px] rounded-full bg-[#1A1814] px-[18px] py-[9px] text-[14px] font-medium text-white transition hover:-translate-y-px hover:bg-[#B8541F]">
                 Open app →
               </Link>
             </div>
@@ -106,7 +106,7 @@ export default function Home() {
           <div className="pointer-events-none absolute right-[-150px] top-[20%] h-[600px] w-[600px] bg-[radial-gradient(circle,rgba(245,229,211,1)_0%,transparent_65%)] opacity-55" />
           <div className="pointer-events-none absolute bottom-[10%] left-[-200px] h-[500px] w-[500px] bg-[radial-gradient(circle,rgba(184,84,31,0.08)_0%,transparent_65%)]" />
           <div className="relative z-[2] mx-auto max-w-[1100px]">
-            <div className="inline-flex items-center gap-[10px] rounded-full border border-[#D9D3C4] bg-[#FBF9F4] px-[14px] py-[7px] font-mono text-[11px] uppercase tracking-[0.08em] text-[#4A453C]">
+            <div className="inline-flex items-center gap-[10px] rounded-full border border-border bg-card px-[14px] py-[7px] font-mono text-[11px] uppercase tracking-[0.08em] text-[#4A453C]">
               <span className="h-[6px] w-[6px] rounded-full bg-[#B8541F]" />
               Now in private beta · 1,200 creators
             </div>
@@ -119,11 +119,11 @@ export default function Home() {
               One composer. Eight platforms. Per-platform previews. Real failure recovery. Your entire archive in one URL you actually own.
             </p>
             <div className="mb-16 flex flex-wrap items-center justify-center gap-[10px] max-md:flex-col">
-              <a href="#" className="inline-flex items-center gap-2 rounded-full bg-[#B8541F] px-[26px] py-[14px] text-[15px] font-medium text-[#F4F1EA] transition hover:-translate-y-px hover:bg-[#1A1814] max-md:w-full max-md:justify-center">
+              <a href="#" className="inline-flex items-center gap-2 rounded-full bg-[#B8541F] px-[26px] py-[14px] text-[15px] font-medium text-white transition hover:-translate-y-px hover:bg-[#1A1814] max-md:w-full max-md:justify-center">
                 Start publishing — it&apos;s free
                 <span>→</span>
               </a>
-              <Link href="/showcase/feed" className="inline-flex items-center gap-2 rounded-full border border-[#D9D3C4] bg-[#FBF9F4] px-5 py-[14px] text-[15px] font-medium text-[#1A1814] transition hover:border-[#85806F] hover:bg-[#F4F1EA] max-md:w-full max-md:justify-center">
+              <Link href="/showcase/feed" className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-[14px] text-[15px] font-medium text-[#1A1814] transition hover:border-[#85806F] hover:bg-panel max-md:w-full max-md:justify-center">
                 See the app
               </Link>
             </div>
@@ -160,42 +160,42 @@ export default function Home() {
               <p className="mx-auto mt-5 max-w-[580px] text-[18px] leading-[1.55] text-[#4A453C]">Write your post. Watch it render on every platform. Publish everywhere at once — and know exactly what happens.</p>
             </div>
 
-            <div className="mx-auto max-w-[1040px] rounded-[24px] border border-[#D9D3C4] bg-[#FBF9F4] p-7 shadow-[0_30px_80px_-40px_rgba(26,24,20,0.2),inset_0_1px_0_rgba(255,255,255,0.8)] max-md:p-[18px]">
-              <div className="mb-[22px] flex items-center justify-between border-b border-dashed border-[#D9D3C4] pb-[18px]">
+            <div className="mx-auto max-w-[1040px] rounded-[24px] border border-border bg-card p-7 shadow-[0_30px_80px_-40px_rgba(26,24,20,0.2),inset_0_1px_0_rgba(255,255,255,0.8)] max-md:p-[18px]">
+              <div className="mb-[22px] flex items-center justify-between border-b border-dashed border-border pb-[18px]">
                 <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">showcase.app · live composer</div>
                 <div className="font-mono text-[10px] uppercase tracking-[0.08em] text-[#85806F]"><span className="mr-[6px] inline-block h-2 w-2 rounded-full bg-[#5A6B3A] shadow-[0_0_0_3px_#E5E8D4]" />Publishing</div>
               </div>
 
               <div className="grid gap-6 lg:grid-cols-[1.1fr_1fr]">
-                <div className="rounded-[14px] border border-[#D9D3C4] bg-[#F4F1EA] p-5">
+                <div className="rounded-[14px] border border-border bg-surface p-5">
                   <div className="mb-[14px] font-mono text-[10px] uppercase tracking-[0.08em] text-[#85806F]">Draft · 247 / 3000</div>
                   <div className="mb-[18px] font-serif text-[19px] leading-[1.45] text-[#1A1814]">
                     The thing I keep coming back to: most social platforms reward volume. The feeds that actually matter to me reward intention. <span className="font-medium italic text-[#B8541F]">#building</span>
                   </div>
-                  <div className="flex flex-wrap gap-[6px] border-t border-[#E8E3D4] pt-[14px] text-[12px] font-medium">
-                    <div className="flex items-center gap-[6px] rounded-full border border-[#1A1814] bg-[#1A1814] px-[10px] py-[5px] text-[#F4F1EA]"><div className="grid h-4 w-4 place-items-center rounded-[4px] bg-[#B8541F] font-mono text-[8px] font-bold text-[#F4F1EA] outline outline-1 outline-[#F4F1EA]">S</div>Showcase</div>
-                    <div className="flex items-center gap-[6px] rounded-full border border-[#1A1814] bg-[#1A1814] px-[10px] py-[5px] text-[#F4F1EA]"><div className="grid h-4 w-4 place-items-center rounded-[4px] bg-[#1A1814] font-mono text-[8px] font-bold text-[#F4F1EA] outline outline-1 outline-[#F4F1EA]">X</div>X</div>
-                    <div className="flex items-center gap-[6px] rounded-full border border-[#1A1814] bg-[#1A1814] px-[10px] py-[5px] text-[#F4F1EA]"><div className="grid h-4 w-4 place-items-center rounded-[4px] bg-[#0A66C2] font-mono text-[8px] font-bold text-white outline outline-1 outline-[#F4F1EA]">in</div>LinkedIn</div>
-                    <div className="flex items-center gap-[6px] rounded-full border border-[#1A1814] bg-[#1A1814] px-[10px] py-[5px] text-[#F4F1EA]"><div className="grid h-4 w-4 place-items-center rounded-[4px] bg-[#1185FE] font-mono text-[8px] font-bold text-white outline outline-1 outline-[#F4F1EA]">B</div>Bluesky</div>
-                    <div className="flex items-center gap-[6px] rounded-full border border-[#D9D3C4] bg-[#FBF9F4] px-[10px] py-[5px] text-[#1A1814]"><div className="grid h-4 w-4 place-items-center rounded-[4px] bg-[#FF4500] font-mono text-[8px] font-bold text-white">r</div>Reddit</div>
-                    <div className="flex items-center gap-[6px] rounded-full border border-[#D9D3C4] bg-[#FBF9F4] px-[10px] py-[5px] text-[#1A1814]"><div className="grid h-4 w-4 place-items-center rounded-[4px] bg-[#1A1814] font-mono text-[8px] font-bold text-[#F4F1EA]">@</div>Threads</div>
+                  <div className="flex flex-wrap gap-[6px] border-t border-divider pt-[14px] text-[12px] font-medium">
+                    <div className="flex items-center gap-[6px] rounded-full border border-[#1A1814] bg-[#1A1814] px-[10px] py-[5px] text-white"><div className="grid h-4 w-4 place-items-center rounded-[4px] bg-[#B8541F] font-mono text-[8px] font-bold text-white outline outline-1 outline-white">S</div>Showcase</div>
+                    <div className="flex items-center gap-[6px] rounded-full border border-[#1A1814] bg-[#1A1814] px-[10px] py-[5px] text-white"><div className="grid h-4 w-4 place-items-center rounded-[4px] bg-[#1A1814] font-mono text-[8px] font-bold text-white outline outline-1 outline-white">X</div>X</div>
+                    <div className="flex items-center gap-[6px] rounded-full border border-[#1A1814] bg-[#1A1814] px-[10px] py-[5px] text-white"><div className="grid h-4 w-4 place-items-center rounded-[4px] bg-[#0A66C2] font-mono text-[8px] font-bold text-white outline outline-1 outline-white">in</div>LinkedIn</div>
+                    <div className="flex items-center gap-[6px] rounded-full border border-[#1A1814] bg-[#1A1814] px-[10px] py-[5px] text-white"><div className="grid h-4 w-4 place-items-center rounded-[4px] bg-[#1185FE] font-mono text-[8px] font-bold text-white outline outline-1 outline-white">B</div>Bluesky</div>
+                    <div className="flex items-center gap-[6px] rounded-full border border-border bg-card px-[10px] py-[5px] text-[#1A1814]"><div className="grid h-4 w-4 place-items-center rounded-[4px] bg-[#FF4500] font-mono text-[8px] font-bold text-white">r</div>Reddit</div>
+                    <div className="flex items-center gap-[6px] rounded-full border border-border bg-card px-[10px] py-[5px] text-[#1A1814]"><div className="grid h-4 w-4 place-items-center rounded-[4px] bg-[#1A1814] font-mono text-[8px] font-bold text-white">@</div>Threads</div>
                   </div>
                 </div>
 
-                <div className="rounded-[14px] border border-[#D9D3C4] bg-[#F4F1EA] p-[18px]">
+                <div className="rounded-[14px] border border-border bg-surface p-[18px]">
                   <div className="mb-[10px] flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.08em] text-[#85806F]">
                     <span>Publish monitor</span>
                     <span className="text-[#5A6B3A]">4 / 6</span>
                   </div>
                   {[
-                    ['S', 'Showcase', 'bg-[#B8541F] text-[#F4F1EA]', '0.3s', 'bg-[#E5E8D4] text-[#5A6B3A]'],
-                    ['X', 'X', 'bg-[#1A1814] text-[#FBF9F4]', '1.2s', 'bg-[#E5E8D4] text-[#5A6B3A]'],
+                    ['S', 'Showcase', 'bg-[#B8541F] text-white', '0.3s', 'bg-[#E5E8D4] text-[#5A6B3A]'],
+                    ['X', 'X', 'bg-[#1A1814] text-white', '1.2s', 'bg-[#E5E8D4] text-[#5A6B3A]'],
                     ['in', 'LinkedIn', 'bg-[#0A66C2] text-white', '2.1s', 'bg-[#E5E8D4] text-[#5A6B3A]'],
                     ['B', 'Bluesky', 'bg-[#1185FE] text-white', '0.8s', 'bg-[#E5E8D4] text-[#5A6B3A]'],
                     ['r', 'Reddit', 'bg-[#FF4500] text-white', 'uploading', 'bg-[#F4E8C8] text-[#A67C1E]'],
                     ['▶', 'YouTube', 'bg-[#FF0033] text-white', '60s cap', 'bg-[#F2DCD1] text-[#A0381F]'],
                   ].map(([short, label, tone, status, pill]) => (
-                    <div key={label} className="flex items-center gap-3 border-b border-[#E8E3D4] py-[10px] text-[13px] last:border-b-0">
+                    <div key={label} className="flex items-center gap-3 border-b border-divider py-[10px] text-[13px] last:border-b-0">
                       <div className={`grid h-[22px] w-[22px] place-items-center rounded-[5px] font-mono text-[10px] font-bold ${tone}`}>{short}</div>
                       <div className="flex-1 font-medium text-[#1A1814]">{label}</div>
                       <span className={`rounded-full px-2 py-[3px] font-mono text-[9px] uppercase tracking-[0.05em] ${pill}`}>{status}</span>
@@ -208,7 +208,7 @@ export default function Home() {
         </section>
 
         <section className="px-8 py-20 max-md:px-5">
-          <div className="mx-auto max-w-[960px] border-y border-[#D9D3C4]">
+          <div className="mx-auto max-w-[960px] border-y border-border">
             <div className="grid md:grid-cols-4">
               {[
                 ['8', 'Platforms'],
@@ -216,7 +216,7 @@ export default function Home() {
                 ['38.7k', 'Posts this week'],
                 ['95%', 'Publish success'],
               ].map(([value, label], index) => (
-                <div key={label} className={`border-[#E8E3D4] px-8 py-8 text-center ${index < 3 ? 'md:border-r' : ''} ${index < 3 ? 'max-md:border-b' : ''}`}>
+                <div key={label} className={`border-divider px-8 py-8 text-center ${index < 3 ? 'md:border-r' : ''} ${index < 3 ? 'max-md:border-b' : ''}`}>
                   <div className="font-serif text-[48px] leading-none tracking-[-0.03em] text-[#1A1814]">{value.includes('.') ? <>{value.split('.')[0]}<em className="font-light italic text-[#B8541F]">.{value.split('.')[1]}</em></> : value.includes('%') ? <><em className="font-light italic text-[#B8541F]">{value.replace('%', '')}</em>%</> : <em className="font-light italic text-[#B8541F]">{value}</em>}</div>
                   <div className="mt-[10px] font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">{label}</div>
                 </div>
@@ -235,7 +235,7 @@ export default function Home() {
 
             <div className="grid gap-6 lg:grid-cols-3">
               {featureCards.map(([title, description]) => (
-                <div key={title} className="rounded-[20px] border border-[#D9D3C4] bg-[#FBF9F4] p-8 transition hover:-translate-y-[3px] hover:border-[#85806F]">
+                <div key={title} className="rounded-[20px] border border-border bg-card p-8 transition hover:-translate-y-[3px] hover:border-[#85806F]">
                   <div className="mb-5 grid h-11 w-11 place-items-center rounded-[12px] bg-[#F5E5D3] text-[#B8541F]"><div className="h-3 w-3 rotate-45 rounded-[2px] bg-[#B8541F]" /></div>
                   <div className="font-serif text-[23px] font-medium leading-[1.2] tracking-[-0.01em]">{title}</div>
                   <div className="mt-[10px] text-[14px] leading-[1.55] text-[#4A453C]">{description}</div>
@@ -257,7 +257,7 @@ export default function Home() {
                   'For You tab — surfaces creators whose hashtags overlap with yours',
                   'Quiet hours — mute the feed on your schedule, not the platform\'s',
                 ].map((item) => (
-                  <li key={item} className="flex gap-3 border-t border-[#E8E3D4] py-[14px] text-[15px] text-[#1A1814] last:border-b">
+                  <li key={item} className="flex gap-3 border-t border-divider py-[14px] text-[15px] text-[#1A1814] last:border-b">
                     <span className="mt-[9px] h-[6px] w-[6px] shrink-0 rounded-full bg-[#B8541F]" />
                     <span>{item}</span>
                   </li>
@@ -265,10 +265,10 @@ export default function Home() {
               </ul>
             </div>
 
-            <div className="rounded-[20px] border border-[#D9D3C4] bg-[#FBF9F4] p-6 shadow-[0_30px_70px_-40px_rgba(26,24,20,0.2)]">
-              <div className="mb-5 flex items-center gap-2 border-b border-dashed border-[#D9D3C4] pb-4">
-                <div className="flex gap-[5px]"><span className="h-[10px] w-[10px] rounded-full bg-[#D9D3C4]" /><span className="h-[10px] w-[10px] rounded-full bg-[#D9D3C4]" /><span className="h-[10px] w-[10px] rounded-full bg-[#D9D3C4]" /></div>
-                <div className="ml-[14px] rounded-[7px] border border-[#E8E3D4] bg-[#F4F1EA] px-[10px] py-[5px] font-mono text-[12px] text-[#85806F]">showcase.app/feed</div>
+            <div className="rounded-[20px] border border-border bg-card p-6 shadow-[0_30px_70px_-40px_rgba(26,24,20,0.2)]">
+              <div className="mb-5 flex items-center gap-2 border-b border-dashed border-border pb-4">
+                <div className="flex gap-[5px]"><span className="h-[10px] w-[10px] rounded-full bg-track" /><span className="h-[10px] w-[10px] rounded-full bg-track" /><span className="h-[10px] w-[10px] rounded-full bg-track" /></div>
+                <div className="ml-[14px] rounded-[7px] border border-divider bg-surface px-[10px] py-[5px] font-mono text-[12px] text-[#85806F]">showcase.app/feed</div>
               </div>
               <div className="space-y-3">
                 {([
@@ -276,20 +276,20 @@ export default function Home() {
                   ['PR', 'avatar-c', 'Priya Rajan', '@priya.writes · 6h', 'An underrated kind of privilege: being able to post less. #creator', ['X', 'B', '@']],
                   ['DW', 'avatar-d', 'David Wen', '@dwen · 11h', 'Three-day experiment: I only posted the things I wrote in a notebook first. My engagement went down. My satisfaction went up. Keeping it.', ['X', 'in']],
                 ] as [string, string, string, string, string, string[]][]).map(([initials, avatarClass, name, meta, body, chips]) => (
-                  <div key={name} className="rounded-[12px] border border-[#E8E3D4] bg-[#F4F1EA] p-4">
+                  <div key={name} className="rounded-[12px] border border-divider bg-surface p-4">
                     <div className="mb-[10px] flex items-center gap-[10px]">
-                      <div className={`grid h-9 w-9 place-items-center rounded-full border border-[#D9D3C4] text-[13px] font-semibold ${avatarClass === 'avatar-a' ? 'bg-[#F5E5D3] text-[#B8541F]' : avatarClass === 'avatar-c' ? 'bg-[#DCD4E8] text-[#5A4A78]' : 'bg-[#D4E3E8] text-[#3A5A6B]'}`}>{initials}</div>
+                      <div className={`grid h-9 w-9 place-items-center rounded-full border border-border text-[13px] font-semibold ${avatarClass === 'avatar-a' ? 'bg-[#F5E5D3] text-[#B8541F]' : avatarClass === 'avatar-c' ? 'bg-[#DCD4E8] text-[#5A4A78]' : 'bg-[#D4E3E8] text-[#3A5A6B]'}`}>{initials}</div>
                       <div>
                         <div className="text-[13px] font-medium text-[#1A1814]">{name}</div>
                         <div className="font-mono text-[11px] text-[#85806F]">{meta}</div>
                       </div>
                     </div>
                     <div className="font-serif text-[14px] leading-[1.5] text-[#1A1814]">{body.replace('#design', '').replace('#creator', '')}<span className="font-medium italic text-[#B8541F]">{body.includes('#design') ? '#design' : body.includes('#creator') ? '#creator' : ''}</span></div>
-                    <div className="mt-[10px] flex items-center justify-between border-t border-[#E8E3D4] pt-[10px] font-mono text-[10px] text-[#85806F]">
+                    <div className="mt-[10px] flex items-center justify-between border-t border-divider pt-[10px] font-mono text-[10px] text-[#85806F]">
                       <span>127 likes · 18 comments</span>
                       <div className="flex gap-[3px]">
                         {(chips as string[]).map((chip) => (
-                          <div key={chip} className="grid h-4 w-4 place-items-center rounded-[4px] bg-[#1A1814] font-mono text-[8px] font-bold text-[#FBF9F4]">{chip}</div>
+                          <div key={chip} className="grid h-4 w-4 place-items-center rounded-[4px] bg-[#1A1814] font-mono text-[8px] font-bold text-white">{chip}</div>
                         ))}
                       </div>
                     </div>
@@ -302,23 +302,23 @@ export default function Home() {
 
         <section className="px-8 pb-[40px] pt-[40px] max-md:px-5">
           <div className="mx-auto grid max-w-[1140px] items-center gap-20 lg:grid-cols-[1.1fr_1fr]">
-            <div className="rounded-[20px] border border-[#D9D3C4] bg-[#FBF9F4] p-6 shadow-[0_30px_70px_-40px_rgba(26,24,20,0.2)] max-lg:order-2">
-              <div className="mb-5 flex items-center gap-2 border-b border-dashed border-[#D9D3C4] pb-4">
-                <div className="flex gap-[5px]"><span className="h-[10px] w-[10px] rounded-full bg-[#D9D3C4]" /><span className="h-[10px] w-[10px] rounded-full bg-[#D9D3C4]" /><span className="h-[10px] w-[10px] rounded-full bg-[#D9D3C4]" /></div>
-                <div className="ml-[14px] rounded-[7px] border border-[#E8E3D4] bg-[#F4F1EA] px-[10px] py-[5px] font-mono text-[12px] text-[#85806F]">showcase.app/@mayarivera</div>
+            <div className="rounded-[20px] border border-border bg-card p-6 shadow-[0_30px_70px_-40px_rgba(26,24,20,0.2)] max-lg:order-2">
+              <div className="mb-5 flex items-center gap-2 border-b border-dashed border-border pb-4">
+                <div className="flex gap-[5px]"><span className="h-[10px] w-[10px] rounded-full bg-track" /><span className="h-[10px] w-[10px] rounded-full bg-track" /><span className="h-[10px] w-[10px] rounded-full bg-track" /></div>
+                <div className="ml-[14px] rounded-[7px] border border-divider bg-surface px-[10px] py-[5px] font-mono text-[12px] text-[#85806F]">showcase.app/@mayarivera</div>
               </div>
               <div className="mb-[18px] flex items-center gap-[14px]">
-                <div className="grid h-14 w-14 place-items-center rounded-full border border-[#D9D3C4] bg-[#F5E5D3] font-serif text-[20px] font-medium text-[#B8541F]">MR</div>
+                <div className="grid h-14 w-14 place-items-center rounded-full border border-border bg-[#F5E5D3] font-serif text-[20px] font-medium text-[#B8541F]">MR</div>
                 <div>
                   <div className="font-serif text-[22px] font-medium tracking-[-0.01em]">Maya Rivera</div>
                   <div className="font-mono text-[12px] text-[#85806F]">Writer · 184 posts · 2,847 followers</div>
                 </div>
               </div>
               <div className="mb-[14px] flex gap-[6px] overflow-hidden">
-                <div className="flex items-center gap-1 rounded-full border border-[#1A1814] bg-[#1A1814] px-[10px] py-[5px] text-[11px] font-medium text-[#F4F1EA]">All 184</div>
-                <div className="flex items-center gap-1 rounded-full border border-[#D9D3C4] bg-[#F4F1EA] px-[10px] py-[5px] text-[11px] font-medium text-[#4A453C]"><span className="grid h-4 w-4 place-items-center rounded-[4px] bg-[#B8541F] font-mono text-[8px] font-bold text-[#F4F1EA]">S</span>Showcase</div>
-                <div className="flex items-center gap-1 rounded-full border border-[#D9D3C4] bg-[#F4F1EA] px-[10px] py-[5px] text-[11px] font-medium text-[#4A453C]"><span className="grid h-4 w-4 place-items-center rounded-[4px] bg-[#1A1814] font-mono text-[8px] font-bold text-[#F4F1EA]">X</span>X 172</div>
-                <div className="flex items-center gap-1 rounded-full border border-[#D9D3C4] bg-[#F4F1EA] px-[10px] py-[5px] text-[11px] font-medium text-[#4A453C]"><span className="grid h-4 w-4 place-items-center rounded-[4px] bg-[#0A66C2] font-mono text-[8px] font-bold text-white">in</span>LinkedIn 48</div>
+                <div className="flex items-center gap-1 rounded-full border border-[#1A1814] bg-[#1A1814] px-[10px] py-[5px] text-[11px] font-medium text-white">All 184</div>
+                <div className="flex items-center gap-1 rounded-full border border-border bg-surface px-[10px] py-[5px] text-[11px] font-medium text-[#4A453C]"><span className="grid h-4 w-4 place-items-center rounded-[4px] bg-[#B8541F] font-mono text-[8px] font-bold text-white">S</span>Showcase</div>
+                <div className="flex items-center gap-1 rounded-full border border-border bg-surface px-[10px] py-[5px] text-[11px] font-medium text-[#4A453C]"><span className="grid h-4 w-4 place-items-center rounded-[4px] bg-[#1A1814] font-mono text-[8px] font-bold text-white">X</span>X 172</div>
+                <div className="flex items-center gap-1 rounded-full border border-border bg-surface px-[10px] py-[5px] text-[11px] font-medium text-[#4A453C]"><span className="grid h-4 w-4 place-items-center rounded-[4px] bg-[#0A66C2] font-mono text-[8px] font-bold text-white">in</span>LinkedIn 48</div>
               </div>
               <div className="grid gap-[10px] md:grid-cols-2">
                 {[
@@ -327,8 +327,8 @@ export default function Home() {
                   'Book progress: chapter 4 done. It took me three weeks longer than I hoped.',
                   'A principle I keep testing: the platforms that make you post more are not the ones that make you better.',
                 ].map((text, index) => (
-                  <div key={text} className="rounded-[10px] border border-[#E8E3D4] bg-[#F4F1EA] p-[14px]">
-                    <div className="mb-2 flex items-center gap-[6px] font-mono text-[9px] uppercase tracking-[0.05em] text-[#85806F]"><span className="grid h-4 w-4 place-items-center rounded-[4px] bg-[#B8541F] font-mono text-[8px] font-bold text-[#F4F1EA]">S</span>{index % 2 === 0 ? '5 platforms · Apr 21' : '3 platforms · Apr 19'}</div>
+                  <div key={text} className="rounded-[10px] border border-divider bg-surface p-[14px]">
+                    <div className="mb-2 flex items-center gap-[6px] font-mono text-[9px] uppercase tracking-[0.05em] text-[#85806F]"><span className="grid h-4 w-4 place-items-center rounded-[4px] bg-[#B8541F] font-mono text-[8px] font-bold text-white">S</span>{index % 2 === 0 ? '5 platforms · Apr 21' : '3 platforms · Apr 19'}</div>
                     <div className="font-serif text-[12px] leading-[1.4] text-[#1A1814]">{text}</div>
                   </div>
                 ))}
@@ -346,7 +346,7 @@ export default function Home() {
                   'Custom domain on Creator tier — yourname.com becomes your showcase',
                   'Open Graph handled automatically, looks good everywhere',
                 ].map((item) => (
-                  <li key={item} className="flex gap-3 border-t border-[#E8E3D4] py-[14px] text-[15px] text-[#1A1814] last:border-b">
+                  <li key={item} className="flex gap-3 border-t border-divider py-[14px] text-[15px] text-[#1A1814] last:border-b">
                     <span className="mt-[9px] h-[6px] w-[6px] shrink-0 rounded-full bg-[#B8541F]" />
                     <span>{item}</span>
                   </li>
@@ -363,7 +363,7 @@ export default function Home() {
               I stopped copying the same post into six tabs. My publishing got sharper because <em className="font-light italic text-[#B8541F]">I could actually see it</em> before my audience did.
             </div>
             <div className="mt-8 inline-flex items-center justify-center gap-3">
-              <div className="grid h-11 w-11 place-items-center rounded-full border border-[#D9D3C4] bg-[#DCD4E8] text-[14px] font-semibold text-[#5A4A78]">PR</div>
+              <div className="grid h-11 w-11 place-items-center rounded-full border border-border bg-[#DCD4E8] text-[14px] font-semibold text-[#5A4A78]">PR</div>
               <div className="text-left">
                 <div className="text-[15px] font-medium text-[#1A1814]">Priya Rajan</div>
                 <div className="font-mono text-[11px] tracking-[0.03em] text-[#85806F]">Essayist · Showcase creator since January</div>
@@ -381,24 +381,24 @@ export default function Home() {
             </div>
 
             <div className="grid gap-5 lg:grid-cols-3">
-              <div className="rounded-[20px] border border-[#D9D3C4] bg-[#FBF9F4] p-[36px_32px]">
+              <div className="rounded-[20px] border border-border bg-card p-[36px_32px]">
                 <div className="mb-2 font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">Free</div>
                 <div className="font-serif text-[52px] leading-none tracking-[-0.03em]"><em className="font-light italic text-[#B8541F]">$0</em></div>
                 <div className="mb-[22px] mt-[6px] font-mono text-[11px] uppercase tracking-[0.05em] text-[#85806F]">Forever</div>
-                <div className="mb-6 border-b border-[#E8E3D4] pb-6 text-[14px] leading-[1.5] text-[#4A453C]">For creators trying us out and solo publishers who post a few times a week.</div>
+                <div className="mb-6 border-b border-divider pb-6 text-[14px] leading-[1.5] text-[#4A453C]">For creators trying us out and solo publishers who post a few times a week.</div>
               </div>
-              <div className="relative rounded-[20px] border border-[#1A1814] bg-[#1A1814] p-[36px_32px] text-[#F4F1EA]">
-                <div className="absolute left-8 top-[-10px] rounded-full bg-[#B8541F] px-[10px] py-1 font-mono text-[10px] uppercase tracking-[0.08em] text-[#F4F1EA]">Most popular</div>
+              <div className="relative rounded-[20px] border border-[#1A1814] bg-[#1A1814] p-[36px_32px] text-white">
+                <div className="absolute left-8 top-[-10px] rounded-full bg-[#B8541F] px-[10px] py-1 font-mono text-[10px] uppercase tracking-[0.08em] text-white">Most popular</div>
                 <div className="mb-2 font-mono text-[11px] uppercase tracking-[0.08em] text-[rgba(251,249,244,0.6)]">Creator</div>
                 <div className="font-serif text-[52px] leading-none tracking-[-0.03em]">$<em className="font-light italic text-[#E87D3F]">8</em></div>
                 <div className="mb-[22px] mt-[6px] font-mono text-[11px] uppercase tracking-[0.05em] text-[rgba(251,249,244,0.6)]">Per month</div>
                 <div className="mb-6 border-b border-[rgba(251,249,244,0.15)] pb-6 text-[14px] leading-[1.5] text-[rgba(251,249,244,0.75)]">For creators who publish consistently and want their profile to really represent them.</div>
               </div>
-              <div className="rounded-[20px] border border-[#D9D3C4] bg-[#FBF9F4] p-[36px_32px]">
+              <div className="rounded-[20px] border border-border bg-card p-[36px_32px]">
                 <div className="mb-2 font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">Pro</div>
                 <div className="font-serif text-[52px] leading-none tracking-[-0.03em]">$<em className="font-light italic text-[#B8541F]">19</em></div>
                 <div className="mb-[22px] mt-[6px] font-mono text-[11px] uppercase tracking-[0.05em] text-[#85806F]">Per month</div>
-                <div className="mb-6 border-b border-[#E8E3D4] pb-6 text-[14px] leading-[1.5] text-[#4A453C]">For power creators, freelancers, and small teams who need scheduling and analytics.</div>
+                <div className="mb-6 border-b border-divider pb-6 text-[14px] leading-[1.5] text-[#4A453C]">For power creators, freelancers, and small teams who need scheduling and analytics.</div>
               </div>
             </div>
           </div>
@@ -414,10 +414,10 @@ export default function Home() {
               {faqItems.map((item, index) => {
                 const isOpen = openFaq === index;
                 return (
-                  <div key={item.question} className={`cursor-pointer border-b border-[#D9D3C4] py-6 ${index === 0 ? 'border-t' : ''}`} onClick={() => setOpenFaq(isOpen ? null : index)}>
+                  <div key={item.question} className={`cursor-pointer border-b border-border py-6 ${index === 0 ? 'border-t' : ''}`} onClick={() => setOpenFaq(isOpen ? null : index)}>
                     <div className="flex items-start justify-between gap-5">
                       <div className="font-serif text-[22px] font-medium leading-[1.3] tracking-[-0.01em] text-[#1A1814]">{item.question}</div>
-                      <div className={`grid h-8 w-8 shrink-0 place-items-center rounded-full border border-[#D9D3C4] transition ${isOpen ? 'border-[#B8541F] bg-[#B8541F] text-[#F4F1EA]' : 'bg-[#EDE8DD] text-[#1A1814]'}`}>
+                      <div className={`grid h-8 w-8 shrink-0 place-items-center rounded-full border border-border transition ${isOpen ? 'border-[#B8541F] bg-[#B8541F] text-white' : 'bg-panel text-[#1A1814]'}`}>
                         <span className={`text-sm transition ${isOpen ? 'rotate-45' : ''}`}>+</span>
                       </div>
                     </div>
@@ -437,13 +437,13 @@ export default function Home() {
             <h2 className="mb-6 font-serif text-[clamp(44px,6vw,72px)] font-normal leading-none tracking-[-0.035em]">The quieter way<br />to <em className="font-light italic text-[#B8541F]">publish everywhere.</em></h2>
             <p className="mx-auto mb-10 max-w-[580px] text-[19px] leading-[1.55] text-[#4A453C]">Join 12,400 creators using Showcase to build a portfolio that grows every time they post. Free to start. Takes 90 seconds.</p>
             <div className="flex flex-wrap items-center justify-center gap-[10px] max-md:flex-col">
-              <a href="#" className="inline-flex items-center gap-2 rounded-full bg-[#B8541F] px-[26px] py-[14px] text-[15px] font-medium text-[#F4F1EA] transition hover:-translate-y-px hover:bg-[#1A1814] max-md:w-full max-md:justify-center">Start publishing free →</a>
-              <Link href="/showcase/feed" className="inline-flex items-center gap-2 rounded-full border border-[#D9D3C4] bg-[#FBF9F4] px-5 py-[14px] text-[15px] font-medium text-[#1A1814] transition hover:border-[#85806F] hover:bg-[#F4F1EA] max-md:w-full max-md:justify-center">Explore the app</Link>
+              <a href="#" className="inline-flex items-center gap-2 rounded-full bg-[#B8541F] px-[26px] py-[14px] text-[15px] font-medium text-white transition hover:-translate-y-px hover:bg-[#1A1814] max-md:w-full max-md:justify-center">Start publishing free →</a>
+              <Link href="/showcase/feed" className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-[14px] text-[15px] font-medium text-[#1A1814] transition hover:border-[#85806F] hover:bg-panel max-md:w-full max-md:justify-center">Explore the app</Link>
             </div>
           </div>
         </section>
 
-        <footer className="border-t border-[#D9D3C4] bg-[#FBF9F4] px-8 pb-10 pt-20 max-md:px-5">
+        <footer className="border-t border-border bg-card px-8 pb-10 pt-20 max-md:px-5">
           <div className="mx-auto max-w-[1240px]">
             <div className="mb-[60px] grid gap-10 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
               <div className="max-w-[340px]">
@@ -465,11 +465,11 @@ export default function Home() {
                 </div>
               ))}
             </div>
-            <div className="flex flex-wrap items-center justify-between gap-[14px] border-t border-[#E8E3D4] pt-8">
+            <div className="flex flex-wrap items-center justify-between gap-[14px] border-t border-divider pt-8">
               <div className="font-mono text-[11px] tracking-[0.03em] text-[#85806F]">© 2026 Showcase Labs · Made with restraint</div>
               <div className="flex gap-1">
                 {['B', 'X', 'GH'].map((icon) => (
-                  <a key={icon} href="#" className="grid h-8 w-8 place-items-center rounded-[8px] border border-[#D9D3C4] bg-[#F4F1EA] text-[12px] text-[#4A453C] transition hover:border-[#1A1814] hover:bg-[#1A1814] hover:text-[#F4F1EA]">{icon}</a>
+                  <a key={icon} href="#" className="grid h-8 w-8 place-items-center rounded-[8px] border border-border bg-surface text-[12px] text-[#4A453C] transition hover:border-[#1A1814] hover:bg-[#1A1814] hover:text-white">{icon}</a>
                 ))}
               </div>
             </div>

@@ -45,7 +45,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
   }));
 
   return (
-    <main className="min-h-screen bg-[#F4F1EA] text-[#1A1814]">
+    <main className="min-h-screen bg-surface text-[#1A1814]">
       <div
         className="pointer-events-none fixed inset-0 z-[1] opacity-30"
         style={{
@@ -61,14 +61,14 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
               <span className="h-[10px] w-[10px] rotate-45 rounded-[2px] bg-[#B8541F]" />
               Showcase
             </Link>
-            <Link href="/showcase/feed" className="rounded-full border border-[#D9D3C4] bg-[#FBF9F4] px-4 py-2 text-[13px] font-medium text-[#4A453C] transition hover:bg-[#1A1814] hover:text-[#F4F1EA]">
+            <Link href="/showcase/feed" className="rounded-full border border-border bg-card px-4 py-2 text-[13px] font-medium text-[#4A453C] transition hover:bg-[#1A1814] hover:text-white">
               Open app
             </Link>
           </div>
 
-          <section className="mb-7 rounded-[24px] border border-[#D9D3C4] bg-[#FBF9F4] p-8 md:p-10">
+          <section className="mb-7 rounded-[24px] border border-border bg-card p-8 md:p-10">
             <div className="grid gap-8 lg:grid-cols-[auto_1fr_auto] lg:items-center">
-              <div className="grid h-[88px] w-[88px] place-items-center rounded-full border border-[#D9D3C4] bg-[#F5E5D3] font-serif text-[34px] text-[#B8541F]">
+              <div className="grid h-[88px] w-[88px] place-items-center rounded-full border border-border bg-[#F5E5D3] font-serif text-[34px] text-[#B8541F]">
                 {initials}
               </div>
               <div>
@@ -107,7 +107,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
                 ))}
               </div>
             ) : (
-              <div className="rounded-[18px] border border-[#D9D3C4] bg-[#FBF9F4] p-8 text-[15px] leading-[1.6] text-[#4A453C]">
+              <div className="rounded-[18px] border border-border bg-card p-8 text-[15px] leading-[1.6] text-[#4A453C]">
                 No public posts yet.
               </div>
             )}

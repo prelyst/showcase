@@ -1,11 +1,72 @@
-import { ConnectedAccountStatus } from '@prisma/client';
+import { ConnectedAccountStatus, Platform } from '@prisma/client';
 
 import { platforms } from '@/lib/mock/showcase';
-import { createDraftPost, getLatestDraftForProfile, updatePostTargets } from '@/lib/repositories/post-repository';
+import { getEnabledTargetCountsForProfile, getLatestDraftForProfile } from '@/lib/repositories/post-repository';
+import { getPublicProfiles } from '@/lib/repositories/profile-repository';
 import { getOAuthProviderByPlatform, isOAuthProviderConfigured } from '@/lib/oauth/providers';
-import { getCurrentUserId } from '@/lib/server/auth';
 import { getShowcaseSessionData } from '@/lib/server/showcase-session';
-import { ConnectionItem, CreatorSuggestion, FeedPost, MonitorData, NotificationItem, PreferenceItem, ProfilePost, ProfileStat, TrendingTopic } from '@/lib/types/showcase';
+import { AvatarTone, ConnectionItem, CreatorSuggestion, FeedPost, MonitorData, NotificationItem, PreferenceItem, ProfileFilter, ProfilePost, ProfileStat, TrendingTopic } from '@/lib/types/showcase';
+
+const FILTER_PLATFORMS: { label: string; platform: Platform }[] = [
+  { label: 'Showcase', platform: Platform.SHOWCASE },
+  { label: 'X', platform: Platform.X },
+  { label: 'LinkedIn', platform: Platform.LINKEDIN },
+  { label: 'Bluesky', platform: Platform.BLUESKY },
+  { label: 'Reddit', platform: Platform.REDDIT },
+  { label: 'Threads', platform: Platform.THREADS },
+];
+
+/** Real per-platform post counts from enabled publish targets. */
+function buildProfileFilters(total: number, counts: Map<Platform, number>): ProfileFilter[] {
+  return [
+    { label: 'All', count: String(total) },
+    ...FILTER_PLATFORMS.map(({ label, platform }) => ({ label, count: String(counts.get(platform) ?? 0) })),
+  ];
+}
+
+const EMPTY_FILTERS = buildProfileFilters(0, new Map());
+
+/** Two-tone avatar palette used consistently across surfaces. */
+function avatarTone(seed: string, initials: string): AvatarTone {
+  const code = seed.split('').reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+  const className = code % 2 === 0 ? 'bg-[#F5E5D3] text-[#B8541F]' : 'bg-[#E5E8D4] text-[#5A6B3A]';
+  return { initials: initials.toUpperCase() || 'SC', className };
+}
+
+function initialsFrom(name: string) {
+  return name
+    .split(/\s+/)
+    .map((part) => part[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+}
+
+/** Real trending: count #hashtags that actually appear in the given post bodies. */
+function aggregateTrending(contents: string[]): TrendingTopic[] {
+  const counts = new Map<string, number>();
+
+  for (const content of contents) {
+    const matches = content.match(/#[\p{L}\p{N}_]+/gu) ?? [];
+    const seen = new Set<string>();
+    for (const raw of matches) {
+      const tag = raw.toLowerCase();
+      if (seen.has(tag)) continue; // count once per post
+      seen.add(tag);
+      counts.set(tag, (counts.get(tag) ?? 0) + 1);
+    }
+  }
+
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 6)
+    .map(([tag, count], index) => ({
+      rank: String(index + 1).padStart(2, '0'),
+      tag,
+      count: `${count} ${count === 1 ? 'post' : 'posts'}`,
+    }));
+}
 
 export async function getProfilePageData(): Promise<{
   displayName: string;
@@ -16,6 +77,7 @@ export async function getProfilePageData(): Promise<{
   isPublic: boolean;
   initials: string;
   stats: ProfileStat[];
+  filters: ProfileFilter[];
   posts: ProfilePost[];
 }> {
   const { currentUser, profile, posts } = await getShowcaseSessionData();
@@ -30,6 +92,7 @@ export async function getProfilePageData(): Promise<{
       isPublic: true,
       initials: '?',
       stats: [],
+      filters: EMPTY_FILTERS,
       posts: [],
     };
   }
@@ -44,13 +107,18 @@ export async function getProfilePageData(): Promise<{
       isPublic: true,
       initials: currentUser.initials,
       stats: [
-        { label: 'Followers', value: '0' },
         { label: 'Posts', value: '0' },
-        { label: 'Following', value: '0' },
+        { label: 'Published', value: '0' },
+        { label: 'Drafts', value: '0' },
       ],
+      filters: EMPTY_FILTERS,
       posts: [],
     };
   }
+
+  const publishedCount = posts.filter((post) => post.status === 'PUBLISHED').length;
+  const draftCount = posts.filter((post) => post.status === 'DRAFT').length;
+  const targetCounts = await getEnabledTargetCountsForProfile(profile.id);
 
   return {
     displayName: profile.displayName,
@@ -60,26 +128,47 @@ export async function getProfilePageData(): Promise<{
     website: profile.website,
     isPublic: profile.isPublic,
     initials: currentUser.initials,
+    filters: buildProfileFilters(posts.length, targetCounts),
+    // Real counts derived from the user's own posts — no follower/engagement fiction.
     stats: [
-      { label: 'Followers', value: '0' },
       { label: 'Posts', value: String(posts.length) },
-      { label: 'Following', value: '0' },
+      { label: 'Published', value: String(publishedCount) },
+      { label: 'Drafts', value: String(draftCount) },
     ],
     posts: posts.length
-      ? posts.slice(0, 12).map((post, index) => ({
-          id: post.id,
-          label: `Published to ${Math.max(post.targets.filter((target) => target.enabled).length, 1)} platforms`,
-          time: new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(post.createdAt),
-          relativeTime: formatRelativeDate(post.createdAt),
-          body: post.content,
-          stats: [
-            `${312 - index * 18} likes`,
-            `${47 - Math.min(index * 4, 28)} comments`,
-            `${89 - Math.min(index * 6, 54)} reposts`,
-          ],
-        }))
+      ? posts.slice(0, 12).map((post) => {
+          const delivery = deliveryFor(post);
+          return {
+            id: post.id,
+            label: `${delivery.total} ${delivery.total === 1 ? 'platform' : 'platforms'}`,
+            time: new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(post.createdAt),
+            relativeTime: formatRelativeDate(post.createdAt),
+            body: post.content,
+            // Real signals: post status + actual lane delivery, not invented engagement.
+            stats: [statusLabel(post.status), `${delivery.published}/${delivery.total} delivered`],
+          };
+        })
       : [],
   };
+}
+
+type PostWithDelivery = {
+  status: string;
+  targets: { enabled: boolean }[];
+  publishJobs: { laneResults: { status: string }[] }[];
+};
+
+/** Real delivery numbers from publish lane results, falling back to enabled targets. */
+function deliveryFor(post: PostWithDelivery) {
+  const latestJob = post.publishJobs[0];
+  const enabledTargets = post.targets.filter((target) => target.enabled).length;
+  const total = latestJob?.laneResults.length || enabledTargets;
+  const published = latestJob?.laneResults.filter((lane) => lane.status === 'PUBLISHED').length ?? 0;
+  return { published, total: Math.max(total, 0) };
+}
+
+function statusLabel(status: string) {
+  return status.charAt(0) + status.slice(1).toLowerCase();
 }
 
 export async function getNotificationsPageData(): Promise<NotificationItem[]> {
@@ -171,8 +260,6 @@ export async function getComposePageData() {
     };
   }
 
-  const userId = currentUser.id;
-
   if (!profile) {
     return {
       draftId: null,
@@ -211,8 +298,6 @@ export async function getFeedPageData(): Promise<{
     };
   }
 
-  const userId = currentUser.id;
-
   if (!profile) {
     return {
       posts: [],
@@ -222,10 +307,8 @@ export async function getFeedPageData(): Promise<{
   }
 
   const mappedPosts: FeedPost[] = posts.length
-    ? posts.slice(0, 8).map((post, index) => {
-        const latestJob = post.publishJobs[0];
-        const publishedCount = latestJob?.laneResults.filter((lane) => lane.status === 'PUBLISHED').length ?? 0;
-        const totalCount = latestJob?.laneResults.length ?? post.targets.filter((target) => target.enabled).length;
+    ? posts.slice(0, 8).map((post) => {
+        const delivery = deliveryFor(post);
 
         return {
           id: post.id,
@@ -234,21 +317,40 @@ export async function getFeedPageData(): Promise<{
           handle: `@${profile.slug}`,
           time: formatRelativeDate(post.createdAt),
           body: post.content,
-          hashtags: latestJob?.failedLanes ? [`#${publishedCount}of${Math.max(totalCount, 1)}-lanes`] : undefined,
           socials: post.targets.filter((target) => target.enabled).map((target) => platforms[target.platform.toLowerCase()]).filter(Boolean),
-          stats: {
-            likes: String(Math.max(12, 96 - index * 7)),
-            comments: String(Math.max(3, 24 - index * 2)),
-            reposts: String(Math.max(1, 18 - index * 2)),
+          // Real publish outcome, not invented likes/comments/reposts.
+          delivery: {
+            published: delivery.published,
+            total: delivery.total,
+            label:
+              delivery.total === 0
+                ? statusLabel(post.status)
+                : delivery.published >= delivery.total
+                  ? `Published to ${delivery.total} ${delivery.total === 1 ? 'platform' : 'platforms'}`
+                  : `${delivery.published}/${delivery.total} lanes delivered`,
           },
         };
       })
     : [];
 
+  // Suggestions and trending are real: actual public profiles + hashtags that appear in real posts.
+  const publicProfiles = await getPublicProfiles(currentUser.id, 5);
+  const suggestions: CreatorSuggestion[] = publicProfiles.map((row) => {
+    const initials = initialsFrom(row.displayName);
+    return {
+      id: row.id,
+      avatar: avatarTone(row.id, initials),
+      name: row.displayName,
+      handle: `@${row.slug}`,
+      bio: row.bio ?? 'Creator on Showcase',
+      following: false,
+    };
+  });
+
   return {
     posts: mappedPosts,
-    trending: [],
-    suggestions: [],
+    trending: aggregateTrending(posts.map((post) => post.content)),
+    suggestions,
   };
 }
 
@@ -256,7 +358,7 @@ export async function getDiscoverPageData(): Promise<{
   trending: TrendingTopic[];
   creators: CreatorSuggestion[];
 }> {
-  const { currentUser, connectedAccounts: accounts } = await getShowcaseSessionData();
+  const { currentUser, posts } = await getShowcaseSessionData();
 
   if (!currentUser) {
     return {
@@ -265,22 +367,22 @@ export async function getDiscoverPageData(): Promise<{
     };
   }
 
-  const creators: CreatorSuggestion[] = accounts.length
-    ? accounts.slice(0, 6).map((account, index) => ({
-        id: account.id,
-        avatar: {
-          initials: account.accountName?.split(' ').map((part) => part[0]).slice(0, 2).join('').toUpperCase() || account.accountHandle.replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase() || 'SC',
-          className: index % 2 === 0 ? 'bg-[#F5E5D3] text-[#B8541F]' : 'bg-[#E5E8D4] text-[#5A6B3A]',
-        },
-        name: account.accountName || account.accountHandle.replace(/^@/, '') || account.platform,
-        handle: account.accountHandle.startsWith('@') ? account.accountHandle : `@${account.accountHandle}`,
-        bio: `${account.platform} account · ${account.status === 'ACTIVE' ? 'connected and ready to publish' : 'inactive connection'}`,
-        following: account.status === 'ACTIVE',
-      }))
-    : [];
+  // Real creators: actual public profiles on Showcase (excluding the current user).
+  const publicProfiles = await getPublicProfiles(currentUser.id, 6);
+  const creators: CreatorSuggestion[] = publicProfiles.map((row) => {
+    const initials = initialsFrom(row.displayName);
+    return {
+      id: row.id,
+      avatar: avatarTone(row.id, initials),
+      name: row.displayName,
+      handle: `@${row.slug}`,
+      bio: row.bio ?? 'Creator on Showcase',
+      following: false,
+    };
+  });
 
   return {
-    trending: [],
+    trending: aggregateTrending(posts.map((post) => post.content)),
     creators,
   };
 }
@@ -298,8 +400,6 @@ export async function getMonitorPageData(): Promise<MonitorData> {
       lanes: [],
     };
   }
-
-  const userId = currentUser.id;
 
   if (!profile) {
     return {

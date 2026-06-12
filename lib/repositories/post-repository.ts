@@ -83,6 +83,23 @@ export async function getPostsForProfile(profileId: string) {
   });
 }
 
+export async function getEnabledTargetCountsForProfile(profileId: string) {
+  if (!prisma) {
+    return new Map<Platform, number>();
+  }
+
+  const grouped = await prisma.postPlatformTarget.groupBy({
+    by: ['platform'],
+    where: {
+      enabled: true,
+      post: { profileId },
+    },
+    _count: { platform: true },
+  });
+
+  return new Map<Platform, number>(grouped.map((row) => [row.platform, row._count.platform]));
+}
+
 export async function getLatestDraftForProfile(profileId: string) {
   if (!prisma) {
     return null;

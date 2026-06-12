@@ -22,7 +22,7 @@ export function PasswordInput({ id, name, placeholder, autoComplete, defaultValu
         placeholder={placeholder}
         autoComplete={autoComplete}
         defaultValue={defaultValue}
-        className="w-full rounded-[12px] border border-[#D9D3C4] bg-[#FBF9F4] px-4 py-[14px] pr-12 text-[15px] text-[#1A1814] outline-none placeholder:text-[#85806F] focus:border-[#B8541F]"
+        className="w-full rounded-[12px] border border-border bg-card px-4 py-[14px] pr-12 text-[15px] text-[#1A1814] outline-none placeholder:text-[#85806F] focus:border-[#B8541F]"
       />
       <button
         type="button"

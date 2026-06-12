@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { ReactNode } from 'react';
 
 import {
@@ -14,6 +15,40 @@ import {
   TrendingTopic,
 } from '@/lib/types/showcase';
 
+export function EmptyState({
+  title,
+  hint,
+  cta,
+  compact = false,
+}: {
+  title: string;
+  hint?: string;
+  cta?: { label: string; href: string };
+  compact?: boolean;
+}) {
+  return (
+    <div
+      className={`flex flex-col items-center justify-center rounded-[14px] border border-dashed border-border bg-card text-center ${
+        compact ? 'px-5 py-8' : 'px-8 py-14'
+      }`}
+    >
+      <span className="mb-3 grid h-9 w-9 place-items-center rounded-full border border-border bg-surface font-serif text-[18px] italic text-[#B8541F]">
+        ·
+      </span>
+      <div className={`font-serif italic text-[#1A1814] ${compact ? 'text-[16px]' : 'text-[19px]'}`}>{title}</div>
+      {hint ? <div className="mt-[6px] max-w-[280px] text-[13px] leading-[1.5] text-[#85806F]">{hint}</div> : null}
+      {cta ? (
+        <Link
+          href={cta.href}
+          className="mt-4 inline-flex items-center gap-1 rounded-full bg-[#1A1814] px-4 py-2 text-[13px] font-medium text-white transition hover:-translate-y-px hover:bg-[#B8541F]"
+        >
+          {cta.label} <span aria-hidden>→</span>
+        </Link>
+      ) : null}
+    </div>
+  );
+}
+
 export function Avatar({ avatar, size = 'md' }: { avatar: AvatarTone; size?: 'sm' | 'md' | 'lg' }) {
   const sizes = {
     sm: 'h-10 w-10 text-[14px]',
@@ -21,7 +56,7 @@ export function Avatar({ avatar, size = 'md' }: { avatar: AvatarTone; size?: 'sm
     lg: 'h-[88px] w-[88px] text-[34px] font-serif',
   };
 
-  return <div className={`grid place-items-center rounded-full border border-[#D9D3C4] font-semibold ${sizes[size]} ${avatar.className}`}>{avatar.initials}</div>;
+  return <div className={`grid place-items-center rounded-full border border-border font-semibold ${sizes[size]} ${avatar.className}`}>{avatar.initials}</div>;
 }
 
 export function PlatformBadge({ platform, large = false }: { platform: PlatformChip; large?: boolean }) {
@@ -34,7 +69,7 @@ export function PlatformBadge({ platform, large = false }: { platform: PlatformC
 
 export function FollowButton({ following }: { following: boolean }) {
   return (
-    <button className={`rounded-full px-3 py-[6px] text-[12px] font-medium ${following ? 'border border-[#D9D3C4] text-[#1A1814]' : 'bg-[#1A1814] text-[#F4F1EA]'}`}>
+    <button className={`rounded-full px-3 py-[6px] text-[12px] font-medium ${following ? 'border border-border text-[#1A1814]' : 'bg-[#1A1814] text-white'}`}>
       {following ? 'Following' : 'Follow'}
     </button>
   );
@@ -42,7 +77,7 @@ export function FollowButton({ following }: { following: boolean }) {
 
 export function FeedPostCard({ post }: { post: FeedPost }) {
   return (
-    <article className="grid grid-cols-[48px_1fr] gap-4 border-b border-[#E8E3D4] py-6 last:border-b-0">
+    <article className="grid grid-cols-[48px_1fr] gap-4 border-b border-divider py-6 last:border-b-0">
       <Avatar avatar={post.avatar} />
       <div>
         <div className="mb-[6px] flex flex-wrap items-baseline gap-2">
@@ -60,23 +95,32 @@ export function FeedPostCard({ post }: { post: FeedPost }) {
         </div>
 
         {post.media ? (
-          <div className="mb-[14px] rounded-[12px] border border-[#D9D3C4] bg-[#EDE8DD] px-8 py-11 text-center font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">
+          <div className="mb-[14px] rounded-[12px] border border-border bg-panel px-8 py-11 text-center font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">
             {post.media}
           </div>
         ) : null}
 
         <div className="flex items-center justify-between gap-5">
-          <div className="flex gap-6 text-[13px] text-[#85806F]">
-            <span>♥ {post.stats.likes}</span>
-            <span>💬 {post.stats.comments}</span>
-            <span>↻ {post.stats.reposts}</span>
+          <div className="flex items-center gap-2 text-[#85806F]">
+            <span
+              className={`h-[6px] w-[6px] rounded-full ${
+                post.delivery.total > 0 && post.delivery.published >= post.delivery.total
+                  ? 'bg-[#5A6B3A]'
+                  : post.delivery.published > 0
+                    ? 'bg-[#B8541F]'
+                    : 'bg-track'
+              }`}
+            />
+            <span className="font-mono text-[11px] uppercase tracking-[0.05em]">{post.delivery.label}</span>
           </div>
-          <div className="flex items-center gap-1">
-            <span className="mr-1 font-mono text-[10px] uppercase tracking-[0.05em] text-[#85806F]">Also on</span>
-            {post.socials.map((platform) => (
-              <PlatformBadge key={platform.key} platform={platform} />
-            ))}
-          </div>
+          {post.socials.length ? (
+            <div className="flex items-center gap-1">
+              <span className="mr-1 font-mono text-[10px] uppercase tracking-[0.05em] text-[#85806F]">Also on</span>
+              {post.socials.map((platform) => (
+                <PlatformBadge key={platform.key} platform={platform} />
+              ))}
+            </div>
+          ) : null}
         </div>
       </div>
     </article>
@@ -85,13 +129,13 @@ export function FeedPostCard({ post }: { post: FeedPost }) {
 
 export function TrendingCard({ topic, compact = false }: { topic: TrendingTopic; compact?: boolean }) {
   return compact ? (
-    <div className="border-b border-[#E8E3D4] py-[10px] last:border-b-0">
+    <div className="border-b border-divider py-[10px] last:border-b-0">
       <div className="font-mono text-[10px] tracking-[0.05em] text-[#85806F]">{topic.rank}</div>
       <div className="font-serif text-[17px] font-medium italic text-[#B8541F]">{topic.tag}</div>
       <div className="text-[12px] text-[#85806F]">{topic.count}</div>
     </div>
   ) : (
-    <div className="rounded-[12px] border border-[#D9D3C4] bg-[#FBF9F4] p-[18px] transition hover:-translate-y-px hover:border-[#B8541F]">
+    <div className="rounded-[12px] border border-border bg-card p-[18px] transition hover:-translate-y-px hover:border-[#B8541F]">
       <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.08em] text-[#85806F]">{topic.rank}</div>
       <div className="mb-[6px] font-serif text-[22px] font-medium italic text-[#B8541F]">{topic.tag}</div>
       <div className="mb-2 text-[13px] text-[#4A453C]">{topic.count}</div>
@@ -102,7 +146,7 @@ export function TrendingCard({ topic, compact = false }: { topic: TrendingTopic;
 
 export function CreatorCard({ creator, compact = false }: { creator: CreatorSuggestion; compact?: boolean }) {
   return compact ? (
-    <div className="flex items-center gap-[10px] border-b border-[#E8E3D4] py-[10px] last:border-b-0">
+    <div className="flex items-center gap-[10px] border-b border-divider py-[10px] last:border-b-0">
       <Avatar avatar={creator.avatar} size="sm" />
       <div className="min-w-0 flex-1">
         <div className="text-[14px] font-medium text-[#1A1814]">{creator.name}</div>
@@ -111,7 +155,7 @@ export function CreatorCard({ creator, compact = false }: { creator: CreatorSugg
       <FollowButton following={creator.following} />
     </div>
   ) : (
-    <div className="flex items-center gap-3 rounded-[12px] border border-[#D9D3C4] bg-[#FBF9F4] p-[18px]">
+    <div className="flex items-center gap-3 rounded-[12px] border border-border bg-card p-[18px]">
       <Avatar avatar={creator.avatar} size="sm" />
       <div className="min-w-0 flex-1">
         <div className="text-[14px] font-medium text-[#1A1814]">{creator.name}</div>
@@ -125,7 +169,7 @@ export function CreatorCard({ creator, compact = false }: { creator: CreatorSugg
 
 export function NotificationRow({ item }: { item: NotificationItem }) {
   return (
-    <div className={`grid grid-cols-[44px_1fr_auto] gap-4 border-b border-[#E8E3D4] px-[18px] py-[14px] last:border-b-0 ${item.unread ? 'bg-[#F5E5D3]' : ''}`}>
+    <div className={`grid grid-cols-[44px_1fr_auto] gap-4 border-b border-divider px-[18px] py-[14px] last:border-b-0 ${item.unread ? 'bg-[#F5E5D3]' : ''}`}>
       <Avatar avatar={item.avatar} size="sm" />
       <div>
         <div className="text-[14px] font-medium text-[#1A1814]">{item.title}</div>
@@ -145,7 +189,7 @@ export function ComposeToolButton({ tool }: { tool: ComposeTool }) {
   }[tool.icon];
 
   return (
-    <button aria-label={tool.label} className="grid h-[34px] w-[34px] place-items-center rounded-[8px] hover:bg-[#EDE8DD] hover:text-[#1A1814]">
+    <button aria-label={tool.label} className="grid h-[34px] w-[34px] place-items-center rounded-[8px] hover:bg-panel hover:text-[#1A1814]">
       {icon}
     </button>
   );
@@ -155,7 +199,7 @@ export function PublishTargetChip({ platform, selected }: { platform: PlatformCh
   return (
     <div
       className={`flex items-center gap-[6px] rounded-full border px-[10px] py-[6px] text-[12px] font-medium ${
-        selected ? 'border-[#1A1814] bg-[#1A1814] text-[#F4F1EA]' : 'border-[#D9D3C4] bg-[#FBF9F4] text-[#1A1814]'
+        selected ? 'border-[#1A1814] bg-[#1A1814] text-white' : 'border-border bg-card text-[#1A1814]'
       }`}
     >
       <PlatformBadge platform={platform} />
@@ -166,7 +210,7 @@ export function PublishTargetChip({ platform, selected }: { platform: PlatformCh
 
 export function PublishLaneRow({ lane }: { lane: PublishLane }) {
   return (
-    <div className="grid items-center gap-4 border-b border-[#E8E3D4] px-6 py-[18px] md:grid-cols-[36px_1fr_auto_auto] last:border-b-0">
+    <div className="grid items-center gap-4 border-b border-divider px-6 py-[18px] md:grid-cols-[36px_1fr_auto_auto] last:border-b-0">
       <PlatformBadge platform={lane.platform} large />
       <div>
         <div className="text-[14px] font-medium text-[#1A1814]">{lane.platform.label}</div>
@@ -181,9 +225,9 @@ export function PublishLaneRow({ lane }: { lane: PublishLane }) {
 
 export function ProfilePostCard({ post }: { post: ProfilePost }) {
   return (
-    <article className="rounded-[14px] border border-[#D9D3C4] bg-[#FBF9F4] p-[22px] transition hover:-translate-y-px hover:border-[#85806F]">
+    <article className="rounded-[14px] border border-border bg-card p-[22px] transition hover:-translate-y-px hover:border-[#85806F]">
       <div className="mb-3 flex items-center gap-2">
-        <PlatformBadge platform={{ key: 'showcase', label: 'Showcase', short: 'S', tone: 'bg-[#B8541F] text-[#F4F1EA]' }} />
+        <PlatformBadge platform={{ key: 'showcase', label: 'Showcase', short: 'S', tone: 'bg-[#B8541F] text-white' }} />
         <span className="font-mono text-[10px] uppercase tracking-[0.05em] text-[#85806F]">{post.label}</span>
         <span className="ml-auto font-mono text-[10px] text-[#85806F]">{post.relativeTime ? `${post.time} · ${post.relativeTime}` : post.time}</span>
       </div>
@@ -199,26 +243,26 @@ export function ProfilePostCard({ post }: { post: ProfilePost }) {
 
 export function ConnectionRow({ item }: { item: ConnectionItem }) {
   return (
-    <div className="grid items-center gap-4 border-b border-[#E8E3D4] px-6 py-4 md:grid-cols-[36px_1fr_auto_auto] last:border-b-0">
+    <div className="grid items-center gap-4 border-b border-divider px-6 py-4 md:grid-cols-[36px_1fr_auto_auto] last:border-b-0">
       <PlatformBadge platform={item.platform} large />
       <div>
         <div className="text-[14px] font-medium text-[#1A1814]">{item.platform.label}</div>
         <div className="font-mono text-[11px] text-[#85806F]">{item.handle}</div>
       </div>
       <span className={`font-mono text-[10px] uppercase tracking-[0.05em] ${item.status === 'Active' ? 'text-[#5A6B3A]' : 'text-[#85806F]'}`}>{item.status}</span>
-      <button className={`rounded-[10px] px-3 py-[6px] text-[12px] font-medium ${item.action === 'Connect' ? 'bg-[#B8541F] text-[#F4F1EA]' : 'border border-[#D9D3C4] text-[#4A453C]'}`}>{item.action}</button>
+      <button className={`rounded-[10px] px-3 py-[6px] text-[12px] font-medium ${item.action === 'Connect' ? 'bg-[#B8541F] text-white' : 'border border-border text-[#4A453C]'}`}>{item.action}</button>
     </div>
   );
 }
 
 export function PreferenceRow({ item }: { item: PreferenceItem }) {
   return (
-    <div className="flex items-center justify-between gap-4 border-b border-[#E8E3D4] px-6 py-4 last:border-b-0">
+    <div className="flex items-center justify-between gap-4 border-b border-divider px-6 py-4 last:border-b-0">
       <div>
         <div className="mb-[2px] text-[14px] font-medium text-[#1A1814]">{item.label}</div>
         <div className="text-[12px] text-[#85806F]">{item.description}</div>
       </div>
-      <div className={`relative h-[22px] w-10 rounded-full ${item.enabled ? 'bg-[#B8541F]' : 'bg-[#D9D3C4]'}`}>
+      <div className={`relative h-[22px] w-10 rounded-full ${item.enabled ? 'bg-[#B8541F]' : 'bg-track'}`}>
         <div className={`absolute bottom-[3px] h-4 w-4 rounded-full bg-white shadow ${item.enabled ? 'left-[21px]' : 'left-[3px]'}`} />
       </div>
     </div>
@@ -227,8 +271,8 @@ export function PreferenceRow({ item }: { item: PreferenceItem }) {
 
 export function SectionCard({ title, subtitle, children }: { title: ReactNode; subtitle?: ReactNode; children: ReactNode }) {
   return (
-    <section className="overflow-hidden rounded-[16px] border border-[#D9D3C4] bg-[#FBF9F4]">
-      <div className="border-b border-[#E8E3D4] px-6 py-5">
+    <section className="overflow-hidden rounded-[16px] border border-border bg-card shadow-card">
+      <div className="border-b border-divider px-6 py-5">
         <div className="mb-1 font-serif text-[20px] tracking-[-0.01em] text-[#1A1814]">{title}</div>
         {subtitle ? <div className="text-[13px] text-[#85806F]">{subtitle}</div> : null}
       </div>
