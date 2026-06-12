@@ -1,3 +1,5 @@
+import { cache } from 'react';
+
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 
 export type SessionUser = {
@@ -12,7 +14,12 @@ export async function getCurrentUserId() {
   return user?.id ?? null;
 }
 
-export async function getCurrentSessionUser(): Promise<SessionUser | null> {
+/**
+ * Memoized per request: `supabase.auth.getUser()` is a network round trip to
+ * the Supabase Auth API. Without this, a single page render hits it ~4× (shell
+ * + page, each via getCurrentUserView and again inside bootstrap).
+ */
+export const getCurrentSessionUser = cache(async (): Promise<SessionUser | null> => {
   const supabase = await createSupabaseServerClient();
 
   if (!supabase) {
@@ -45,7 +52,7 @@ export async function getCurrentSessionUser(): Promise<SessionUser | null> {
     name,
     username,
   };
-}
+});
 
 export async function isAuthenticated() {
   const user = await getCurrentSessionUser();

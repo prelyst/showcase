@@ -1,3 +1,5 @@
+import { cache } from 'react';
+
 import { prisma } from '@/lib/db/prisma';
 
 export async function isProfileSlugTaken(slug: string, excludeUserId?: string) {
@@ -87,7 +89,10 @@ export async function getPublicProfiles(excludeUserId?: string, limit = 6) {
   });
 }
 
-export async function getProfileByUserId(userId: string) {
+// Memoized per request: read by several callers (bootstrap, current-user view,
+// session data) during a single render. Every mutation path reads before it
+// writes, so per-request memoization never returns stale data.
+export const getProfileByUserId = cache(async (userId: string) => {
   if (!prisma) {
     return null;
   }
@@ -98,7 +103,7 @@ export async function getProfileByUserId(userId: string) {
       user: true,
     },
   });
-}
+});
 
 export async function updateProfileByUserId(userId: string, data: {
   displayName: string;
