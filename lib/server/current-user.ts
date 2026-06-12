@@ -1,3 +1,5 @@
+import { cache } from 'react';
+
 import { getProfileByUserId } from '@/lib/repositories/profile-repository';
 import { ensureCurrentUserBootstrapped } from '@/lib/server/bootstrap-user';
 import { getCurrentSessionUser } from '@/lib/server/auth';
@@ -32,7 +34,11 @@ interface CurrentUserView {
   hasProfile: boolean;
 }
 
-export async function getCurrentUserView(): Promise<{ user: CurrentUserView | null; reason?: string }> {
+/**
+ * Memoized per request so the shell and the page share one result instead of
+ * each re-running auth + bootstrap + profile lookup.
+ */
+export const getCurrentUserView = cache(async (): Promise<{ user: CurrentUserView | null; reason?: string }> => {
   const sessionUser = await getCurrentSessionUser();
 
   if (!sessionUser) {
@@ -69,4 +75,4 @@ export async function getCurrentUserView(): Promise<{ user: CurrentUserView | nu
       hasProfile: Boolean(profile),
     },
   };
-}
+});

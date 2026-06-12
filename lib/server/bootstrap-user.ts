@@ -1,3 +1,5 @@
+import { cache } from 'react';
+
 import { createProfile, getProfileByUserId, isProfileSlugTaken } from '@/lib/repositories/profile-repository';
 import { getUserSettings, upsertUserSettings } from '@/lib/repositories/settings-repository';
 import { getUserById, upsertUserByAuth } from '@/lib/repositories/user-repository';
@@ -78,7 +80,12 @@ async function tryCreateProfileWithRetry(
   return null;
 }
 
-export async function ensureCurrentUserBootstrapped() {
+/**
+ * Memoized per request: bootstrap does a user upsert (write) plus profile/
+ * settings reads. The shell and the page both trigger it via getCurrentUserView,
+ * so without memoization it runs (and re-writes) twice per navigation.
+ */
+export const ensureCurrentUserBootstrapped = cache(async () => {
   const sessionUser = await getCurrentSessionUser();
 
   if (!sessionUser) {
@@ -148,4 +155,4 @@ export async function ensureCurrentUserBootstrapped() {
   } catch {
     return null;
   }
-}
+});
