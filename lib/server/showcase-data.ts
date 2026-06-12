@@ -3,7 +3,7 @@ import { ConnectedAccountStatus, Platform } from '@prisma/client';
 import { platforms } from '@/lib/mock/showcase';
 import { getEnabledTargetCountsForProfile, getLatestDraftForProfile } from '@/lib/repositories/post-repository';
 import { getPublicProfiles } from '@/lib/repositories/profile-repository';
-import { getOAuthProviderByPlatform, isOAuthProviderConfigured } from '@/lib/oauth/providers';
+import { getOAuthProviderByPlatform, isOAuthProviderConfigured, oauthProviders } from '@/lib/oauth/providers';
 import { getShowcaseSessionData } from '@/lib/server/showcase-session';
 import { AvatarTone, ConnectionItem, CreatorSuggestion, FeedPost, MonitorData, NotificationItem, PreferenceItem, ProfileFilter, ProfilePost, ProfileStat, TrendingTopic } from '@/lib/types/showcase';
 
@@ -208,28 +208,54 @@ export async function getSettingsPageData(): Promise<{
     };
   }
 
-  const connectedPlatforms: ConnectionItem[] = accounts.length
-    ? accounts.map((account) => {
-        const provider = getOAuthProviderByPlatform(account.platform);
-        const isConfigured = provider ? isOAuthProviderConfigured(provider) : account.platform === 'SHOWCASE';
-        const status = account.status === ConnectedAccountStatus.ACTIVE
-          ? ('Active' as const)
-          : account.status === ConnectedAccountStatus.ERROR
-            ? ('Error' as const)
-            : isConfigured
-              ? ('Inactive' as const)
-              : ('Setup required' as const);
+  const accountsByPlatform = new Map(accounts.map((account) => [account.platform, account]));
 
-        return {
-          platform: platforms[account.platform.toLowerCase()],
-          handle: account.accountHandle,
-          status,
-          action: account.status === 'ACTIVE' ? ('Disconnect' as const) : ('Connect' as const),
-          actionHref: account.status === 'ACTIVE' ? undefined : provider ? `/auth/oauth/${provider.key}/start` : undefined,
-          detail: account.errorMessage ?? (!isConfigured && provider ? `${provider.label} OAuth env vars are missing.` : undefined),
-        };
-      })
-    : [];
+  // List every platform Showcase can publish to, not just the ones already
+  // linked — otherwise a brand-new user with no connected accounts sees nothing.
+  const connectedPlatforms: ConnectionItem[] = Object.values(oauthProviders).map((provider) => {
+    const account = accountsByPlatform.get(provider.platform);
+    const isConfigured = isOAuthProviderConfigured(provider);
+
+    if (!account) {
+      return {
+        platform: platforms[provider.key],
+        handle: 'Not connected',
+        status: isConfigured ? ('Inactive' as const) : ('Setup required' as const),
+        action: 'Connect' as const,
+        actionHref: isConfigured ? `/auth/oauth/${provider.key}/start` : undefined,
+        detail: isConfigured ? undefined : `${provider.label} OAuth env vars are missing.`,
+      };
+    }
+
+    const status = account.status === ConnectedAccountStatus.ACTIVE
+      ? ('Active' as const)
+      : account.status === ConnectedAccountStatus.ERROR
+        ? ('Error' as const)
+        : isConfigured
+          ? ('Inactive' as const)
+          : ('Setup required' as const);
+
+    return {
+      platform: platforms[provider.key],
+      handle: account.accountHandle,
+      status,
+      action: account.status === 'ACTIVE' ? ('Disconnect' as const) : ('Connect' as const),
+      actionHref: account.status === 'ACTIVE' ? undefined : isConfigured ? `/auth/oauth/${provider.key}/start` : undefined,
+      detail: account.errorMessage ?? (!isConfigured ? `${provider.label} OAuth env vars are missing.` : undefined),
+    };
+  });
+
+  // Preserve any linked accounts that aren't OAuth providers (e.g. SHOWCASE).
+  for (const account of accounts) {
+    if (getOAuthProviderByPlatform(account.platform)) continue;
+    connectedPlatforms.push({
+      platform: platforms[account.platform.toLowerCase()],
+      handle: account.accountHandle,
+      status: account.status === ConnectedAccountStatus.ACTIVE ? ('Active' as const) : ('Inactive' as const),
+      action: account.status === 'ACTIVE' ? ('Disconnect' as const) : ('Connect' as const),
+      detail: account.errorMessage ?? undefined,
+    });
+  }
 
   const preferenceRows: PreferenceItem[] = settings
     ? [

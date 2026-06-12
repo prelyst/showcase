@@ -35,7 +35,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
                 >
                   Connect
                 </a>
-              ) : (
+              ) : item.action === 'Disconnect' ? (
                 <form action={toggleConnectedAccountAction}>
                   <input type="hidden" name="platform" value={item.platform.key.toUpperCase()} />
                   <input type="hidden" name="action" value="disconnect" />
@@ -45,6 +45,13 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
                     className="rounded-[10px] border border-border px-3 py-[6px] text-[12px] font-medium text-subtle"
                   />
                 </form>
+              ) : (
+                <button
+                  disabled
+                  className="cursor-not-allowed rounded-[10px] border border-border px-3 py-[6px] text-[12px] font-medium text-muted opacity-60"
+                >
+                  Connect
+                </button>
               )}
             </div>
           ))}
