@@ -273,7 +273,16 @@ export async function getSettingsPageData(): Promise<{
 }
 
 export async function getComposePageData() {
-  const { currentUser, profile } = await getShowcaseSessionData();
+  const { currentUser, profile, connectedAccounts } = await getShowcaseSessionData();
+
+  // Showcase is always a target; everything else must be an active connection.
+  const availableTargets = [
+    platforms.showcase,
+    ...connectedAccounts
+      .filter((account) => account.status === ConnectedAccountStatus.ACTIVE && account.platform !== Platform.SHOWCASE)
+      .map((account) => platforms[account.platform.toLowerCase()])
+      .filter(Boolean),
+  ];
 
   if (!currentUser) {
     return {
@@ -283,6 +292,7 @@ export async function getComposePageData() {
       authorInitials: '?',
       content: 'Sign in to start composing on Showcase.',
       selectedTargets: ['showcase'],
+      availableTargets: [platforms.showcase],
     };
   }
 
@@ -294,6 +304,7 @@ export async function getComposePageData() {
       authorInitials: currentUser.initials,
       content: 'Tell your first story on Showcase.',
       selectedTargets: ['showcase'],
+      availableTargets,
     };
   }
 
@@ -306,6 +317,7 @@ export async function getComposePageData() {
     authorInitials: currentUser.initials,
     content: draft?.content ?? '',
     selectedTargets: draft?.targets.filter((target) => target.enabled).map((target) => target.platform.toLowerCase()) ?? ['showcase'],
+    availableTargets,
   };
 }
 
