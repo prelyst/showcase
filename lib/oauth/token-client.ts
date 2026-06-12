@@ -20,8 +20,9 @@ function buildAuthHeaders(provider: OAuthProviderConfig) {
   const { clientId, clientSecret } = getOAuthProviderEnv(provider);
   const headers: Record<string, string> = { 'Content-Type': 'application/x-www-form-urlencoded' };
 
-  // Confidential clients (those with a secret) authenticate via HTTP Basic.
-  if (clientSecret) {
+  // Confidential clients authenticate via HTTP Basic, unless the provider
+  // wants the secret in the body instead (LinkedIn).
+  if (clientSecret && provider.tokenAuthStyle !== 'body') {
     headers.Authorization = `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`;
   }
 
@@ -42,6 +43,12 @@ function normalize(provider: OAuthProviderConfig, raw: RawTokenResponse): OAuthT
 }
 
 async function postToken(provider: OAuthProviderConfig, body: URLSearchParams): Promise<RawTokenResponse> {
+  // Providers that don't use HTTP Basic expect the secret in the body.
+  if (provider.tokenAuthStyle === 'body') {
+    const { clientSecret } = getOAuthProviderEnv(provider);
+    if (clientSecret) body.set('client_secret', clientSecret);
+  }
+
   const response = await fetch(provider.tokenUrl, {
     method: 'POST',
     headers: buildAuthHeaders(provider),

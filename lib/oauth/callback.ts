@@ -5,6 +5,7 @@ import { upsertOAuthConnectedAccount } from '@/lib/repositories/connected-accoun
 import { decodeOAuthState } from '@/lib/oauth/state';
 import { getOAuthProviderByPlatform, isOAuthProviderConfigured } from '@/lib/oauth/providers';
 import { exchangeAuthorizationCode } from '@/lib/oauth/token-client';
+import { fetchLinkedInIdentity } from '@/lib/publish/adapters/linkedin';
 import { fetchXIdentity } from '@/lib/publish/adapters/x';
 
 export async function handleOAuthCallback(input: {
@@ -93,6 +94,13 @@ export async function handleOAuthCallback(input: {
       accountHandle = `@${identity.username}`;
       accountName = identity.name;
       externalId = identity.id;
+    }
+  } else if (provider.platform === Platform.LINKEDIN) {
+    const identity = await fetchLinkedInIdentity(tokens.accessToken);
+    if (identity) {
+      accountHandle = identity.name;
+      accountName = identity.name;
+      externalId = identity.sub; // member id → urn:li:person:{sub}
     }
   }
 

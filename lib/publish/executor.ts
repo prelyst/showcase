@@ -3,6 +3,7 @@ import { ConnectedAccount, ConnectedAccountStatus, Platform, PostStatus, Publish
 import { getConnectedAccountsForUser, upsertOAuthConnectedAccount } from '@/lib/repositories/connected-account-repository';
 import { getOAuthProviderByPlatform } from '@/lib/oauth/providers';
 import { refreshOAuthToken } from '@/lib/oauth/token-client';
+import { postToLinkedIn } from '@/lib/publish/adapters/linkedin';
 import { postToX } from '@/lib/publish/adapters/x';
 import { prisma } from '@/lib/db/prisma';
 
@@ -67,6 +68,15 @@ async function deliverLane(
     const accessToken = await getValidAccessToken(account);
     const result = await postToX(accessToken, text, account.accountHandle);
     return { externalUrl: result.url, externalId: result.id, message: 'Published to X.' };
+  }
+
+  if (platform === Platform.LINKEDIN) {
+    if (!account.externalId) {
+      throw new Error('LinkedIn member id missing — reconnect LinkedIn to enable publishing.');
+    }
+    const accessToken = await getValidAccessToken(account);
+    const result = await postToLinkedIn(accessToken, text, account.externalId);
+    return { externalUrl: result.url, externalId: result.id, message: 'Published to LinkedIn.' };
   }
 
   // No live adapter yet for this platform — simulated delivery (demo only).

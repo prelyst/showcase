@@ -11,6 +11,9 @@ export type OAuthProviderConfig = {
   clientIdEnv: string;
   clientSecretEnv?: string;
   authorizeParams?: Record<string, string>;
+  // How client credentials are sent to the token endpoint. X accepts HTTP
+  // Basic ('basic', the default); LinkedIn requires them in the form body.
+  tokenAuthStyle?: 'basic' | 'body';
 };
 
 export const oauthProviders: Record<string, OAuthProviderConfig> = {
@@ -34,6 +37,7 @@ export const oauthProviders: Record<string, OAuthProviderConfig> = {
     scope: ['openid', 'profile', 'w_member_social', 'email'],
     clientIdEnv: 'OAUTH_LINKEDIN_CLIENT_ID',
     clientSecretEnv: 'OAUTH_LINKEDIN_CLIENT_SECRET',
+    tokenAuthStyle: 'body',
   },
   bluesky: {
     platform: Platform.BLUESKY,
