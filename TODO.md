@@ -19,7 +19,7 @@
 - [x] Discovery/trending — now aggregated from real post hashtags + real public profiles
 - [x] Analytics/engagement — removed fabricated likes/comments/reposts/followers; feed/profile now show real publish-lane delivery + real derived counts
 - [x] Profile filters — now real per-platform counts from enabled publish targets
-- [x] White theme — page is white with off-white card layering (terracotta + serif preserved)
+- [x] Warm editorial theme — warm paper base with atmospheric color washes + layered cream cards, Fraunces display serif, terracotta/sage accents, depth + hover motion
 - [x] Empty states — feed/discover/notifications/profile/monitor now have on-brand empty states
 - [ ] npm audit — 5 moderate remain (postcss bundled in Next.js, not fixable without downgrade)
 - [ ] Dependabot — 2 moderate alerts on repo (Next.js postcss)

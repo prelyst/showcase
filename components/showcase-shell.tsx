@@ -73,8 +73,10 @@ function NavLink({ href, label, icon, active, badge }: { href: string; label: st
   return (
     <Link
       href={href}
-      className={`flex items-center gap-[11px] rounded-[8px] px-[10px] py-2 text-[14px] font-medium transition ${
-        active ? 'bg-[#1A1814] text-white' : 'text-[#4A453C] hover:bg-panel hover:text-[#1A1814]'
+      className={`group relative flex items-center gap-[11px] rounded-[9px] px-[11px] py-[9px] text-[14px] font-medium transition ${
+        active
+          ? 'bg-ink text-white shadow-[0_8px_18px_-10px_rgba(33,28,21,0.65)]'
+          : 'text-subtle hover:bg-panel hover:text-ink'
       }`}
     >
       <span className={`grid h-[17px] w-[17px] place-items-center ${active ? 'opacity-100' : 'opacity-70'} [&>svg]:h-[17px] [&>svg]:w-[17px]`}>
@@ -82,7 +84,7 @@ function NavLink({ href, label, icon, active, badge }: { href: string; label: st
       </span>
       <span>{label}</span>
       {badge ? (
-        <span className="ml-auto rounded-full bg-[#B8541F] px-[6px] py-[2px] font-mono text-[10px] font-semibold text-white">
+        <span className="ml-auto rounded-full bg-accent px-[7px] py-[2px] font-mono text-[10px] font-semibold text-white shadow-[0_0_0_3px_rgba(184,84,31,0.16)]">
           {badge}
         </span>
       ) : null}
@@ -98,25 +100,25 @@ export async function ShowcaseShell({ title, subtitle, active, children, loading
   }
 
   return (
-    <main className="min-h-screen bg-surface text-[#1A1814]">
+    <main className="min-h-screen bg-transparent text-ink">
       <div
-        className="pointer-events-none fixed inset-0 z-[1] opacity-30"
+        className="pointer-events-none fixed inset-0 z-[1] opacity-[0.22] mix-blend-multiply"
         style={{
           backgroundImage:
             'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.85\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3CfeColorMatrix values=\'0 0 0 0 0.1 0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0.04 0\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")',
         }}
       />
       <div className="relative z-[2] grid min-h-screen lg:grid-cols-[240px_1fr]">
-        <aside className="hidden h-screen border-r border-divider bg-surface px-5 py-7 lg:sticky lg:top-0 lg:flex lg:flex-col">
-          <Link href="/" className="mb-9 flex items-center gap-2 px-2 font-serif text-[22px] font-medium tracking-[-0.02em]">
-            <span className="h-[10px] w-[10px] rotate-45 rounded-[2px] bg-[#B8541F]" />
+        <aside className="hidden h-screen border-r border-border bg-[rgba(250,244,234,0.6)] px-5 py-7 backdrop-blur-md lg:sticky lg:top-0 lg:flex lg:flex-col">
+          <Link href="/" className="group mb-9 flex items-center gap-[10px] px-2 font-serif text-[23px] font-medium tracking-[-0.02em]">
+            <span className="h-[12px] w-[12px] rotate-45 rounded-[3px] bg-accent shadow-[0_0_0_4px_rgba(184,84,31,0.14)] transition group-hover:rotate-[135deg]" />
             Showcase
           </Link>
 
           <Link
             href="/showcase/compose"
             prefetch
-            className="mb-5 flex items-center justify-center gap-2 rounded-[10px] bg-[#B8541F] px-[14px] py-[11px] text-[14px] font-medium text-white transition hover:-translate-y-px hover:bg-[#1A1814]"
+            className="mb-5 flex items-center justify-center gap-2 rounded-[11px] bg-accent px-[14px] py-[11px] text-[14px] font-medium text-white shadow-[0_8px_20px_-10px_rgba(184,84,31,0.7)] transition hover:-translate-y-px hover:bg-accent-deep hover:shadow-[0_12px_26px_-10px_rgba(184,84,31,0.8)]"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-[14px] w-[14px]">
               <path d="M12 5v14M5 12h14" />
@@ -161,7 +163,7 @@ export async function ShowcaseShell({ title, subtitle, active, children, loading
         </aside>
 
         <div className="min-h-screen">
-          <header className="sticky top-0 z-10 border-b border-divider bg-[rgba(244,241,234,0.88)] px-5 py-5 backdrop-blur-[12px] md:px-10">
+          <header className="sticky top-0 z-10 border-b border-border bg-[rgba(250,244,234,0.72)] px-5 py-5 backdrop-blur-[14px] md:px-10">
             <div className="mb-4 flex items-center justify-between lg:hidden">
               <Link href="/showcase/feed" className="flex items-center gap-2 font-serif text-[20px] font-medium tracking-[-0.02em]">
                 <span className="h-[10px] w-[10px] rotate-45 rounded-[2px] bg-[#B8541F]" />
@@ -194,8 +196,8 @@ export async function ShowcaseShell({ title, subtitle, active, children, loading
 
             <div className="flex items-end justify-between gap-5">
               <div>
-                <div className="font-serif text-[28px] font-normal tracking-[-0.02em] text-[#1A1814]">{title}</div>
-                {subtitle ? <div className="mt-1 font-mono text-[11px] uppercase tracking-[0.05em] text-[#85806F]">{subtitle}</div> : null}
+                <div className="font-serif text-[30px] font-normal leading-[1.1] tracking-[-0.02em] text-ink">{title}</div>
+                {subtitle ? <div className="mt-[6px] font-mono text-[11px] uppercase tracking-[0.06em] text-muted">{subtitle}</div> : null}
               </div>
               <Link
                 href="/showcase/compose"

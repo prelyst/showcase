@@ -28,19 +28,19 @@ export function EmptyState({
 }) {
   return (
     <div
-      className={`flex flex-col items-center justify-center rounded-[14px] border border-dashed border-border bg-card text-center ${
+      className={`flex flex-col items-center justify-center rounded-[18px] border border-dashed border-track bg-card text-center shadow-card ${
         compact ? 'px-5 py-8' : 'px-8 py-14'
       }`}
     >
-      <span className="mb-3 grid h-9 w-9 place-items-center rounded-full border border-border bg-surface font-serif text-[18px] italic text-[#B8541F]">
+      <span className="mb-3 grid h-11 w-11 place-items-center rounded-full bg-accent-tint font-serif text-[22px] italic text-accent shadow-[0_0_0_6px_rgba(184,84,31,0.07)]">
         ·
       </span>
-      <div className={`font-serif italic text-[#1A1814] ${compact ? 'text-[16px]' : 'text-[19px]'}`}>{title}</div>
-      {hint ? <div className="mt-[6px] max-w-[280px] text-[13px] leading-[1.5] text-[#85806F]">{hint}</div> : null}
+      <div className={`font-serif italic text-ink ${compact ? 'text-[17px]' : 'text-[20px]'}`}>{title}</div>
+      {hint ? <div className="mt-[6px] max-w-[280px] text-[13px] leading-[1.5] text-muted">{hint}</div> : null}
       {cta ? (
         <Link
           href={cta.href}
-          className="mt-4 inline-flex items-center gap-1 rounded-full bg-[#1A1814] px-4 py-2 text-[13px] font-medium text-white transition hover:-translate-y-px hover:bg-[#B8541F]"
+          className="mt-4 inline-flex items-center gap-1 rounded-full bg-accent px-[18px] py-[10px] text-[13px] font-medium text-white shadow-[0_8px_18px_-10px_rgba(184,84,31,0.8)] transition hover:-translate-y-px hover:bg-accent-deep"
         >
           {cta.label} <span aria-hidden>→</span>
         </Link>
@@ -69,7 +69,7 @@ export function PlatformBadge({ platform, large = false }: { platform: PlatformC
 
 export function FollowButton({ following }: { following: boolean }) {
   return (
-    <button className={`rounded-full px-3 py-[6px] text-[12px] font-medium ${following ? 'border border-border text-[#1A1814]' : 'bg-[#1A1814] text-white'}`}>
+    <button className={`rounded-full px-[14px] py-[6px] text-[12px] font-medium transition ${following ? 'border border-border bg-surface text-ink hover:border-accent/50' : 'bg-accent text-white shadow-[0_6px_14px_-8px_rgba(184,84,31,0.8)] hover:-translate-y-px hover:bg-accent-deep'}`}>
       {following ? 'Following' : 'Follow'}
     </button>
   );
@@ -77,18 +77,18 @@ export function FollowButton({ following }: { following: boolean }) {
 
 export function FeedPostCard({ post }: { post: FeedPost }) {
   return (
-    <article className="grid grid-cols-[48px_1fr] gap-4 border-b border-divider py-6 last:border-b-0">
+    <article className="group -mx-3 grid grid-cols-[48px_1fr] gap-4 rounded-[16px] border border-transparent px-3 py-6 transition duration-300 hover:border-border hover:bg-card hover:shadow-card">
       <Avatar avatar={post.avatar} />
       <div>
         <div className="mb-[6px] flex flex-wrap items-baseline gap-2">
-          <span className="text-[15px] font-medium text-[#1A1814]">{post.author}</span>
-          <span className="font-mono text-[12px] text-[#85806F]">{post.handle}</span>
-          <span className="text-[13px] text-[#85806F]">· {post.time}</span>
+          <span className="text-[15px] font-semibold text-ink">{post.author}</span>
+          <span className="font-mono text-[12px] text-muted">{post.handle}</span>
+          <span className="text-[13px] text-muted">· {post.time}</span>
         </div>
-        <div className="mb-[14px] font-serif text-[18px] leading-[1.5] text-[#1A1814]">
+        <div className="mb-[14px] font-serif text-[19px] leading-[1.55] text-ink">
           {post.body}{' '}
           {post.hashtags?.map((tag) => (
-            <span key={tag} className="font-medium italic text-[#B8541F]">
+            <span key={tag} className="font-medium italic text-accent">
               {tag}{' '}
             </span>
           ))}
@@ -135,11 +135,14 @@ export function TrendingCard({ topic, compact = false }: { topic: TrendingTopic;
       <div className="text-[12px] text-[#85806F]">{topic.count}</div>
     </div>
   ) : (
-    <div className="rounded-[12px] border border-border bg-card p-[18px] transition hover:-translate-y-px hover:border-[#B8541F]">
-      <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.08em] text-[#85806F]">{topic.rank}</div>
-      <div className="mb-[6px] font-serif text-[22px] font-medium italic text-[#B8541F]">{topic.tag}</div>
-      <div className="mb-2 text-[13px] text-[#4A453C]">{topic.count}</div>
-      {topic.delta ? <div className="font-mono text-[11px] text-[#5A6B3A]">{topic.delta}</div> : null}
+    <div className="group relative overflow-hidden rounded-[14px] border border-border bg-card p-[18px] shadow-card transition duration-300 hover:-translate-y-[3px] hover:border-accent hover:shadow-lift">
+      <span className="pointer-events-none absolute -right-3 -top-4 font-serif text-[64px] font-semibold italic leading-none text-accent/[0.08] transition group-hover:text-accent/[0.16]">
+        {topic.rank}
+      </span>
+      <div className="relative mb-2 font-mono text-[10px] uppercase tracking-[0.08em] text-muted">Trending</div>
+      <div className="relative mb-[6px] font-serif text-[23px] font-medium italic text-accent">{topic.tag}</div>
+      <div className="relative mb-2 text-[13px] text-subtle">{topic.count}</div>
+      {topic.delta ? <div className="relative font-mono text-[11px] text-sage">{topic.delta}</div> : null}
     </div>
   );
 }
@@ -155,12 +158,12 @@ export function CreatorCard({ creator, compact = false }: { creator: CreatorSugg
       <FollowButton following={creator.following} />
     </div>
   ) : (
-    <div className="flex items-center gap-3 rounded-[12px] border border-border bg-card p-[18px]">
+    <div className="flex items-center gap-3 rounded-[14px] border border-border bg-card p-[18px] shadow-card transition duration-300 hover:-translate-y-[3px] hover:border-accent/40 hover:shadow-lift">
       <Avatar avatar={creator.avatar} size="sm" />
       <div className="min-w-0 flex-1">
-        <div className="text-[14px] font-medium text-[#1A1814]">{creator.name}</div>
-        <div className="mb-[6px] font-mono text-[11px] text-[#85806F]">{creator.handle}</div>
-        <div className="line-clamp-2 text-[12px] leading-[1.4] text-[#4A453C]">{creator.bio}</div>
+        <div className="text-[14px] font-medium text-ink">{creator.name}</div>
+        <div className="mb-[6px] font-mono text-[11px] text-muted">{creator.handle}</div>
+        <div className="line-clamp-2 text-[12px] leading-[1.4] text-subtle">{creator.bio}</div>
       </div>
       <FollowButton following={creator.following} />
     </div>
@@ -225,14 +228,14 @@ export function PublishLaneRow({ lane }: { lane: PublishLane }) {
 
 export function ProfilePostCard({ post }: { post: ProfilePost }) {
   return (
-    <article className="rounded-[14px] border border-border bg-card p-[22px] transition hover:-translate-y-px hover:border-[#85806F]">
+    <article className="group rounded-[16px] border border-border bg-card p-[22px] shadow-card transition duration-300 hover:-translate-y-[3px] hover:border-accent/40 hover:shadow-lift">
       <div className="mb-3 flex items-center gap-2">
-        <PlatformBadge platform={{ key: 'showcase', label: 'Showcase', short: 'S', tone: 'bg-[#B8541F] text-white' }} />
-        <span className="font-mono text-[10px] uppercase tracking-[0.05em] text-[#85806F]">{post.label}</span>
-        <span className="ml-auto font-mono text-[10px] text-[#85806F]">{post.relativeTime ? `${post.time} · ${post.relativeTime}` : post.time}</span>
+        <PlatformBadge platform={{ key: 'showcase', label: 'Showcase', short: 'S', tone: 'bg-accent text-white' }} />
+        <span className="font-mono text-[10px] uppercase tracking-[0.05em] text-muted">{post.label}</span>
+        <span className="ml-auto font-mono text-[10px] text-muted">{post.relativeTime ? `${post.time} · ${post.relativeTime}` : post.time}</span>
       </div>
-      <div className="mb-[14px] font-serif text-[15px] leading-[1.5] text-[#1A1814]">{post.body}</div>
-      <div className="flex gap-4 font-mono text-[11px] text-[#85806F]">
+      <div className="mb-[14px] font-serif text-[16px] leading-[1.55] text-ink">{post.body}</div>
+      <div className="flex gap-4 border-t border-divider pt-3 font-mono text-[11px] text-muted">
         {post.stats.map((stat) => (
           <span key={stat}>{stat}</span>
         ))}
@@ -271,10 +274,10 @@ export function PreferenceRow({ item }: { item: PreferenceItem }) {
 
 export function SectionCard({ title, subtitle, children }: { title: ReactNode; subtitle?: ReactNode; children: ReactNode }) {
   return (
-    <section className="overflow-hidden rounded-[16px] border border-border bg-card shadow-card">
-      <div className="border-b border-divider px-6 py-5">
-        <div className="mb-1 font-serif text-[20px] tracking-[-0.01em] text-[#1A1814]">{title}</div>
-        {subtitle ? <div className="text-[13px] text-[#85806F]">{subtitle}</div> : null}
+    <section className="rise-in overflow-hidden rounded-[18px] border border-border bg-card shadow-card">
+      <div className="border-b border-divider bg-panel/50 px-6 py-5">
+        <div className="mb-1 font-serif text-[21px] tracking-[-0.01em] text-ink">{title}</div>
+        {subtitle ? <div className="text-[13px] text-subtle">{subtitle}</div> : null}
       </div>
       {children}
     </section>
