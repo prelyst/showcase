@@ -1,7 +1,7 @@
 import { PendingActionButton } from '@/components/pending-action-button';
 import { ShowcaseShell } from '@/components/showcase-shell';
-import { Avatar, PlatformBadge, ProfilePostCard } from '@/components/showcase-ui';
-import { platforms, profileFilters } from '@/lib/mock/showcase';
+import { Avatar, EmptyState, PlatformBadge, ProfilePostCard } from '@/components/showcase-ui';
+import { platforms } from '@/lib/mock/showcase';
 import { getProfilePageData } from '@/lib/server/showcase-data';
 import { updateProfileAction } from './actions';
 
@@ -13,7 +13,7 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
   return (
     <ShowcaseShell title="Profile" subtitle={`showcase.app/@${profile.slug}`} active="/showcase/profile">
       <div className="max-w-[1100px]">
-        <div className="mb-6 grid gap-7 rounded-[20px] border border-[#D9D3C4] bg-[#FBF9F4] p-9 lg:grid-cols-[auto_1fr_auto] lg:items-center">
+        <div className="mb-6 grid gap-7 rounded-[20px] border border-border bg-card p-9 shadow-card lg:grid-cols-[auto_1fr_auto] lg:items-center">
           <Avatar avatar={{ initials: profile.initials, className: 'bg-[#F5E5D3] text-[#B8541F]' }} size="lg" />
           <div>
             <div className="mb-1 font-serif text-[34px] tracking-[-0.02em] text-[#1A1814]">{profile.displayName}</div>
@@ -40,26 +40,34 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
 
         <div className="mb-6 grid gap-6 xl:grid-cols-[1.1fr_380px]">
           <div>
-            {saved ? <div className="mb-4 rounded-[12px] border border-[#D9D3C4] bg-[#F4F1EA] px-4 py-3 text-[13px] text-[#4A453C]">Profile updated.</div> : null}
+            {saved ? <div className="mb-4 rounded-[12px] border border-border bg-surface px-4 py-3 text-[13px] text-[#4A453C]">Profile updated.</div> : null}
             {errorMessage ? <div className="mb-4 rounded-[12px] border border-[#F2DCD1] bg-[#FBF1EC] px-4 py-3 text-[13px] text-[#A0381F]">{errorMessage}</div> : null}
 
             <div className="mb-6 flex gap-2 overflow-x-auto pb-1">
-              {profileFilters.map((filter, index) => (
-                <button key={filter.label} className={`flex items-center gap-[6px] rounded-full border px-[14px] py-[7px] text-[13px] font-medium whitespace-nowrap ${index === 0 ? 'border-[#1A1814] bg-[#1A1814] text-[#F4F1EA]' : 'border-[#D9D3C4] bg-[#FBF9F4] text-[#4A453C]'}`}>
+              {profile.filters.map((filter, index) => (
+                <button key={filter.label} className={`flex items-center gap-[6px] rounded-full border px-[14px] py-[7px] text-[13px] font-medium whitespace-nowrap transition ${index === 0 ? 'border-[#1A1814] bg-[#1A1814] text-white' : 'border-border bg-card text-[#4A453C] hover:border-[#85806F]'}`}>
                   {filter.label}
                   <span className="font-mono text-[11px] opacity-60">{filter.count}</span>
                 </button>
               ))}
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              {profile.posts.map((post) => (
-                <ProfilePostCard key={post.id} post={post} />
-              ))}
-            </div>
+            {profile.posts.length ? (
+              <div className="grid gap-4 md:grid-cols-2">
+                {profile.posts.map((post) => (
+                  <ProfilePostCard key={post.id} post={post} />
+                ))}
+              </div>
+            ) : (
+              <EmptyState
+                title="No posts on your archive yet."
+                hint="Everything you publish keeps a clean home here, at your single profile URL."
+                cta={{ label: 'Write your first post', href: '/showcase/compose' }}
+              />
+            )}
           </div>
 
-          <aside className="rounded-[20px] border border-[#D9D3C4] bg-[#FBF9F4] p-6">
+          <aside className="rounded-[20px] border border-border bg-card p-6">
             <div className="mb-5">
               <div className="mb-1 font-serif text-[24px] tracking-[-0.02em] text-[#1A1814]">Edit profile</div>
               <div className="text-[13px] leading-[1.5] text-[#4A453C]">Update how your identity appears across Showcase.</div>
@@ -68,32 +76,32 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
             <form action={updateProfileAction} className="space-y-4">
               <div>
                 <label htmlFor="displayName" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">Display name</label>
-                <input id="displayName" name="displayName" defaultValue={profile.displayName} className="w-full rounded-[12px] border border-[#D9D3C4] bg-[#FBF9F4] px-4 py-[14px] text-[15px] text-[#1A1814] outline-none focus:border-[#B8541F]" />
+                <input id="displayName" name="displayName" defaultValue={profile.displayName} className="w-full rounded-[12px] border border-border bg-card px-4 py-[14px] text-[15px] text-[#1A1814] outline-none focus:border-[#B8541F]" />
               </div>
 
               <div>
                 <label htmlFor="slug" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">Profile slug</label>
-                <input id="slug" name="slug" defaultValue={profile.slug} className="w-full rounded-[12px] border border-[#D9D3C4] bg-[#FBF9F4] px-4 py-[14px] text-[15px] text-[#1A1814] outline-none focus:border-[#B8541F]" />
+                <input id="slug" name="slug" defaultValue={profile.slug} className="w-full rounded-[12px] border border-border bg-card px-4 py-[14px] text-[15px] text-[#1A1814] outline-none focus:border-[#B8541F]" />
               </div>
 
               <div>
                 <label htmlFor="bio" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">Bio</label>
-                <textarea id="bio" name="bio" defaultValue={profile.bio} className="min-h-[110px] w-full rounded-[12px] border border-[#D9D3C4] bg-[#FBF9F4] px-4 py-[14px] text-[15px] text-[#1A1814] outline-none focus:border-[#B8541F]" />
+                <textarea id="bio" name="bio" defaultValue={profile.bio} className="min-h-[110px] w-full rounded-[12px] border border-border bg-card px-4 py-[14px] text-[15px] text-[#1A1814] outline-none focus:border-[#B8541F]" />
               </div>
 
               <div>
                 <label htmlFor="location" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">Location</label>
-                <input id="location" name="location" defaultValue={profile.location || ''} className="w-full rounded-[12px] border border-[#D9D3C4] bg-[#FBF9F4] px-4 py-[14px] text-[15px] text-[#1A1814] outline-none focus:border-[#B8541F]" />
+                <input id="location" name="location" defaultValue={profile.location || ''} className="w-full rounded-[12px] border border-border bg-card px-4 py-[14px] text-[15px] text-[#1A1814] outline-none focus:border-[#B8541F]" />
               </div>
 
               <div>
                 <label htmlFor="website" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">Website</label>
-                <input id="website" name="website" defaultValue={profile.website || ''} className="w-full rounded-[12px] border border-[#D9D3C4] bg-[#FBF9F4] px-4 py-[14px] text-[15px] text-[#1A1814] outline-none focus:border-[#B8541F]" />
+                <input id="website" name="website" defaultValue={profile.website || ''} className="w-full rounded-[12px] border border-border bg-card px-4 py-[14px] text-[15px] text-[#1A1814] outline-none focus:border-[#B8541F]" />
               </div>
 
               <div>
                 <label htmlFor="isPublic" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">Visibility</label>
-                <select id="isPublic" name="isPublic" defaultValue={profile.isPublic ? 'true' : 'false'} className="w-full rounded-[12px] border border-[#D9D3C4] bg-[#FBF9F4] px-4 py-[14px] text-[15px] text-[#1A1814] outline-none focus:border-[#B8541F]">
+                <select id="isPublic" name="isPublic" defaultValue={profile.isPublic ? 'true' : 'false'} className="w-full rounded-[12px] border border-border bg-card px-4 py-[14px] text-[15px] text-[#1A1814] outline-none focus:border-[#B8541F]">
                   <option value="true">Public profile</option>
                   <option value="false">Private profile</option>
                 </select>
@@ -102,7 +110,7 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
               <PendingActionButton
                 idle="Save profile"
                 pending="Saving profile..."
-                className="inline-flex w-full items-center justify-center rounded-[12px] bg-[#1A1814] px-5 py-[14px] text-[15px] font-medium text-[#F4F1EA] transition hover:bg-[#B8541F]"
+                className="inline-flex w-full items-center justify-center rounded-[12px] bg-[#1A1814] px-5 py-[14px] text-[15px] font-medium text-white transition hover:bg-[#B8541F]"
               />
             </form>
           </aside>

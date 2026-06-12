@@ -66,6 +66,27 @@ export async function getProfileBySlug(slug: string) {
   });
 }
 
+export async function getPublicProfiles(excludeUserId?: string, limit = 6) {
+  if (!prisma) {
+    return [];
+  }
+
+  return prisma.profile.findMany({
+    where: {
+      isPublic: true,
+      ...(excludeUserId ? { userId: { not: excludeUserId } } : {}),
+    },
+    orderBy: { createdAt: 'desc' },
+    take: limit,
+    select: {
+      id: true,
+      displayName: true,
+      slug: true,
+      bio: true,
+    },
+  });
+}
+
 export async function getProfileByUserId(userId: string) {
   if (!prisma) {
     return null;

@@ -1,5 +1,5 @@
 import { ShowcaseShell } from '@/components/showcase-shell';
-import { CreatorCard, TrendingCard } from '@/components/showcase-ui';
+import { CreatorCard, EmptyState, TrendingCard } from '@/components/showcase-ui';
 import { getDiscoverPageData } from '@/lib/server/showcase-data';
 
 export default async function DiscoverPage() {
@@ -8,11 +8,11 @@ export default async function DiscoverPage() {
   return (
     <ShowcaseShell title="Discover" active="/showcase/discover">
       <div className="max-w-[1100px]">
-        <div className="mb-7 rounded-[16px] border border-[#D9D3C4] bg-[#FBF9F4] p-7">
+        <div className="mb-7 rounded-[16px] border border-border bg-card p-7">
           <input
             type="text"
             placeholder="Search posts, creators, hashtags…"
-            className="w-full rounded-[10px] border border-[#D9D3C4] bg-[#F4F1EA] px-[18px] py-[14px] text-[15px] text-[#1A1814] outline-none placeholder:text-[#85806F]"
+            className="w-full rounded-[10px] border border-border bg-surface px-[18px] py-[14px] text-[15px] text-[#1A1814] outline-none placeholder:text-[#85806F]"
           />
         </div>
 
@@ -22,11 +22,15 @@ export default async function DiscoverPage() {
           </div>
           <button className="font-mono text-[11px] uppercase tracking-[0.05em] text-[#85806F]">View all →</button>
         </div>
-        <div className="grid gap-[14px] md:grid-cols-2 xl:grid-cols-4">
-          {trending.map((topic) => (
-            <TrendingCard key={topic.tag} topic={topic} />
-          ))}
-        </div>
+        {trending.length ? (
+          <div className="grid gap-[14px] md:grid-cols-2 xl:grid-cols-4">
+            {trending.map((topic) => (
+              <TrendingCard key={topic.tag} topic={topic} />
+            ))}
+          </div>
+        ) : (
+          <EmptyState compact title="No trending hashtags yet." hint="Hashtags from published posts across Showcase will rank here." />
+        )}
 
         <div className="mb-4 mt-8 flex items-end justify-between">
           <div className="font-serif text-[22px] tracking-[-0.01em] text-[#1A1814]">
@@ -34,11 +38,15 @@ export default async function DiscoverPage() {
           </div>
           <button className="font-mono text-[11px] uppercase tracking-[0.05em] text-[#85806F]">View all →</button>
         </div>
-        <div className="grid gap-[14px] md:grid-cols-2 xl:grid-cols-4">
-          {creators.map((creator) => (
-            <CreatorCard key={creator.id} creator={creator} />
-          ))}
-        </div>
+        {creators.length ? (
+          <div className="grid gap-[14px] md:grid-cols-2 xl:grid-cols-4">
+            {creators.map((creator) => (
+              <CreatorCard key={creator.id} creator={creator} />
+            ))}
+          </div>
+        ) : (
+          <EmptyState compact title="No public creators yet." hint="As people make their Showcase profiles public, they’ll appear here." />
+        )}
       </div>
     </ShowcaseShell>
   );

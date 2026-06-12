@@ -22,10 +22,11 @@ export type FeedPost = {
   hashtags?: string[];
   media?: string;
   socials: PlatformChip[];
-  stats: {
-    likes: string;
-    comments: string;
-    reposts: string;
+  // Real delivery outcome derived from publish lane results — not invented engagement.
+  delivery: {
+    published: number;
+    total: number;
+    label: string;
   };
 };
 

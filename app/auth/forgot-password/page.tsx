@@ -25,7 +25,7 @@ export default function ForgotPasswordPage() {
         <p className="text-[14px] leading-[1.6] text-[#4A453C]">We'll send a reset link to your email.</p>
       </div>
 
-      <div className="mb-6 rounded-[16px] border border-[#E8E3D4] bg-[#F4F1EA] p-4">
+      <div className="mb-6 rounded-[16px] border border-divider bg-surface p-4">
         <div className="mb-1 font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">Password reset</div>
         <div className="font-serif text-[22px] italic text-[#1A1814]">Supabase Auth</div>
         <div className="mt-2 text-[13px] leading-[1.55] text-[#4A453C]">
@@ -44,13 +44,13 @@ export default function ForgotPasswordPage() {
             type="email"
             placeholder="you@example.com"
             autoComplete="email"
-            className="w-full rounded-[12px] border border-[#D9D3C4] bg-[#FBF9F4] px-4 py-[14px] text-[15px] text-[#1A1814] outline-none placeholder:text-[#85806F] focus:border-[#B8541F]"
+            className="w-full rounded-[12px] border border-border bg-card px-4 py-[14px] text-[15px] text-[#1A1814] outline-none placeholder:text-[#85806F] focus:border-[#B8541F]"
           />
         </div>
 
         <button
           type="submit"
-          className="inline-flex w-full items-center justify-center rounded-[12px] bg-[#1A1814] px-5 py-[14px] text-[15px] font-medium text-[#F4F1EA] transition hover:bg-[#B8541F]"
+          className="inline-flex w-full items-center justify-center rounded-[12px] bg-[#1A1814] px-5 py-[14px] text-[15px] font-medium text-white transition hover:bg-[#B8541F]"
         >
           Send reset link
         </button>

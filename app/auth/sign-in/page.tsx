@@ -34,7 +34,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
         <p className="text-[14px] leading-[1.6] text-[#4A453C]">Sign in to continue into your Showcase workspace.</p>
       </div>
 
-      <div className="mb-5 rounded-[16px] border border-[#E8E3D4] bg-[#F4F1EA] p-4">
+      <div className="mb-5 rounded-[16px] border border-divider bg-surface p-4">
         <div className="mb-1 font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">Current auth mode</div>
         <div className="font-serif text-[22px] italic text-[#1A1814]">Supabase session exchange</div>
         <div className="mt-2 text-[13px] leading-[1.55] text-[#4A453C]">
@@ -43,7 +43,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
       </div>
 
       {!configured ? <div className="mb-4 rounded-[12px] border border-[#F2DCD1] bg-[#FBF1EC] px-4 py-3 text-[13px] text-[#A0381F]">Supabase auth is not configured yet. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY first.</div> : null}
-      {signedOut ? <div className="mb-4 rounded-[12px] border border-[#D9D3C4] bg-[#F4F1EA] px-4 py-3 text-[13px] text-[#4A453C]">You were signed out.</div> : null}
+      {signedOut ? <div className="mb-4 rounded-[12px] border border-border bg-surface px-4 py-3 text-[13px] text-[#4A453C]">You were signed out.</div> : null}
       {errorMessage ? <div className="mb-4 rounded-[12px] border border-[#F2DCD1] bg-[#FBF1EC] px-4 py-3 text-[13px] text-[#A0381F]">{errorMessage}</div> : null}
 
       <form action={signInAction} className="space-y-4">
@@ -57,7 +57,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
             type="email"
             placeholder="you@example.com"
             autoComplete="email"
-            className="w-full rounded-[12px] border border-[#D9D3C4] bg-[#FBF9F4] px-4 py-[14px] text-[15px] text-[#1A1814] outline-none placeholder:text-[#85806F] focus:border-[#B8541F]"
+            className="w-full rounded-[12px] border border-border bg-card px-4 py-[14px] text-[15px] text-[#1A1814] outline-none placeholder:text-[#85806F] focus:border-[#B8541F]"
           />
         </div>
 
@@ -80,7 +80,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
           disabled={!configured}
           idle="Enter Showcase"
           pending="Entering Showcase..."
-          className="inline-flex w-full items-center justify-center rounded-[12px] bg-[#1A1814] px-5 py-[14px] text-[15px] font-medium text-[#F4F1EA] transition hover:bg-[#B8541F]"
+          className="inline-flex w-full items-center justify-center rounded-[12px] bg-[#1A1814] px-5 py-[14px] text-[15px] font-medium text-white transition hover:bg-[#B8541F]"
         />
       </form>
 

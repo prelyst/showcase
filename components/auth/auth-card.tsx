@@ -15,7 +15,7 @@ export function AuthCard({
   footer?: ReactNode;
 }) {
   return (
-    <main className="min-h-screen bg-[#F4F1EA] text-[#1A1814]">
+    <main className="min-h-screen bg-surface text-[#1A1814]">
       <div
         className="pointer-events-none fixed inset-0 z-[1] opacity-30"
         style={{
@@ -38,15 +38,15 @@ export function AuthCard({
             </div>
           </section>
 
-          <section className="overflow-hidden rounded-[24px] border border-[#D9D3C4] bg-[#FBF9F4] shadow-[0_18px_60px_rgba(26,24,20,0.08)]">
-            <div className="border-b border-[#E8E3D4] px-6 py-5 md:hidden">
+          <section className="overflow-hidden rounded-[24px] border border-border bg-card shadow-[0_18px_60px_rgba(26,24,20,0.08)]">
+            <div className="border-b border-divider px-6 py-5 md:hidden">
               <Link href="/" className="inline-flex items-center gap-2 font-serif text-[22px] tracking-[-0.02em] text-[#1A1814]">
                 <span className="h-[10px] w-[10px] rotate-45 rounded-[2px] bg-[#B8541F]" />
                 Showcase
               </Link>
             </div>
             <div className="px-6 py-6 sm:px-8 sm:py-8">{children}</div>
-            {footer ? <div className="border-t border-[#E8E3D4] bg-[#F4F1EA] px-6 py-4 sm:px-8">{footer}</div> : null}
+            {footer ? <div className="border-t border-divider bg-surface px-6 py-4 sm:px-8">{footer}</div> : null}
           </section>
         </div>
       </div>

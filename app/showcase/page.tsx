@@ -12,7 +12,7 @@ const pages = [
 
 export default function ShowcaseIndexPage() {
   return (
-    <main className="min-h-screen bg-[#F4F1EA] px-6 py-16 text-[#1A1814] md:px-10">
+    <main className="min-h-screen bg-surface px-6 py-16 text-[#1A1814] md:px-10">
       <div className="mx-auto max-w-5xl">
         <div className="mb-10">
           <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-[#B8541F]">Showcase app</p>
@@ -27,7 +27,7 @@ export default function ShowcaseIndexPage() {
             <Link
               key={page.href}
               href={page.href}
-              className="rounded-[20px] border border-[#D9D3C4] bg-[#FBF9F4] p-6 transition hover:-translate-y-0.5 hover:border-[#85806F]"
+              className="rounded-[20px] border border-border bg-card p-6 transition hover:-translate-y-0.5 hover:border-[#85806F]"
             >
               <div className="font-serif text-2xl tracking-[-0.02em] text-[#1A1814]">{page.label}</div>
               <div className="mt-3 font-mono text-[11px] uppercase tracking-[0.08em] text-[#85806F]">

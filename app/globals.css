@@ -13,8 +13,17 @@ html {
 body {
   margin: 0;
   font-family: var(--font-geist-sans), sans-serif;
+  background-color: #ffffff;
+  color: #1a1814;
 }
 
 .font-serif {
   font-family: Georgia, 'Times New Roman', serif;
+}
+
+/* Consistent keyboard focus on the white theme */
+:where(a, button, input, textarea, select):focus-visible {
+  outline: 2px solid #b8541f;
+  outline-offset: 2px;
+  border-radius: 8px;
 }
