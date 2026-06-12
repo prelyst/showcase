@@ -2,7 +2,6 @@ import Link from 'next/link';
 import { ReactNode } from 'react';
 
 import { signOutAction } from '@/app/auth/sign-in/actions';
-import { ThemeToggle } from '@/components/theme-toggle';
 import { getUnreadNotificationCount } from '@/lib/repositories/notification-repository';
 import { getCurrentUserView } from '@/lib/server/current-user';
 
@@ -204,7 +203,6 @@ export async function ShowcaseShell({ title, subtitle, active, children, loading
                 {subtitle ? <div className="mt-[6px] font-mono text-[11px] uppercase tracking-[0.06em] text-muted">{subtitle}</div> : null}
               </div>
               <div className="flex items-center gap-2">
-                <ThemeToggle />
                 <Link
                   href="/showcase/compose"
                   prefetch
