@@ -1,18 +1,11 @@
-import { ConnectedAccountStatus } from '@prisma/client';
+import { ConnectedAccountStatus, Platform } from '@prisma/client';
 
 import { createNotification } from '@/lib/repositories/notification-repository';
 import { upsertOAuthConnectedAccount } from '@/lib/repositories/connected-account-repository';
 import { decodeOAuthState } from '@/lib/oauth/state';
-import { getOAuthProviderByPlatform, getOAuthProviderEnv, isOAuthProviderConfigured } from '@/lib/oauth/providers';
-
-function buildPlaceholderTokens(platform: string, code: string) {
-  const suffix = code.slice(-8) || 'pending';
-  return {
-    accessToken: `oauth_stub_${platform.toLowerCase()}_${suffix}`,
-    refreshToken: `refresh_stub_${platform.toLowerCase()}_${suffix}`,
-    tokenExpiresAt: new Date(Date.now() + 1000 * 60 * 60),
-  };
-}
+import { getOAuthProviderByPlatform, isOAuthProviderConfigured } from '@/lib/oauth/providers';
+import { exchangeAuthorizationCode } from '@/lib/oauth/token-client';
+import { fetchXIdentity } from '@/lib/publish/adapters/x';
 
 export async function handleOAuthCallback(input: {
   platform: string;
@@ -68,20 +61,52 @@ export async function handleOAuthCallback(input: {
     return { redirectTo: '/showcase/settings?oauth=provider-not-configured' };
   }
 
-  const env = getOAuthProviderEnv(provider);
-  void env;
+  let tokens;
+  try {
+    tokens = await exchangeAuthorizationCode(provider, input.code, decodedState.codeVerifier);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Token exchange failed.';
 
-  const tokens = buildPlaceholderTokens(provider.platform, input.code);
+    await upsertOAuthConnectedAccount({
+      userId: decodedState.userId,
+      platform: provider.platform,
+      accountHandle: 'Connection failed',
+      accountName: provider.label,
+      status: ConnectedAccountStatus.ERROR,
+      errorMessage: message,
+      accessToken: null,
+      refreshToken: null,
+      tokenExpiresAt: null,
+    });
+
+    return { redirectTo: `/showcase/settings?oauth=${encodeURIComponent('token-exchange-failed')}` };
+  }
+
+  // Resolve the real account handle/id where we have an adapter for it.
+  let accountHandle = `@${provider.key}`;
+  let accountName: string | null = provider.label;
+  let externalId: string | null = null;
+
+  if (provider.platform === Platform.X) {
+    const identity = await fetchXIdentity(tokens.accessToken);
+    if (identity) {
+      accountHandle = `@${identity.username}`;
+      accountName = identity.name;
+      externalId = identity.id;
+    }
+  }
 
   await upsertOAuthConnectedAccount({
     userId: decodedState.userId,
     platform: provider.platform,
-    accountHandle: `@${provider.key}-${decodedState.userId.slice(0, 6)}`,
-    accountName: provider.label,
+    accountHandle,
+    accountName,
+    externalId,
     status: ConnectedAccountStatus.ACTIVE,
     accessToken: tokens.accessToken,
     refreshToken: tokens.refreshToken,
     tokenExpiresAt: tokens.tokenExpiresAt,
+    scopes: tokens.scopes,
     errorMessage: null,
   });
 
@@ -92,8 +117,7 @@ export async function handleOAuthCallback(input: {
     actorHandle: '@showcase',
     message: `${provider.label} connected`,
     metadata: {
-      detail: `${provider.label} is now ready for authenticated publishing once live API delivery is enabled.`,
-      oauth: 'scaffolded',
+      detail: `${accountHandle} is connected and ready for publishing.`,
     },
   });
 

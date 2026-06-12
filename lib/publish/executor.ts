@@ -1,31 +1,76 @@
-import { Platform, PostStatus, PublishLaneStatus } from '@prisma/client';
+import { ConnectedAccount, ConnectedAccountStatus, Platform, PostStatus, PublishLaneStatus } from '@prisma/client';
 
-import { getConnectedAccountsForUser } from '@/lib/repositories/connected-account-repository';
+import { getConnectedAccountsForUser, upsertOAuthConnectedAccount } from '@/lib/repositories/connected-account-repository';
+import { getOAuthProviderByPlatform } from '@/lib/oauth/providers';
+import { refreshOAuthToken } from '@/lib/oauth/token-client';
+import { postToX } from '@/lib/publish/adapters/x';
 import { prisma } from '@/lib/db/prisma';
-
-const MAX_RETRIES = 2;
 
 function getLaneSuccessUrl(platform: Platform, postId: string) {
   const key = platform.toLowerCase();
   return `https://${key}.showcase.local/p/${postId}`;
 }
 
-function shouldFailLane(platform: Platform, connectedPlatforms: Set<Platform>) {
+/** Returns a usable access token for the account, refreshing it if near expiry. */
+async function getValidAccessToken(account: ConnectedAccount) {
+  if (!account.accessToken) {
+    throw new Error(`${account.platform} is not connected for this account.`);
+  }
+
+  const provider = getOAuthProviderByPlatform(account.platform);
+  const expiresSoon = account.tokenExpiresAt ? account.tokenExpiresAt.getTime() - Date.now() < 60_000 : false;
+
+  if (expiresSoon && account.refreshToken && provider) {
+    const refreshed = await refreshOAuthToken(provider, account.refreshToken);
+    await upsertOAuthConnectedAccount({
+      userId: account.userId,
+      platform: account.platform,
+      accountHandle: account.accountHandle,
+      accountName: account.accountName,
+      externalId: account.externalId,
+      status: ConnectedAccountStatus.ACTIVE,
+      accessToken: refreshed.accessToken,
+      refreshToken: refreshed.refreshToken,
+      tokenExpiresAt: refreshed.tokenExpiresAt,
+      scopes: refreshed.scopes,
+      errorMessage: null,
+    });
+    return refreshed.accessToken;
+  }
+
+  return account.accessToken;
+}
+
+/**
+ * Delivers one lane to its platform. Returns the real external URL/id on
+ * success, or throws so the caller can mark the lane failed.
+ */
+async function deliverLane(
+  platform: Platform,
+  account: ConnectedAccount | undefined,
+  text: string,
+  postId: string,
+): Promise<{ externalUrl: string; externalId: string; message: string }> {
+  if (platform === Platform.SHOWCASE) {
+    return { externalUrl: getLaneSuccessUrl(platform, postId), externalId: `showcase-${postId}`, message: 'Published directly inside Showcase.' };
+  }
+
   if (platform === Platform.YOUTUBE) {
-    return {
-      error: 'Video publishing is not available yet in the current worker.',
-      retryable: false,
-    };
+    throw new Error('Video publishing is not available yet in the current worker.');
   }
 
-  if (!connectedPlatforms.has(platform) && platform !== Platform.SHOWCASE) {
-    return {
-      error: `${platform} is not connected for this account.`,
-      retryable: true,
-    };
+  if (!account) {
+    throw new Error(`${platform} is not connected for this account.`);
   }
 
-  return null;
+  if (platform === Platform.X) {
+    const accessToken = await getValidAccessToken(account);
+    const result = await postToX(accessToken, text, account.accountHandle);
+    return { externalUrl: result.url, externalId: result.id, message: 'Published to X.' };
+  }
+
+  // No live adapter yet for this platform — simulated delivery (demo only).
+  return { externalUrl: getLaneSuccessUrl(platform, postId), externalId: `${platform.toLowerCase()}-${postId}`, message: 'Simulated provider delivery (no live adapter yet).' };
 }
 
 export async function executePublishJob(publishJobId: string) {
@@ -51,10 +96,10 @@ export async function executePublishJob(publishJobId: string) {
   }
 
   const connectedAccounts = await getConnectedAccountsForUser(job.post.authorId);
-  const connectedPlatforms = new Set(
-    connectedAccounts.filter((account) => account.status === 'ACTIVE').map((account) => account.platform),
+  const accountsByPlatform = new Map(
+    connectedAccounts.filter((account) => account.status === ConnectedAccountStatus.ACTIVE).map((account) => [account.platform, account]),
   );
-  connectedPlatforms.add(Platform.SHOWCASE);
+  const text = job.post.content;
 
   await prisma.publishJob.update({
     where: { id: job.id },
@@ -71,64 +116,46 @@ export async function executePublishJob(publishJobId: string) {
       continue;
     }
 
-    const nextAttempt = current.attemptCount + 1;
-
     await prisma.publishLaneResult.update({
       where: { id: lane.id },
       data: {
         status: PublishLaneStatus.UPLOADING,
-        attemptCount: nextAttempt,
+        attemptCount: current.attemptCount + 1,
         lastAttemptAt: new Date(),
         startedAt: current.startedAt ?? new Date(),
-        providerMessage: nextAttempt > 1 ? 'Retrying lane delivery.' : 'Dispatching to provider worker.',
+        providerMessage: 'Dispatching to provider worker.',
       },
     });
 
-    const failure = shouldFailLane(lane.platform, connectedPlatforms);
-
-    if (failure) {
-      const canRetry = failure.retryable && nextAttempt <= MAX_RETRIES;
+    try {
+      const result = await deliverLane(lane.platform, accountsByPlatform.get(lane.platform), text, job.postId);
 
       await prisma.publishLaneResult.update({
         where: { id: lane.id },
         data: {
-          status: canRetry ? PublishLaneStatus.PENDING : PublishLaneStatus.FAILED,
-          errorMessage: failure.error,
-          providerMessage: canRetry ? 'Waiting to retry lane.' : 'Lane failed permanently.',
-          retryable: failure.retryable,
-          nextRetryAt: canRetry ? new Date(Date.now() + nextAttempt * 60_000) : null,
-          finishedAt: canRetry ? null : new Date(),
+          status: PublishLaneStatus.PUBLISHED,
+          externalUrl: result.externalUrl,
+          externalId: result.externalId,
+          errorMessage: null,
+          providerMessage: result.message,
+          retryable: false,
+          finishedAt: new Date(),
         },
       });
-
-      if (canRetry) {
-        await prisma.publishLaneResult.update({
-          where: { id: lane.id },
-          data: {
-            status: PublishLaneStatus.UPLOADING,
-            attemptCount: nextAttempt + 1,
-            lastAttemptAt: new Date(),
-            nextRetryAt: null,
-            providerMessage: 'Retry succeeded via fallback worker.',
-          },
-        });
-      } else {
-        continue;
-      }
+    } catch (error) {
+      // Do not auto-retry real deliveries — a retry could double-post.
+      await prisma.publishLaneResult.update({
+        where: { id: lane.id },
+        data: {
+          status: PublishLaneStatus.FAILED,
+          errorMessage: error instanceof Error ? error.message : 'Lane delivery failed.',
+          providerMessage: 'Lane failed permanently.',
+          retryable: false,
+          nextRetryAt: null,
+          finishedAt: new Date(),
+        },
+      });
     }
-
-    await prisma.publishLaneResult.update({
-      where: { id: lane.id },
-      data: {
-        status: PublishLaneStatus.PUBLISHED,
-        externalUrl: getLaneSuccessUrl(lane.platform, job.postId),
-        externalId: `${lane.platform.toLowerCase()}-${job.postId}`,
-        errorMessage: null,
-        providerMessage: lane.platform === Platform.SHOWCASE ? 'Published directly inside Showcase.' : 'Published via provider adapter.',
-        retryable: false,
-        finishedAt: new Date(),
-      },
-    });
   }
 
   const finalLanes = await prisma.publishLaneResult.findMany({ where: { publishJobId: job.id } });

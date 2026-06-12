@@ -276,9 +276,9 @@ Working well now:
 - auth metadata sync from profile edits
 
 Still not fully production-complete:
-- publish execution is still internal simulation, not real external delivery
+- publish execution is live for X (real OAuth token exchange + tweet delivery); other platforms are still internal simulation
 - discovery/trending/social graph is still lightweight
-- OAuth connection scaffolding now exists, but token exchange and provider API delivery are still placeholder/stubbed
+- OAuth token exchange is real for X; the remaining providers still need their token exchange and provider API delivery adapters
 - some analytics/engagement numbers are still presentation-level
 - npm audit still reports moderate upstream ecosystem advisories that do not have a safe in-family auto-fix from the current dependency set
 
