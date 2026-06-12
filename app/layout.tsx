@@ -1,6 +1,6 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Geist, Geist_Mono, Fraunces } from 'next/font/google';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -12,6 +12,14 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
+// Editorial display serif — optical sizing + italic carry the brand voice.
+const fraunces = Fraunces({
+  variable: '--font-fraunces',
+  subsets: ['latin'],
+  style: ['normal', 'italic'],
+  axes: ['opsz'],
+});
+
 export const metadata: Metadata = {
   title: 'Showcase',
   description: 'A calmer, creator-focused social publishing app.',
@@ -20,7 +28,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>{children}</body>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable}`}>{children}</body>
     </html>
   );
 }

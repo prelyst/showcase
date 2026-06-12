@@ -131,6 +131,7 @@ export async function publishNowAction(formData: FormData) {
   revalidatePath('/showcase/monitor');
   revalidatePath('/showcase/profile');
   revalidatePath('/showcase/feed');
+  revalidatePath('/showcase/discover'); // trending hashtags aggregate from posts
 
   redirect('/showcase/feed?published=1');
 }

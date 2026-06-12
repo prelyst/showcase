@@ -7,30 +7,39 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        serif: ['var(--font-fraunces)', 'Georgia', 'serif'],
+        mono: ['var(--font-geist-mono)', 'monospace'],
+      },
       colors: {
-        // Surfaces — white base with subtle off-white card layering
-        surface: '#FFFFFF',
-        card: '#F7F7F5',
-        panel: '#F0EFEC',
-        skeleton: '#F0EFEC',
-        track: '#DAD8D2',
+        // Surfaces — warm paper base with layered cream cards
+        surface: '#FAF4EA',
+        card: '#FFFCF6',
+        panel: '#F3EBDC',
+        skeleton: '#EFE6D6',
+        track: '#E0D5C2',
         // Lines
-        border: '#E6E4DF',
-        divider: '#ECEAE5',
-        // Ink + text (kept from original warm palette)
-        ink: '#1A1814',
-        subtle: '#4A453C',
-        muted: '#85806F',
-        // Brand accent (terracotta) — preserved
+        border: '#E7DDCB',
+        divider: '#EFE7D8',
+        // Ink + text (warm, higher contrast)
+        ink: '#211C15',
+        subtle: '#5A5142',
+        muted: '#8C8270',
+        // Brand accent (terracotta) — deepened + extended
         accent: '#B8541F',
-        'accent-tint': '#F5E5D3',
-        sage: '#5A6B3A',
-        'sage-tint': '#E5E8D4',
+        'accent-deep': '#8F3D12',
+        'accent-bright': '#D9692B',
+        'accent-tint': '#F6E2CE',
+        sage: '#566B33',
+        'sage-tint': '#E4E9D2',
+        gold: '#A67C1E',
         danger: '#A0381F',
         'danger-tint': '#F2DCD1',
       },
       boxShadow: {
-        card: '0 1px 2px rgba(26,24,20,0.04), 0 8px 24px -16px rgba(26,24,20,0.18)',
+        // Warm-tinted, layered elevation
+        card: '0 1px 2px rgba(74,46,20,0.05), 0 10px 30px -18px rgba(74,46,20,0.28)',
+        lift: '0 2px 4px rgba(74,46,20,0.06), 0 20px 44px -22px rgba(120,60,24,0.34)',
       },
     },
   },

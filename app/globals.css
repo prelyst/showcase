@@ -13,17 +13,49 @@ html {
 body {
   margin: 0;
   font-family: var(--font-geist-sans), sans-serif;
-  background-color: #ffffff;
-  color: #1a1814;
+  color: #211c15;
+  /* Warm paper base with atmospheric terracotta + sage washes for depth
+     instead of a flat cold white. */
+  background-color: #faf4ea;
+  background-image:
+    radial-gradient(820px 520px at 8% -8%, rgba(184, 84, 31, 0.12), transparent 60%),
+    radial-gradient(760px 600px at 100% 4%, rgba(90, 107, 58, 0.1), transparent 58%),
+    radial-gradient(900px 700px at 50% 120%, rgba(184, 84, 31, 0.06), transparent 60%);
+  background-attachment: fixed;
 }
 
 .font-serif {
-  font-family: Georgia, 'Times New Roman', serif;
+  font-family: var(--font-fraunces), Georgia, 'Times New Roman', serif;
+  font-optical-sizing: auto;
+  letter-spacing: -0.012em;
 }
 
-/* Consistent keyboard focus on the white theme */
+::selection {
+  background-color: #f3c9a8;
+  color: #5a2a0c;
+}
+
+/* Consistent keyboard focus on the warm theme */
 :where(a, button, input, textarea, select):focus-visible {
   outline: 2px solid #b8541f;
   outline-offset: 2px;
   border-radius: 8px;
+}
+
+/* Tasteful staggered entrance for content cards. */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .rise-in {
+    animation: rise-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
 }
