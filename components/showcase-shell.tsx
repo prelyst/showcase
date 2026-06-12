@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ReactNode } from 'react';
 
 import { signOutAction } from '@/app/auth/sign-in/actions';
+import { NavLink, MobileNavLink } from '@/components/nav-link';
 import { getUnreadNotificationCount } from '@/lib/repositories/notification-repository';
 import { getCurrentUserView } from '@/lib/server/current-user';
 
@@ -71,34 +72,6 @@ const yoursNav = [
   },
 ];
 
-function UnreadDot({ onDark = false }: { onDark?: boolean }) {
-  return (
-    <span className="relative ml-auto flex h-[9px] w-[9px]" aria-label="Unread notifications" role="status">
-      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60 motion-reduce:hidden" />
-      <span className={`relative inline-flex h-[9px] w-[9px] rounded-full bg-accent ring-2 ${onDark ? 'ring-ink' : 'ring-card'}`} />
-    </span>
-  );
-}
-
-function NavLink({ href, label, icon, active, dot }: { href: string; label: string; icon: ReactNode; active?: boolean; dot?: boolean }) {
-  return (
-    <Link
-      href={href}
-      className={`group relative flex items-center gap-[11px] rounded-[9px] px-[11px] py-[9px] text-[14px] font-medium transition ${
-        active
-          ? 'bg-ink text-white shadow-[0_8px_18px_-10px_rgba(33,28,21,0.65)]'
-          : 'text-subtle hover:bg-panel hover:text-ink'
-      }`}
-    >
-      <span className={`grid h-[17px] w-[17px] place-items-center ${active ? 'opacity-100' : 'opacity-70'} [&>svg]:h-[17px] [&>svg]:w-[17px]`}>
-        {icon}
-      </span>
-      <span>{label}</span>
-      {dot ? <UnreadDot onDark={active} /> : null}
-    </Link>
-  );
-}
-
 export async function ShowcaseShell({ title, subtitle, active, children, loading = false }: { title: ReactNode; subtitle?: ReactNode; active?: string; children: ReactNode; loading?: boolean }) {
   const { user: currentUser } = await getCurrentUserView();
 
@@ -131,7 +104,6 @@ export async function ShowcaseShell({ title, subtitle, active, children, loading
                 <NavLink
                   key={item.href}
                   {...item}
-                  active={!loading && active === item.href}
                   dot={item.href === NOTIFICATIONS_HREF && hasUnread}
                 />
               ))}
@@ -142,7 +114,7 @@ export async function ShowcaseShell({ title, subtitle, active, children, loading
             <div className="mb-[10px] px-[10px] font-mono text-[10px] uppercase tracking-[0.08em] text-muted">Yours</div>
             <div className="space-y-[2px]">
               {yoursNav.map((item) => (
-                <NavLink key={item.href} {...item} active={!loading && active === item.href} />
+                <NavLink key={item.href} {...item} />
               ))}
             </div>
           </div>
@@ -183,17 +155,7 @@ export async function ShowcaseShell({ title, subtitle, active, children, loading
 
             <div className="mb-4 flex gap-2 overflow-x-auto pb-1 lg:hidden">
               {[...browseNav, ...yoursNav].map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`whitespace-nowrap rounded-full border px-3 py-2 text-[12px] font-medium transition ${
-                    !loading && active === item.href
-                      ? 'border-ink bg-ink text-white'
-                      : 'border-border bg-card text-subtle'
-                  }`}
-                >
-                  {item.label}
-                </Link>
+                <MobileNavLink key={item.href} href={item.href} label={item.label} />
               ))}
             </div>
 
