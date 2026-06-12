@@ -1,8 +1,8 @@
-import { ShowcaseShell } from '@/components/showcase-shell';
+import { ShowcaseShellSkeleton } from '@/components/showcase-shell';
 
 export default function ComposeLoading() {
   return (
-    <ShowcaseShell title={<><span>New post </span><em className="font-light italic text-accent">/ draft</em></>} active="/showcase/compose">
+    <ShowcaseShellSkeleton title={<><span>New post </span><em className="font-light italic text-accent">/ draft</em></>} active="/showcase/compose">
       <div className="grid max-w-[1200px] gap-7 xl:grid-cols-[1.1fr_1fr] animate-pulse">
         <div className="overflow-hidden rounded-[16px] border border-border bg-card">
           <div className="flex items-center justify-between border-b border-divider px-[22px] py-4">
@@ -74,6 +74,6 @@ export default function ComposeLoading() {
           </div>
         </div>
       </div>
-    </ShowcaseShell>
+    </ShowcaseShellSkeleton>
   );
 }

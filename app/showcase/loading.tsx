@@ -1,4 +1,4 @@
-import { ShowcaseShell } from '@/components/showcase-shell';
+import { ShowcaseShellSkeleton } from '@/components/showcase-shell';
 
 function SidebarCard() {
   return (
@@ -39,7 +39,7 @@ function FeedCard() {
 
 export default function ShowcaseLoading() {
   return (
-    <ShowcaseShell
+    <ShowcaseShellSkeleton
       title={<><span>Loading </span><em className="font-light italic text-accent">/ content</em></>}
       loading
     >
@@ -61,6 +61,6 @@ export default function ShowcaseLoading() {
           <SidebarCard />
         </aside>
       </div>
-    </ShowcaseShell>
+    </ShowcaseShellSkeleton>
   );
 }

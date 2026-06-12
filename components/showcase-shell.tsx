@@ -6,15 +6,23 @@ import { DesktopNav, MobileNav } from '@/components/showcase-nav';
 import { getUnreadNotificationCount } from '@/lib/repositories/notification-repository';
 import { getCurrentUserView } from '@/lib/server/current-user';
 
-export async function ShowcaseShell({ title, subtitle, children }: { title: ReactNode; subtitle?: ReactNode; active?: string; children: ReactNode; loading?: boolean }) {
-  const { user: currentUser } = await getCurrentUserView();
-
-  if (!currentUser) {
-    return null;
-  }
-
-  const hasUnread = (await getUnreadNotificationCount(currentUser.id)) > 0;
-
+/**
+ * Synchronous chrome (sidebar + header). Renders no data of its own so it can be
+ * used both by the async shell and by the instant loading skeleton.
+ */
+function ShowcaseChrome({
+  title,
+  subtitle,
+  children,
+  hasUnread,
+  userCard,
+}: {
+  title: ReactNode;
+  subtitle?: ReactNode;
+  children: ReactNode;
+  hasUnread: boolean;
+  userCard: ReactNode;
+}) {
   return (
     <main className="min-h-screen bg-transparent text-ink">
       <div
@@ -33,22 +41,7 @@ export async function ShowcaseShell({ title, subtitle, children }: { title: Reac
 
           <DesktopNav hasUnread={hasUnread} />
 
-          <div className="mt-auto border-t border-divider pt-5">
-            <div className="flex items-center gap-[10px] rounded-[8px] px-[10px] py-2 hover:bg-panel">
-              <div className="grid h-8 w-8 place-items-center rounded-full border border-border bg-accent-tint text-[12px] font-semibold text-accent">
-                {currentUser.initials}
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="truncate text-[13px] font-medium text-ink">{currentUser.displayName}</div>
-                <div className="font-mono text-[11px] text-muted">@{currentUser.username}</div>
-              </div>
-              <form action={signOutAction}>
-                <button className="rounded-[8px] border border-border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.05em] text-subtle transition hover:bg-ink hover:text-white">
-                  Sign out
-                </button>
-              </form>
-            </div>
-          </div>
+          <div className="mt-auto border-t border-divider pt-5">{userCard}</div>
         </aside>
 
         <div className="min-h-screen">
@@ -90,5 +83,67 @@ export async function ShowcaseShell({ title, subtitle, children }: { title: Reac
         </div>
       </div>
     </main>
+  );
+}
+
+export async function ShowcaseShell({ title, subtitle, children }: { title: ReactNode; subtitle?: ReactNode; active?: string; children: ReactNode; loading?: boolean }) {
+  const { user: currentUser } = await getCurrentUserView();
+
+  if (!currentUser) {
+    return null;
+  }
+
+  const hasUnread = (await getUnreadNotificationCount(currentUser.id)) > 0;
+
+  return (
+    <ShowcaseChrome
+      title={title}
+      subtitle={subtitle}
+      hasUnread={hasUnread}
+      userCard={
+        <div className="flex items-center gap-[10px] rounded-[8px] px-[10px] py-2 hover:bg-panel">
+          <div className="grid h-8 w-8 place-items-center rounded-full border border-border bg-accent-tint text-[12px] font-semibold text-accent">
+            {currentUser.initials}
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="truncate text-[13px] font-medium text-ink">{currentUser.displayName}</div>
+            <div className="font-mono text-[11px] text-muted">@{currentUser.username}</div>
+          </div>
+          <form action={signOutAction}>
+            <button className="rounded-[8px] border border-border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.05em] text-subtle transition hover:bg-ink hover:text-white">
+              Sign out
+            </button>
+          </form>
+        </div>
+      }
+    >
+      {children}
+    </ShowcaseChrome>
+  );
+}
+
+/**
+ * Instant, fully synchronous loading fallback. Renders the same chrome as the
+ * real shell (so the sidebar and header stay put) without awaiting any data,
+ * which is what keeps loading.tsx from blanking the screen on first navigation.
+ */
+export function ShowcaseShellSkeleton({ title, subtitle, children }: { title: ReactNode; subtitle?: ReactNode; active?: string; children: ReactNode; loading?: boolean }) {
+  return (
+    <ShowcaseChrome
+      title={title}
+      subtitle={subtitle}
+      hasUnread={false}
+      userCard={
+        <div className="flex items-center gap-[10px] rounded-[8px] px-[10px] py-2">
+          <div className="h-8 w-8 animate-pulse rounded-full bg-skeleton" />
+          <div className="min-w-0 flex-1 space-y-2">
+            <div className="h-3 w-24 animate-pulse rounded bg-skeleton" />
+            <div className="h-2.5 w-16 animate-pulse rounded bg-skeleton" />
+          </div>
+        </div>
+      }
+    >
+      {children}
+    </ShowcaseChrome>
   );
 }

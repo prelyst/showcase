@@ -1,9 +1,9 @@
-import { ShowcaseShell } from '@/components/showcase-shell';
+import { ShowcaseShellSkeleton } from '@/components/showcase-shell';
 import { CardSkeleton } from '@/components/loading-skeleton';
 
 export default function ProfileLoading() {
   return (
-    <ShowcaseShell title="Profile" active="/showcase/profile" loading>
+    <ShowcaseShellSkeleton title="Profile" active="/showcase/profile" loading>
       <div className="max-w-[900px]">
         <div className="mb-8 flex animate-pulse items-center gap-5">
           <div className="h-[88px] w-[88px] rounded-full bg-skeleton" />
@@ -17,6 +17,6 @@ export default function ProfileLoading() {
           <CardSkeleton />
         </div>
       </div>
-    </ShowcaseShell>
+    </ShowcaseShellSkeleton>
   );
 }

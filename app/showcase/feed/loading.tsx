@@ -1,9 +1,9 @@
-import { ShowcaseShell } from '@/components/showcase-shell';
+import { ShowcaseShellSkeleton } from '@/components/showcase-shell';
 import { ListSkeleton } from '@/components/loading-skeleton';
 
 export default function FeedLoading() {
   return (
-    <ShowcaseShell
+    <ShowcaseShellSkeleton
       title={<><span>Feed </span><em className="font-light italic text-accent">/ following</em></>}
       active="/showcase/feed"
       loading
@@ -19,6 +19,6 @@ export default function FeedLoading() {
           </div>
         </aside>
       </div>
-    </ShowcaseShell>
+    </ShowcaseShellSkeleton>
   );
 }
