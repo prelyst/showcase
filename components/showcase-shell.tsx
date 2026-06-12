@@ -116,17 +116,6 @@ export async function ShowcaseShell({ title, subtitle, active, children, loading
             Showcase
           </Link>
 
-          <Link
-            href="/showcase/compose"
-            prefetch
-            className="mb-5 flex items-center justify-center gap-2 rounded-[11px] bg-accent px-[14px] py-[11px] text-[14px] font-medium text-white shadow-[0_8px_20px_-10px_rgba(184,84,31,0.7)] transition hover:-translate-y-px hover:bg-accent-deep hover:shadow-[0_12px_26px_-10px_rgba(184,84,31,0.8)]"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-[14px] w-[14px]">
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-            <span>New post</span>
-          </Link>
-
           <div className="mb-6">
             <div className="mb-[10px] px-[10px] font-mono text-[10px] uppercase tracking-[0.08em] text-muted">Browse</div>
             <div className="space-y-[2px]">
