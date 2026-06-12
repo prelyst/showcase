@@ -37,9 +37,9 @@ const config: Config = {
         'danger-tint': 'rgb(var(--danger-tint) / <alpha-value>)',
       },
       boxShadow: {
-        // Warm-tinted, layered elevation
-        card: '0 1px 2px rgba(74,46,20,0.05), 0 10px 30px -18px rgba(74,46,20,0.28)',
-        lift: '0 2px 4px rgba(74,46,20,0.06), 0 20px 44px -22px rgba(120,60,24,0.34)',
+        // Neutral, layered elevation for the clean white theme
+        card: '0 1px 2px rgba(18,18,20,0.05), 0 10px 30px -18px rgba(18,18,20,0.22)',
+        lift: '0 2px 4px rgba(18,18,20,0.06), 0 20px 44px -22px rgba(18,18,20,0.30)',
       },
     },
   },

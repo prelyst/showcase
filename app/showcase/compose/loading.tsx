@@ -32,7 +32,7 @@ export default function ComposeLoading() {
             </div>
           </div>
           <div className="border-t border-divider bg-panel px-[22px] py-[18px]">
-            <div className="mb-3 h-3 w-24 rounded bg-[#DDD6C8]" />
+            <div className="mb-3 h-3 w-24 rounded bg-skeleton" />
             <div className="flex flex-wrap gap-2">
               <div className="h-8 w-24 rounded-full bg-surface" />
               <div className="h-8 w-20 rounded-full bg-surface" />
@@ -42,7 +42,7 @@ export default function ComposeLoading() {
           </div>
           <div className="flex justify-end gap-[10px] border-t border-divider bg-panel px-[22px] py-[18px]">
             <div className="h-10 w-24 rounded-[10px] bg-surface" />
-            <div className="h-10 w-28 rounded-[10px] bg-[#D97A46]" />
+            <div className="h-10 w-28 rounded-[10px] bg-accent" />
           </div>
         </div>
 
@@ -50,7 +50,7 @@ export default function ComposeLoading() {
           <div className="flex items-center justify-between border-b border-divider px-[22px] py-4">
             <div className="h-3 w-20 rounded bg-skeleton" />
             <div className="flex gap-2">
-              <div className="h-7 w-16 rounded-[6px] bg-[#DDD6C8]" />
+              <div className="h-7 w-16 rounded-[6px] bg-skeleton" />
               <div className="h-7 w-10 rounded-[6px] bg-skeleton" />
               <div className="h-7 w-16 rounded-[6px] bg-skeleton" />
             </div>

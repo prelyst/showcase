@@ -9,15 +9,15 @@
   color-scheme: light;
 
   --surface: 255 255 255;
-  --card: 255 252 246;
-  --panel: 243 235 220;
-  --skeleton: 239 230 214;
-  --track: 224 213 194;
-  --border: 231 221 203;
-  --divider: 239 231 216;
-  --ink: 33 28 21;
-  --subtle: 90 81 66;
-  --muted: 140 130 112;
+  --card: 255 255 255;
+  --panel: 245 245 245;
+  --skeleton: 236 236 236;
+  --track: 222 222 222;
+  --border: 230 230 230;
+  --divider: 240 240 240;
+  --ink: 24 23 22;
+  --subtle: 82 80 78;
+  --muted: 135 133 130;
   --accent: 184 84 31;
   --accent-deep: 143 61 18;
   --accent-bright: 217 105 43;
