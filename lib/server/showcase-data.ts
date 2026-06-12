@@ -470,10 +470,12 @@ export async function getMonitorPageData(): Promise<MonitorData> {
         id: lane.id,
         platform: platforms[lane.platform.toLowerCase()],
         detail:
-          lane.externalUrl ||
-          lane.providerMessage ||
-          lane.errorMessage ||
-          `${lane.platform.toLowerCase()} lane ${lane.status.toLowerCase()}`,
+          lane.status === 'FAILED'
+            ? lane.errorMessage || lane.providerMessage || `${lane.platform.toLowerCase()} lane failed`
+            : lane.externalUrl ||
+              lane.providerMessage ||
+              lane.errorMessage ||
+              `${lane.platform.toLowerCase()} lane ${lane.status.toLowerCase()}`,
         status:
           lane.status === 'PUBLISHED'
             ? ('Published' as const)
