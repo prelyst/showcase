@@ -43,12 +43,10 @@ const faqItems = [
 
 const platforms = [
   { label: 'X', short: 'X', className: 'bg-ink text-white' },
-  { label: 'LinkedIn', short: 'in', className: 'bg-[#0A66C2] text-white' },
-  { label: 'Bluesky', short: 'B', className: 'bg-[#1185FE] text-white' },
-  { label: 'Reddit', short: 'r', className: 'bg-[#FF4500] text-white' },
-  { label: 'YouTube', short: '▶', className: 'bg-[#FF0033] text-white' },
   { label: 'Threads', short: '@', className: 'bg-ink text-white border border-card' },
-  { label: 'Instagram', short: 'IG', className: 'bg-[linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)] text-white', soon: true },
+  { label: 'Facebook', short: 'f', className: 'bg-[#1877F2] text-white' },
+  { label: 'Instagram', short: 'IG', className: 'bg-[linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)] text-white' },
+  { label: 'YouTube', short: '▶', className: 'bg-[#FF0033] text-white' },
   { label: 'TikTok', short: 'TT', className: 'bg-black text-white border border-cyan-300', soon: true },
 ];
 

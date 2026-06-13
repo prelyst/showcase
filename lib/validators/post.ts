@@ -14,7 +14,7 @@ export const updatePostTargetsSchema = z.object({
   postId: z.string().min(1),
   targets: z.array(
     z.object({
-      platform: z.enum(['SHOWCASE', 'X', 'LINKEDIN', 'BLUESKY', 'REDDIT', 'YOUTUBE', 'THREADS']),
+      platform: z.enum(['SHOWCASE', 'X', 'THREADS', 'FACEBOOK', 'INSTAGRAM', 'YOUTUBE']),
       enabled: z.boolean(),
     })
   ),

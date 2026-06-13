@@ -5,11 +5,10 @@ import { PlatformChip } from '@/lib/types/showcase';
 export const platforms: Record<string, PlatformChip> = {
   showcase: { key: 'showcase', label: 'Showcase', short: 'S', tone: 'bg-accent text-white' },
   x: { key: 'x', label: 'X', short: 'X', tone: 'bg-ink text-white' },
-  linkedin: { key: 'linkedin', label: 'LinkedIn', short: 'in', tone: 'bg-[#0A66C2] text-white' },
-  bluesky: { key: 'bluesky', label: 'Bluesky', short: 'B', tone: 'bg-[#1185FE] text-white' },
-  reddit: { key: 'reddit', label: 'Reddit', short: 'r', tone: 'bg-[#FF4500] text-white' },
-  youtube: { key: 'youtube', label: 'YouTube', short: '▶', tone: 'bg-[#FF0033] text-white' },
   threads: { key: 'threads', label: 'Threads', short: '@', tone: 'bg-ink text-white' },
+  facebook: { key: 'facebook', label: 'Facebook', short: 'f', tone: 'bg-[#1877F2] text-white' },
+  instagram: { key: 'instagram', label: 'Instagram', short: 'IG', tone: 'bg-[linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)] text-white' },
+  youtube: { key: 'youtube', label: 'YouTube', short: '▶', tone: 'bg-[#FF0033] text-white' },
 };
 
 export const composeTools = [
@@ -22,8 +21,8 @@ export const composeTools = [
 export const publishTargets = [
   { platform: platforms.showcase, selected: true },
   { platform: platforms.x, selected: true },
-  { platform: platforms.linkedin, selected: true },
-  { platform: platforms.bluesky, selected: true },
-  { platform: platforms.reddit, selected: false },
-  { platform: platforms.threads, selected: false },
+  { platform: platforms.threads, selected: true },
+  { platform: platforms.facebook, selected: false },
+  { platform: platforms.instagram, selected: false },
+  { platform: platforms.youtube, selected: false },
 ];

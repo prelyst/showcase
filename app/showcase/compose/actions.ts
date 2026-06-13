@@ -8,7 +8,7 @@ import { createDraftPost, publishPost, updateDraftPost, updatePostTargets } from
 import { getCurrentUserId } from '@/lib/server/auth';
 import { updateDraftPostSchema, updatePostTargetsSchema } from '@/lib/validators/post';
 
-const ALL_PLATFORMS = ['SHOWCASE', 'X', 'LINKEDIN', 'BLUESKY', 'REDDIT', 'YOUTUBE', 'THREADS'] as const;
+const ALL_PLATFORMS = ['SHOWCASE', 'X', 'THREADS', 'FACEBOOK', 'INSTAGRAM', 'YOUTUBE'] as const;
 
 export async function saveDraftAction(formData: FormData) {
   const userId = await getCurrentUserId();

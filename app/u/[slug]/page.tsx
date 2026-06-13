@@ -77,7 +77,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
                 <div className="max-w-[560px] text-[15px] leading-[1.6] text-subtle">{profile.bio || 'A creator building a quieter publishing archive on Showcase.'}</div>
                 <div className="mt-4 flex items-center gap-[6px]">
                   <span className="mr-1 font-mono text-[10px] uppercase tracking-[0.05em] text-muted">Published via</span>
-                  {[platforms.showcase, platforms.x, platforms.linkedin, platforms.bluesky].map((platform) => (
+                  {[platforms.showcase, platforms.x, platforms.threads, platforms.facebook].map((platform) => (
                     <PlatformBadge key={platform.key} platform={platform} />
                   ))}
                 </div>

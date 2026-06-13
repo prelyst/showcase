@@ -1,4 +1,4 @@
-export type PlatformKey = 'showcase' | 'x' | 'linkedin' | 'bluesky' | 'reddit' | 'youtube' | 'threads';
+export type PlatformKey = 'showcase' | 'x' | 'threads' | 'facebook' | 'youtube' | 'instagram';
 
 export type PlatformChip = {
   key: PlatformKey;

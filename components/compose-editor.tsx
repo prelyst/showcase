@@ -12,11 +12,10 @@ import type { PlatformChip, PlatformKey } from '@/lib/types/showcase';
 const PLATFORM_LIMITS: Record<PlatformKey, number> = {
   showcase: 3000,
   x: 280,
-  linkedin: 3000,
-  bluesky: 300,
-  reddit: 40000,
-  youtube: 5000,
   threads: 500,
+  facebook: 63206,
+  instagram: 2200,
+  youtube: 5000,
 };
 
 type Draft = {

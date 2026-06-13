@@ -9,11 +9,15 @@ datasource db {
 enum Platform {
   SHOWCASE
   X
+  THREADS
+  FACEBOOK
+  INSTAGRAM
+  YOUTUBE
+  // Deprecated — no longer offered as connectable platforms, kept so existing
+  // rows/migrations remain valid.
   LINKEDIN
   BLUESKY
   REDDIT
-  YOUTUBE
-  THREADS
 }
 
 enum PostStatus {

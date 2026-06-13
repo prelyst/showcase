@@ -10,10 +10,10 @@ import { AvatarTone, ConnectionItem, CreatorSuggestion, FeedPost, MonitorData, M
 const FILTER_PLATFORMS: { label: string; platform: Platform }[] = [
   { label: 'Showcase', platform: Platform.SHOWCASE },
   { label: 'X', platform: Platform.X },
-  { label: 'LinkedIn', platform: Platform.LINKEDIN },
-  { label: 'Bluesky', platform: Platform.BLUESKY },
-  { label: 'Reddit', platform: Platform.REDDIT },
   { label: 'Threads', platform: Platform.THREADS },
+  { label: 'Facebook', platform: Platform.FACEBOOK },
+  { label: 'Instagram', platform: Platform.INSTAGRAM },
+  { label: 'YouTube', platform: Platform.YOUTUBE },
 ];
 
 /** Real per-platform post counts from enabled publish targets. */
