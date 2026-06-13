@@ -80,6 +80,8 @@ export const oauthProviders: Record<string, OAuthProviderConfig> = {
     scope: ['threads_basic', 'threads_content_publish'],
     clientIdEnv: 'OAUTH_THREADS_CLIENT_ID',
     clientSecretEnv: 'OAUTH_THREADS_CLIENT_SECRET',
+    // Threads (Meta) expects client_secret in the form body, like LinkedIn.
+    tokenAuthStyle: 'body',
   },
 };
 

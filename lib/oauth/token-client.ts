@@ -12,9 +12,21 @@ type RawTokenResponse = {
   refresh_token?: string;
   expires_in?: number;
   scope?: string;
-  error?: string;
+  // Standard OAuth returns a string error; Meta/Threads returns an object
+  // ({ message, type, code }), so accept either shape.
+  error?: string | { message?: string; type?: string; code?: number };
   error_description?: string;
 };
+
+/** Extracts a human-readable message from either OAuth or Meta error shapes. */
+function extractError(raw: RawTokenResponse): string | null {
+  if (raw.error_description) return raw.error_description;
+  if (typeof raw.error === 'string') return raw.error;
+  if (raw.error && typeof raw.error === 'object') {
+    return raw.error.message || raw.error.type || `error code ${raw.error.code}`;
+  }
+  return null;
+}
 
 function buildAuthHeaders(provider: OAuthProviderConfig) {
   const { clientId, clientSecret } = getOAuthProviderEnv(provider);
@@ -31,7 +43,7 @@ function buildAuthHeaders(provider: OAuthProviderConfig) {
 
 function normalize(provider: OAuthProviderConfig, raw: RawTokenResponse): OAuthTokenSet {
   if (!raw.access_token) {
-    throw new Error(raw.error_description || raw.error || `${provider.label}: token endpoint returned no access_token`);
+    throw new Error(extractError(raw) || `${provider.label}: token endpoint returned no access_token`);
   }
 
   return {
@@ -59,7 +71,7 @@ async function postToken(provider: OAuthProviderConfig, body: URLSearchParams): 
   const raw = (await response.json().catch(() => ({}))) as RawTokenResponse;
 
   if (!response.ok) {
-    throw new Error(raw.error_description || raw.error || `${provider.label}: token request failed (${response.status})`);
+    throw new Error(extractError(raw) || `${provider.label}: token request failed (${response.status})`);
   }
 
   return raw;
