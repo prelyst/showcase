@@ -6,6 +6,7 @@ import { decodeOAuthState } from '@/lib/oauth/state';
 import { getOAuthProviderByPlatform, isOAuthProviderConfigured } from '@/lib/oauth/providers';
 import { exchangeAuthorizationCode } from '@/lib/oauth/token-client';
 import { fetchLinkedInIdentity } from '@/lib/publish/adapters/linkedin';
+import { fetchThreadsIdentity } from '@/lib/publish/adapters/threads';
 import { fetchXIdentity } from '@/lib/publish/adapters/x';
 
 export async function handleOAuthCallback(input: {
@@ -101,6 +102,13 @@ export async function handleOAuthCallback(input: {
       accountHandle = identity.name;
       accountName = identity.name;
       externalId = identity.sub; // member id → urn:li:person:{sub}
+    }
+  } else if (provider.platform === Platform.THREADS) {
+    const identity = await fetchThreadsIdentity(tokens.accessToken);
+    if (identity) {
+      accountHandle = `@${identity.username}`;
+      accountName = identity.username;
+      externalId = identity.id; // Threads user id → used in publish calls
     }
   }
 

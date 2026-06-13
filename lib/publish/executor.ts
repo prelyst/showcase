@@ -4,6 +4,7 @@ import { getConnectedAccountsForUser, upsertOAuthConnectedAccount } from '@/lib/
 import { getOAuthProviderByPlatform } from '@/lib/oauth/providers';
 import { refreshOAuthToken } from '@/lib/oauth/token-client';
 import { postToLinkedIn } from '@/lib/publish/adapters/linkedin';
+import { postToThreads } from '@/lib/publish/adapters/threads';
 import { postToX } from '@/lib/publish/adapters/x';
 import { prisma } from '@/lib/db/prisma';
 
@@ -77,6 +78,15 @@ async function deliverLane(
     const accessToken = await getValidAccessToken(account);
     const result = await postToLinkedIn(accessToken, text, account.externalId);
     return { externalUrl: result.url, externalId: result.id, message: 'Published to LinkedIn.' };
+  }
+
+  if (platform === Platform.THREADS) {
+    if (!account.externalId) {
+      throw new Error('Threads user id missing — reconnect Threads to enable publishing.');
+    }
+    const accessToken = await getValidAccessToken(account);
+    const result = await postToThreads(accessToken, text, account.externalId);
+    return { externalUrl: result.url, externalId: result.id, message: 'Published to Threads.' };
   }
 
   // No live adapter yet for this platform — simulated delivery (demo only).
