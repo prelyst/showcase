@@ -1,6 +1,6 @@
 # TODO.md — Showcase Production Readiness
 
-> Last updated: 2026-06-10 · 11 commits pushed
+> Last updated: 2026-06-13 · 90 commits
 
 ## 🔴 Before Deploy
 
@@ -10,20 +10,23 @@
   - Run `npm run db:init` for migrations + seed
   - Verify `npm run build` passes cleanly
 - [ ] **Rotate any secrets** shared during dev/debugging
-- [ ] **Forgot password flow** — wire Supabase `resetPasswordForEmail` in a server action
-- [ ] **OAuth connections** — token exchange stubbed, provider API delivery is placeholder
-- [ ] **Publish execution** — `lib/publish/executor.ts` still simulates delivery; needs real provider APIs
+- [ ] **Forgot password flow** — `app/auth/forgot-password/page.tsx` is still a static form; wire Supabase `resetPasswordForEmail` in a server action + handle the reset-link callback
+- [x] **OAuth connections** — real token exchange + identity fetch wired for X, LinkedIn, Threads, Facebook, Instagram (Instagram upgrades to a long-lived token); token refresh handled in the publish executor
+- [ ] **Publish execution** — real provider delivery now live for X, LinkedIn, Threads, Facebook, Instagram (incl. media). Remaining:
+  - [ ] **YouTube** video publishing (currently throws "not available yet")
+  - [ ] Any platform without a live adapter still falls back to simulated delivery
 
 ## 🟡 Polish
 
+- [x] Media support — posts can attach an image via Supabase Storage upload; carried through to Instagram/Facebook publishing
 - [x] Discovery/trending — now aggregated from real post hashtags + real public profiles
 - [x] Analytics/engagement — removed fabricated likes/comments/reposts/followers; feed/profile now show real publish-lane delivery + real derived counts
 - [x] Profile filters — now real per-platform counts from enabled publish targets
 - [x] Warm editorial theme — warm paper base with atmospheric color washes + layered cream cards, Fraunces display serif, terracotta/sage accents, depth + hover motion
 - [x] Empty states — feed/discover/notifications/profile/monitor now have on-brand empty states
-- [ ] npm audit — 5 moderate remain (postcss bundled in Next.js, not fixable without downgrade)
-- [ ] Dependabot — 2 moderate alerts on repo (Next.js postcss)
-- [ ] Search — discover page has search input but no backend
+- [ ] npm audit — 6 vulns (5 moderate + 1 high): postcss XSS (bundled in Next.js, needs breaking downgrade) + esbuild dev-server advisory
+- [ ] Dependabot — alerts on repo (Next.js/postcss)
+- [ ] Search — discover page has a search input but no backend
 
 ## 🔵 Nice-to-Have
 
@@ -33,7 +36,7 @@
 - [x] PWA / offline support — web manifest, icons, service worker (offline fallback + asset caching), SW registration
 - [x] Rate limiting on auth endpoints — fixed-window limiter by IP on sign-in/sign-up
 - [x] CSP headers — full CSP + X-Frame-Options/HSTS/Referrer-Policy/Permissions-Policy in next.config.ts
-- [ ] Automated tests
+- [ ] Automated tests — no test runner or tests in the repo yet
 
 ## 🚀 Deploy
 
@@ -42,4 +45,3 @@
 - [ ] Configure env vars in Vercel dashboard
 - [ ] Run `npm run db:init` against production Supabase
 - [ ] Set `SHOWCASE_ENABLE_DB=true` in production
-
