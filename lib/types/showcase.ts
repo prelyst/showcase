@@ -66,13 +66,18 @@ export type PublishLane = {
   retryNote?: string;
 };
 
-export type MonitorData = {
+export type MonitorJob = {
+  id: string;
   heroBody: string;
   heroMeta: string;
   progressLabel: string;
   progressWidth: string;
   summary: string;
   lanes: PublishLane[];
+};
+
+export type MonitorData = {
+  jobs: MonitorJob[];
 };
 
 export type ProfileStat = {

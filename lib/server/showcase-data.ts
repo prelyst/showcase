@@ -5,7 +5,7 @@ import { getEnabledTargetCountsForProfile, getLatestDraftForProfile } from '@/li
 import { getPublicProfiles } from '@/lib/repositories/profile-repository';
 import { getOAuthProviderByPlatform, isOAuthProviderConfigured, oauthProviders } from '@/lib/oauth/providers';
 import { getShowcaseSessionData } from '@/lib/server/showcase-session';
-import { AvatarTone, ConnectionItem, CreatorSuggestion, FeedPost, MonitorData, NotificationItem, PlatformChip, PreferenceItem, ProfileFilter, ProfilePost, ProfileStat, TrendingTopic } from '@/lib/types/showcase';
+import { AvatarTone, ConnectionItem, CreatorSuggestion, FeedPost, MonitorData, MonitorJob, NotificationItem, PlatformChip, PreferenceItem, ProfileFilter, ProfilePost, ProfileStat, PublishLane, TrendingTopic } from '@/lib/types/showcase';
 
 const FILTER_PLATFORMS: { label: string; platform: Platform }[] = [
   { label: 'Showcase', platform: Platform.SHOWCASE },
@@ -435,86 +435,55 @@ export async function getDiscoverPageData(): Promise<{
   };
 }
 
-export async function getMonitorPageData(): Promise<MonitorData> {
-  const { currentUser, profile, posts } = await getShowcaseSessionData();
+type MonitorPost = Awaited<ReturnType<typeof getShowcaseSessionData>>['posts'][number];
+type MonitorLaneResult = MonitorPost['publishJobs'][number]['laneResults'][number];
 
-  if (!currentUser) {
-    return {
-      heroBody: '"Sign in to monitor your published posts."',
-      heroMeta: 'Unauthenticated view',
-      progressLabel: '0 / 1',
-      progressWidth: '12%',
-      summary: 'Sign in to track your delivery lanes',
-      lanes: [],
-    };
-  }
+/** Maps a job's raw lane results into the UI lane view. */
+function buildMonitorLanes(laneResults: MonitorLaneResult[]): PublishLane[] {
+  return laneResults.map((lane) => ({
+    id: lane.id,
+    platform: platforms[lane.platform.toLowerCase()],
+    detail:
+      lane.status === 'FAILED'
+        ? lane.errorMessage || lane.providerMessage || `${lane.platform.toLowerCase()} lane failed`
+        : lane.externalUrl ||
+          lane.providerMessage ||
+          lane.errorMessage ||
+          `${lane.platform.toLowerCase()} lane ${lane.status.toLowerCase()}`,
+    status:
+      lane.status === 'PUBLISHED'
+        ? ('Published' as const)
+        : lane.status === 'FAILED'
+          ? ('Failed' as const)
+          : lane.status === 'PENDING'
+            ? ('Queued' as const)
+            : ('Uploading' as const),
+    elapsed: lane.finishedAt && lane.startedAt
+      ? `${Math.max(1, Math.round((lane.finishedAt.getTime() - lane.startedAt.getTime()) / 1000))}s`
+      : lane.startedAt
+        ? `${Math.max(1, Math.round((Date.now() - lane.startedAt.getTime()) / 1000))}s`
+        : '—',
+    pillTone:
+      lane.status === 'PUBLISHED'
+        ? 'bg-sage-tint text-sage'
+        : lane.status === 'FAILED'
+          ? 'bg-danger-tint text-danger'
+          : lane.status === 'PENDING'
+            ? 'bg-panel text-subtle'
+            : 'bg-[#F4E8C8] text-gold',
+    attempts: lane.attemptCount,
+    retryNote: lane.nextRetryAt
+      ? `Retry scheduled · ${formatRelativeDate(lane.nextRetryAt)}`
+      : lane.attemptCount > 1
+        ? `Recovered after ${lane.attemptCount} attempts`
+        : undefined,
+  }));
+}
 
-  if (!profile) {
-    return {
-      heroBody: '"Your publishing monitor will light up as soon as you save and publish a post."',
-      heroMeta: 'No active jobs yet',
-      progressLabel: '0 / 1',
-      progressWidth: '12%',
-      summary: '0 failed · 0 in flight',
-      lanes: [],
-    };
-  }
-
-  const latest = posts[0];
-
-  if (!latest) {
-    return {
-      heroBody: '"Your publishing monitor will light up as soon as you save and publish a post."',
-      heroMeta: 'No active jobs yet',
-      progressLabel: '0 / 1',
-      progressWidth: '12%',
-      summary: '0 failed · 0 in flight',
-      lanes: [],
-    };
-  }
-
-  const latestJob = latest.publishJobs[0];
-
-  const lanes = latestJob?.laneResults.length
-    ? latestJob.laneResults.map((lane) => ({
-        id: lane.id,
-        platform: platforms[lane.platform.toLowerCase()],
-        detail:
-          lane.status === 'FAILED'
-            ? lane.errorMessage || lane.providerMessage || `${lane.platform.toLowerCase()} lane failed`
-            : lane.externalUrl ||
-              lane.providerMessage ||
-              lane.errorMessage ||
-              `${lane.platform.toLowerCase()} lane ${lane.status.toLowerCase()}`,
-        status:
-          lane.status === 'PUBLISHED'
-            ? ('Published' as const)
-            : lane.status === 'FAILED'
-              ? ('Failed' as const)
-              : lane.status === 'PENDING'
-                ? ('Queued' as const)
-                : ('Uploading' as const),
-        elapsed: lane.finishedAt && lane.startedAt
-          ? `${Math.max(1, Math.round((lane.finishedAt.getTime() - lane.startedAt.getTime()) / 1000))}s`
-          : lane.startedAt
-            ? `${Math.max(1, Math.round((Date.now() - lane.startedAt.getTime()) / 1000))}s`
-            : '—',
-        pillTone:
-          lane.status === 'PUBLISHED'
-            ? 'bg-sage-tint text-sage'
-            : lane.status === 'FAILED'
-              ? 'bg-danger-tint text-danger'
-              : lane.status === 'PENDING'
-                ? 'bg-panel text-subtle'
-                : 'bg-[#F4E8C8] text-gold',
-        attempts: lane.attemptCount,
-        retryNote: lane.nextRetryAt
-          ? `Retry scheduled · ${formatRelativeDate(lane.nextRetryAt)}`
-          : lane.attemptCount > 1
-            ? `Recovered after ${lane.attemptCount} attempts`
-            : undefined,
-      }))
-    : [];
+/** Builds a single monitor job view from a post that has a publish job. */
+function buildMonitorJob(post: MonitorPost): MonitorJob {
+  const job = post.publishJobs[0];
+  const lanes = buildMonitorLanes(job?.laneResults ?? []);
 
   const publishedCount = lanes.filter((lane) => lane.status === 'Published').length;
   const failedCount = lanes.filter((lane) => lane.status === 'Failed').length;
@@ -522,13 +491,30 @@ export async function getMonitorPageData(): Promise<MonitorData> {
   const progress = lanes.length ? `${Math.max(12, Math.round((publishedCount / lanes.length) * 100))}%` : '12%';
 
   return {
-    heroBody: `"${latest.content.slice(0, 140)}${latest.content.length > 140 ? '…' : ''}"`,
-    heroMeta: `${latestJob ? latestJob.executionStatus.replaceAll('_', ' ') : latest.status.toLowerCase()} · ${formatRelativeDate(latest.updatedAt)}`,
+    id: post.id,
+    heroBody: `"${post.content.slice(0, 140)}${post.content.length > 140 ? '…' : ''}"`,
+    heroMeta: `${job ? job.executionStatus.replaceAll('_', ' ') : post.status.toLowerCase()} · ${formatRelativeDate(post.updatedAt)}`,
     progressLabel: `${publishedCount} / ${Math.max(lanes.length, 1)}`,
     progressWidth: progress,
     summary: `${failedCount} failed · ${queuedCount} in flight`,
     lanes,
   };
+}
+
+export async function getMonitorPageData(): Promise<MonitorData> {
+  const { currentUser, profile, posts } = await getShowcaseSessionData();
+
+  if (!currentUser || !profile) {
+    return { jobs: [] };
+  }
+
+  // Every post that actually has a publish job, newest first — so the monitor
+  // can page back through prior publishes, not just the latest one.
+  const jobs = posts
+    .filter((post) => post.publishJobs[0]?.laneResults.length)
+    .map((post) => buildMonitorJob(post));
+
+  return { jobs };
 }
 
 function formatRelativeDate(date: Date) {
