@@ -1,7 +1,6 @@
 import { PendingActionButton } from '@/components/pending-action-button';
 import { ShowcaseShell } from '@/components/showcase-shell';
 import { Avatar, EmptyState, PlatformBadge, ProfilePostCard } from '@/components/showcase-ui';
-import { platforms } from '@/lib/mock/showcase';
 import { getProfilePageData } from '@/lib/server/showcase-data';
 import { updateProfileAction } from './actions';
 
@@ -19,12 +18,14 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
             <div className="mb-1 font-serif text-[34px] tracking-[-0.02em] text-ink">{profile.displayName}</div>
             <div className="mb-3 font-mono text-[13px] text-muted">showcase.app/@{profile.slug}</div>
             <div className="mb-[14px] max-w-[460px] text-[15px] leading-[1.5] text-subtle">{profile.bio}</div>
-            <div className="flex items-center gap-[6px]">
-              <span className="mr-1 font-mono text-[10px] uppercase tracking-[0.05em] text-muted">Also on</span>
-              {[platforms.x, platforms.linkedin, platforms.bluesky, platforms.reddit, platforms.threads].map((platform) => (
-                <PlatformBadge key={platform.key} platform={platform} />
-              ))}
-            </div>
+            {profile.alsoOn.length ? (
+              <div className="flex items-center gap-[6px]">
+                <span className="mr-1 font-mono text-[10px] uppercase tracking-[0.05em] text-muted">Also on</span>
+                {profile.alsoOn.map((platform) => (
+                  <PlatformBadge key={platform.key} platform={platform} />
+                ))}
+              </div>
+            ) : null}
           </div>
           <div className="flex flex-col gap-3 text-right max-lg:text-left">
             <div className="flex gap-6 max-lg:flex-wrap lg:justify-end">

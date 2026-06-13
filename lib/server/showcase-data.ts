@@ -5,7 +5,7 @@ import { getEnabledTargetCountsForProfile, getLatestDraftForProfile } from '@/li
 import { getPublicProfiles } from '@/lib/repositories/profile-repository';
 import { getOAuthProviderByPlatform, isOAuthProviderConfigured, oauthProviders } from '@/lib/oauth/providers';
 import { getShowcaseSessionData } from '@/lib/server/showcase-session';
-import { AvatarTone, ConnectionItem, CreatorSuggestion, FeedPost, MonitorData, NotificationItem, PreferenceItem, ProfileFilter, ProfilePost, ProfileStat, TrendingTopic } from '@/lib/types/showcase';
+import { AvatarTone, ConnectionItem, CreatorSuggestion, FeedPost, MonitorData, NotificationItem, PlatformChip, PreferenceItem, ProfileFilter, ProfilePost, ProfileStat, TrendingTopic } from '@/lib/types/showcase';
 
 const FILTER_PLATFORMS: { label: string; platform: Platform }[] = [
   { label: 'Showcase', platform: Platform.SHOWCASE },
@@ -79,8 +79,15 @@ export async function getProfilePageData(): Promise<{
   stats: ProfileStat[];
   filters: ProfileFilter[];
   posts: ProfilePost[];
+  alsoOn: PlatformChip[];
 }> {
-  const { currentUser, profile, posts } = await getShowcaseSessionData();
+  const { currentUser, profile, posts, connectedAccounts } = await getShowcaseSessionData();
+
+  // "Also on" should reflect only the platforms the user has actually linked.
+  const alsoOn = connectedAccounts
+    .filter((account) => account.status === ConnectedAccountStatus.ACTIVE && account.platform !== Platform.SHOWCASE)
+    .map((account) => platforms[account.platform.toLowerCase()])
+    .filter(Boolean);
 
   if (!currentUser) {
     return {
@@ -94,6 +101,7 @@ export async function getProfilePageData(): Promise<{
       stats: [],
       filters: EMPTY_FILTERS,
       posts: [],
+      alsoOn: [],
     };
   }
 
@@ -113,6 +121,7 @@ export async function getProfilePageData(): Promise<{
       ],
       filters: EMPTY_FILTERS,
       posts: [],
+      alsoOn,
     };
   }
 
@@ -149,6 +158,7 @@ export async function getProfilePageData(): Promise<{
           };
         })
       : [],
+    alsoOn,
   };
 }
 
