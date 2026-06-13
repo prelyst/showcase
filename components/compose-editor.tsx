@@ -1,12 +1,15 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 
 import { publishNowAction, saveDraftAction } from '@/app/showcase/compose/actions';
 import { PendingActionButton } from '@/components/pending-action-button';
-import { Avatar, ComposeToolButton, PlatformBadge } from '@/components/showcase-ui';
-import { composeTools } from '@/lib/mock/showcase';
+import { Avatar, PlatformBadge } from '@/components/showcase-ui';
+import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 import type { PlatformChip, PlatformKey } from '@/lib/types/showcase';
+
+const MEDIA_BUCKET = 'post-media';
+const MAX_IMAGE_BYTES = 8 * 1024 * 1024; // Instagram's image ceiling.
 
 // Per-platform character ceilings used to validate the live preview.
 const PLATFORM_LIMITS: Record<PlatformKey, number> = {
@@ -24,6 +27,8 @@ type Draft = {
   authorHandle: string;
   authorInitials: string;
   content: string;
+  mediaUrl: string | null;
+  mediaType: string | null;
   selectedTargets: string[];
 };
 
@@ -56,9 +61,51 @@ export function ComposeEditor({
   errorMessage: string | null;
 }) {
   const [content, setContent] = useState(draft.content);
+  const [mediaUrl, setMediaUrl] = useState<string | null>(draft.mediaUrl);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [selected, setSelected] = useState<Set<string>>(
     () => new Set(draft.selectedTargets.filter((key) => availableTargets.some((target) => target.key === key))),
   );
+
+  async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setUploadError('Please choose an image file (jpg or png).');
+      return;
+    }
+    if (file.size > MAX_IMAGE_BYTES) {
+      setUploadError('Image must be under 8MB.');
+      return;
+    }
+
+    setUploadError(null);
+    setUploading(true);
+    try {
+      const supabase = createSupabaseBrowserClient();
+      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+      const path = `uploads/${crypto.randomUUID()}.${ext}`;
+      const { error } = await supabase.storage
+        .from(MEDIA_BUCKET)
+        .upload(path, file, { cacheControl: '3600', upsert: false, contentType: file.type });
+      if (error) throw error;
+      const { data } = supabase.storage.from(MEDIA_BUCKET).getPublicUrl(path);
+      setMediaUrl(data.publicUrl);
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : 'Upload failed.');
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  function removeMedia() {
+    setMediaUrl(null);
+    setUploadError(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  }
 
   const selectedTargets = availableTargets.filter((target) => selected.has(target.key));
   const [previewKey, setPreviewKey] = useState<PlatformKey>(
@@ -74,13 +121,16 @@ export function ComposeEditor({
   const limit = PLATFORM_LIMITS[activeKey] ?? 3000;
   const overBy = Math.max(0, content.length - limit);
 
+  const instagramSelected = selectedTargets.some((target) => target.key === 'instagram');
+
   const validation = useMemo(() => {
     if (selectedTargets.length === 0) return { tone: 'warn' as const, text: 'Select at least one platform', tag: 'NO TARGET' };
     if (!content.trim()) return { tone: 'warn' as const, text: 'Write something to publish', tag: 'EMPTY' };
+    if (instagramSelected && !mediaUrl) return { tone: 'error' as const, text: 'Instagram requires an image', tag: 'IMAGE REQUIRED' };
     const over = selectedTargets.filter((target) => content.length > (PLATFORM_LIMITS[target.key] ?? 3000));
     if (over.length) return { tone: 'error' as const, text: `Too long for ${over.map((t) => t.label).join(', ')}`, tag: 'OVER LIMIT' };
     return { tone: 'ok' as const, text: 'All selected platforms validated', tag: 'READY' };
-  }, [content, selectedTargets]);
+  }, [content, selectedTargets, instagramSelected, mediaUrl]);
 
   function toggle(key: string) {
     setSelected((prev) => {
@@ -118,12 +168,41 @@ export function ComposeEditor({
             className="min-h-[220px] w-full resize-none border-none bg-transparent font-serif text-[22px] leading-[1.4] text-ink outline-none"
           />
 
+          <input type="hidden" name="mediaUrl" value={mediaUrl ?? ''} />
+          <input type="hidden" name="mediaType" value={mediaUrl ? 'image' : ''} />
+
           <div className="mt-3 border-t border-divider pt-[18px]">
-            <div className="flex gap-1 text-muted">
-              {composeTools.map((tool) => (
-                <ComposeToolButton key={tool.label} tool={tool} />
-              ))}
-            </div>
+            {mediaUrl ? (
+              <div className="relative inline-block">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={mediaUrl} alt="Attached" className="max-h-[180px] rounded-[12px] border border-border object-cover" />
+                <button
+                  type="button"
+                  onClick={removeMedia}
+                  className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-ink/80 text-[13px] text-white hover:bg-ink"
+                  aria-label="Remove image"
+                >
+                  ✕
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="flex items-center gap-2 rounded-[10px] border border-border px-3 py-[9px] text-[13px] font-medium text-subtle transition hover:border-muted disabled:opacity-50"
+                >
+                  <span>🖼</span>
+                  {uploading ? 'Uploading…' : 'Attach image'}
+                </button>
+                {instagramSelected ? (
+                  <span className="font-mono text-[11px] text-muted">Required for Instagram</span>
+                ) : null}
+              </div>
+            )}
+            <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+            {uploadError ? <div className="mt-2 text-[12px] text-danger">{uploadError}</div> : null}
           </div>
         </div>
 
@@ -224,6 +303,11 @@ export function ComposeEditor({
               {activePlatform ? <PlatformBadge platform={activePlatform} large /> : null}
             </div>
             <div className="whitespace-pre-wrap break-words font-serif text-[17px] leading-[1.5] text-ink">{renderBody(content)}</div>
+
+            {mediaUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={mediaUrl} alt="Attached" className="mt-3 max-h-[280px] w-full rounded-[12px] border border-border object-cover" />
+            ) : null}
 
             <div className="mt-[12px] flex items-center justify-between border-t border-dashed border-border pt-[10px]">
               <div className="flex items-center gap-1">

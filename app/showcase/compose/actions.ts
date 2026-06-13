@@ -10,6 +10,14 @@ import { updateDraftPostSchema, updatePostTargetsSchema } from '@/lib/validators
 
 const ALL_PLATFORMS = ['SHOWCASE', 'X', 'THREADS', 'FACEBOOK', 'INSTAGRAM', 'YOUTUBE'] as const;
 
+/** Reads the attached media URL/type from the compose form (empty -> null). */
+function readMedia(formData: FormData): { mediaUrl: string | null; mediaType: 'image' | 'video' | null } {
+  const url = String(formData.get('mediaUrl') || '').trim();
+  if (!url) return { mediaUrl: null, mediaType: null };
+  const type = String(formData.get('mediaType') || 'image').trim();
+  return { mediaUrl: url, mediaType: type === 'video' ? 'video' : 'image' };
+}
+
 export async function saveDraftAction(formData: FormData) {
   const userId = await getCurrentUserId();
 
@@ -25,11 +33,14 @@ export async function saveDraftAction(formData: FormData) {
 
   const content = String(formData.get('content') || '').trim();
   const draftId = String(formData.get('draftId') || '').trim();
+  const { mediaUrl, mediaType } = readMedia(formData);
   const selectedTargets = ALL_PLATFORMS.filter((platform) => String(formData.get(`target-${platform}`)) === 'on');
 
   const parsed = updateDraftPostSchema.safeParse({
     postId: draftId || 'pending-draft',
     content,
+    mediaUrl,
+    mediaType,
   });
 
   if (!content) {
@@ -41,13 +52,15 @@ export async function saveDraftAction(formData: FormData) {
     redirect(`/showcase/compose?error=${encodeURIComponent(message)}`);
   }
 
-  let draft = draftId ? await updateDraftPost({ postId: draftId, content }) : null;
+  let draft = draftId ? await updateDraftPost({ postId: draftId, content, mediaUrl, mediaType }) : null;
 
   if (!draft) {
     draft = await createDraftPost(
       {
         profileId: profile.id,
         content,
+        mediaUrl,
+        mediaType,
       },
       userId,
     );
@@ -95,19 +108,27 @@ export async function publishNowAction(formData: FormData) {
 
   const content = String(formData.get('content') || '').trim();
   const draftId = String(formData.get('draftId') || '').trim();
+  const { mediaUrl, mediaType } = readMedia(formData);
   const selectedTargets = ALL_PLATFORMS.filter((platform) => String(formData.get(`target-${platform}`)) === 'on');
 
   if (!content) {
     redirect('/showcase/compose?error=content-required');
   }
 
-  let draft = draftId ? await updateDraftPost({ postId: draftId, content }) : null;
+  // Instagram cannot publish text-only — an image is required.
+  if (selectedTargets.includes('INSTAGRAM') && !mediaUrl) {
+    redirect('/showcase/compose?error=' + encodeURIComponent('Instagram requires an image. Attach one before publishing.'));
+  }
+
+  let draft = draftId ? await updateDraftPost({ postId: draftId, content, mediaUrl, mediaType }) : null;
 
   if (!draft) {
     draft = await createDraftPost(
       {
         profileId: profile.id,
         content,
+        mediaUrl,
+        mediaType,
       },
       userId,
     );

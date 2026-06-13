@@ -1,13 +1,20 @@
 import { z } from 'zod';
 
+const mediaUrl = z.string().url().max(2048).nullable().optional();
+const mediaType = z.enum(['image', 'video']).nullable().optional();
+
 export const createDraftPostSchema = z.object({
   profileId: z.string().min(1),
   content: z.string().min(1).max(3000),
+  mediaUrl,
+  mediaType,
 });
 
 export const updateDraftPostSchema = z.object({
   postId: z.string().min(1),
   content: z.string().min(1).max(3000),
+  mediaUrl,
+  mediaType,
 });
 
 export const updatePostTargetsSchema = z.object({

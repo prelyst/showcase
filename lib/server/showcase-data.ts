@@ -301,6 +301,8 @@ export async function getComposePageData() {
       authorHandle: '@guest',
       authorInitials: '?',
       content: 'Sign in to start composing on Showcase.',
+      mediaUrl: null,
+      mediaType: null,
       selectedTargets: ['showcase'],
       availableTargets: [platforms.showcase],
     };
@@ -313,6 +315,8 @@ export async function getComposePageData() {
       authorHandle: `@${currentUser.username}`,
       authorInitials: currentUser.initials,
       content: 'Tell your first story on Showcase.',
+      mediaUrl: null,
+      mediaType: null,
       selectedTargets: ['showcase'],
       availableTargets,
     };
@@ -326,6 +330,8 @@ export async function getComposePageData() {
     authorHandle: `@${profile.slug}`,
     authorInitials: currentUser.initials,
     content: draft?.content ?? '',
+    mediaUrl: draft?.mediaUrl ?? null,
+    mediaType: draft?.mediaType ?? null,
     selectedTargets: draft?.targets.filter((target) => target.enabled).map((target) => target.platform.toLowerCase()) ?? ['showcase'],
     availableTargets,
   };

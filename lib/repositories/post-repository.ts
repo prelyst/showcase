@@ -14,6 +14,8 @@ export async function createDraftPost(input: CreateDraftPostInput, authorId: str
       authorId,
       profileId: input.profileId,
       content: input.content,
+      mediaUrl: input.mediaUrl ?? null,
+      mediaType: input.mediaType ?? null,
       status: 'DRAFT',
     },
     include: {
@@ -31,6 +33,8 @@ export async function updateDraftPost(input: UpdateDraftPostInput) {
     where: { id: input.postId },
     data: {
       content: input.content,
+      mediaUrl: input.mediaUrl ?? null,
+      mediaType: input.mediaType ?? null,
     },
   });
 }

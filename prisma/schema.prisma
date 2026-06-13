@@ -76,6 +76,8 @@ model Post {
   authorId    String
   profileId   String
   content     String
+  mediaUrl    String?
+  mediaType   String?
   status      PostStatus           @default(DRAFT)
   visibility  String               @default("public")
   createdAt   DateTime             @default(now())
