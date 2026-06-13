@@ -5,6 +5,7 @@ import { upsertOAuthConnectedAccount } from '@/lib/repositories/connected-accoun
 import { decodeOAuthState } from '@/lib/oauth/state';
 import { getOAuthProviderByPlatform, isOAuthProviderConfigured } from '@/lib/oauth/providers';
 import { exchangeAuthorizationCode } from '@/lib/oauth/token-client';
+import { fetchFacebookIdentity } from '@/lib/publish/adapters/facebook';
 import { fetchLinkedInIdentity } from '@/lib/publish/adapters/linkedin';
 import { fetchThreadsIdentity } from '@/lib/publish/adapters/threads';
 import { fetchXIdentity } from '@/lib/publish/adapters/x';
@@ -109,6 +110,13 @@ export async function handleOAuthCallback(input: {
       accountHandle = `@${identity.username}`;
       accountName = identity.username;
       externalId = identity.id; // Threads user id → used in publish calls
+    }
+  } else if (provider.platform === Platform.FACEBOOK) {
+    const identity = await fetchFacebookIdentity(tokens.accessToken);
+    if (identity) {
+      accountHandle = identity.name;
+      accountName = identity.name;
+      externalId = identity.id; // Page id → publish target for /{pageId}/feed
     }
   }
 

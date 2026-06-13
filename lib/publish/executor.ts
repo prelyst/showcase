@@ -3,6 +3,7 @@ import { ConnectedAccount, ConnectedAccountStatus, Platform, PostStatus, Publish
 import { getConnectedAccountsForUser, upsertOAuthConnectedAccount } from '@/lib/repositories/connected-account-repository';
 import { getOAuthProviderByPlatform } from '@/lib/oauth/providers';
 import { refreshOAuthToken } from '@/lib/oauth/token-client';
+import { postToFacebook } from '@/lib/publish/adapters/facebook';
 import { postToLinkedIn } from '@/lib/publish/adapters/linkedin';
 import { postToThreads } from '@/lib/publish/adapters/threads';
 import { postToX } from '@/lib/publish/adapters/x';
@@ -87,6 +88,15 @@ async function deliverLane(
     const accessToken = await getValidAccessToken(account);
     const result = await postToThreads(accessToken, text, account.externalId);
     return { externalUrl: result.url, externalId: result.id, message: 'Published to Threads.' };
+  }
+
+  if (platform === Platform.FACEBOOK) {
+    if (!account.externalId) {
+      throw new Error('Facebook Page id missing — reconnect Facebook to enable publishing.');
+    }
+    const accessToken = await getValidAccessToken(account);
+    const result = await postToFacebook(accessToken, text, account.externalId);
+    return { externalUrl: result.url, externalId: result.id, message: 'Published to Facebook.' };
   }
 
   // No live adapter yet for this platform — simulated delivery (demo only).
