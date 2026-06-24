@@ -12,9 +12,7 @@
 - [ ] **Rotate any secrets** shared during dev/debugging
 - [x] **Forgot password flow** — Supabase `resetPasswordForEmail`, auth callback exchange, and reset-password update flow are wired
 - [x] **OAuth connections** — real token exchange + identity fetch wired for X, LinkedIn, Threads, Facebook, Instagram (Instagram upgrades to a long-lived token); token refresh handled in the publish executor
-- [ ] **Publish execution** — real provider delivery now live for X, LinkedIn, Threads, Facebook, Instagram (incl. media). Remaining:
-  - [ ] **YouTube** video publishing (currently throws "not available yet")
-  - [ ] Any platform without a live adapter still falls back to simulated delivery
+- [x] **Publish execution** — real provider delivery now live for X, LinkedIn, Threads, Facebook, Instagram (incl. media), and YouTube video upload; no offered platform uses simulated delivery
 
 ## 🟡 Polish
 

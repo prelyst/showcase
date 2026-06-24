@@ -10,6 +10,7 @@ import { exchangeInstagramLongLivedToken, fetchInstagramIdentity } from '@/lib/p
 import { fetchLinkedInIdentity } from '@/lib/publish/adapters/linkedin';
 import { fetchThreadsIdentity } from '@/lib/publish/adapters/threads';
 import { fetchXIdentity } from '@/lib/publish/adapters/x';
+import { fetchYouTubeIdentity } from '@/lib/publish/adapters/youtube';
 
 export async function handleOAuthCallback(input: {
   platform: string;
@@ -138,6 +139,13 @@ export async function handleOAuthCallback(input: {
       accountHandle = `@${identity.username}`;
       accountName = identity.username;
       externalId = identity.id; // IG user id → publish target for /{ig-user-id}/media
+    }
+  } else if (provider.platform === Platform.YOUTUBE) {
+    const identity = await fetchYouTubeIdentity(tokens.accessToken);
+    if (identity) {
+      accountHandle = identity.title;
+      accountName = identity.title;
+      externalId = identity.id; // YouTube channel id
     }
   }
 

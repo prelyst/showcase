@@ -8,6 +8,7 @@ import { postToInstagram } from '@/lib/publish/adapters/instagram';
 import { postToLinkedIn } from '@/lib/publish/adapters/linkedin';
 import { postToThreads } from '@/lib/publish/adapters/threads';
 import { postToX } from '@/lib/publish/adapters/x';
+import { postToYouTube } from '@/lib/publish/adapters/youtube';
 import { prisma } from '@/lib/db/prisma';
 
 function getLaneSuccessUrl(platform: Platform, postId: string) {
@@ -55,13 +56,10 @@ async function deliverLane(
   text: string,
   postId: string,
   mediaUrl: string | null,
+  mediaType: string | null,
 ): Promise<{ externalUrl: string; externalId: string; message: string }> {
   if (platform === Platform.SHOWCASE) {
     return { externalUrl: getLaneSuccessUrl(platform, postId), externalId: `showcase-${postId}`, message: 'Published directly inside Showcase.' };
-  }
-
-  if (platform === Platform.YOUTUBE) {
-    throw new Error('Video publishing is not available yet in the current worker.');
   }
 
   if (!account) {
@@ -102,6 +100,15 @@ async function deliverLane(
     const accessToken = await getValidAccessToken(account);
     const result = await postToInstagram(accessToken, text, account.externalId, mediaUrl);
     return { externalUrl: result.url, externalId: result.id, message: 'Published to Instagram.' };
+  }
+
+  if (platform === Platform.YOUTUBE) {
+    if (!mediaUrl || mediaType !== 'video') {
+      throw new Error('YouTube requires an attached video. Attach a video and publish again.');
+    }
+    const accessToken = await getValidAccessToken(account);
+    const result = await postToYouTube(accessToken, text, mediaUrl);
+    return { externalUrl: result.url, externalId: result.id, message: 'Published to YouTube.' };
   }
 
   if (platform === Platform.FACEBOOK) {
@@ -145,6 +152,7 @@ export async function executePublishJob(publishJobId: string) {
   );
   const text = job.post.content;
   const mediaUrl = job.post.mediaUrl;
+  const mediaType = job.post.mediaType;
 
   await prisma.publishJob.update({
     where: { id: job.id },
@@ -173,7 +181,7 @@ export async function executePublishJob(publishJobId: string) {
     });
 
     try {
-      const result = await deliverLane(lane.platform, accountsByPlatform.get(lane.platform), text, job.postId, mediaUrl);
+      const result = await deliverLane(lane.platform, accountsByPlatform.get(lane.platform), text, job.postId, mediaUrl, mediaType);
 
       await prisma.publishLaneResult.update({
         where: { id: lane.id },

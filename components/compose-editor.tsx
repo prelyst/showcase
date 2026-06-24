@@ -10,6 +10,7 @@ import type { PlatformChip, PlatformKey } from '@/lib/types/showcase';
 
 const MEDIA_BUCKET = 'post-media';
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024; // Instagram's image ceiling.
+const MAX_VIDEO_BYTES = 512 * 1024 * 1024;
 
 // Per-platform character ceilings used to validate the live preview.
 const PLATFORM_LIMITS: Record<PlatformKey, number> = {
@@ -62,6 +63,7 @@ export function ComposeEditor({
 }) {
   const [content, setContent] = useState(draft.content);
   const [mediaUrl, setMediaUrl] = useState<string | null>(draft.mediaUrl);
+  const [mediaType, setMediaType] = useState<string | null>(draft.mediaType);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -73,12 +75,18 @@ export function ComposeEditor({
     const file = event.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      setUploadError('Please choose an image file (jpg or png).');
+    const nextMediaType = file.type.startsWith('video/') ? 'video' : file.type.startsWith('image/') ? 'image' : null;
+
+    if (!nextMediaType) {
+      setUploadError('Please choose an image or video file.');
       return;
     }
-    if (file.size > MAX_IMAGE_BYTES) {
+    if (nextMediaType === 'image' && file.size > MAX_IMAGE_BYTES) {
       setUploadError('Image must be under 8MB.');
+      return;
+    }
+    if (nextMediaType === 'video' && file.size > MAX_VIDEO_BYTES) {
+      setUploadError('Video must be under 512MB.');
       return;
     }
 
@@ -94,6 +102,7 @@ export function ComposeEditor({
       if (error) throw error;
       const { data } = supabase.storage.from(MEDIA_BUCKET).getPublicUrl(path);
       setMediaUrl(data.publicUrl);
+      setMediaType(nextMediaType);
     } catch (err) {
       setUploadError(err instanceof Error ? err.message : 'Upload failed.');
     } finally {
@@ -103,6 +112,7 @@ export function ComposeEditor({
 
   function removeMedia() {
     setMediaUrl(null);
+    setMediaType(null);
     setUploadError(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
   }
@@ -122,15 +132,17 @@ export function ComposeEditor({
   const overBy = Math.max(0, content.length - limit);
 
   const instagramSelected = selectedTargets.some((target) => target.key === 'instagram');
+  const youtubeSelected = selectedTargets.some((target) => target.key === 'youtube');
 
   const validation = useMemo(() => {
     if (selectedTargets.length === 0) return { tone: 'warn' as const, text: 'Select at least one platform', tag: 'NO TARGET' };
     if (!content.trim()) return { tone: 'warn' as const, text: 'Write something to publish', tag: 'EMPTY' };
-    if (instagramSelected && !mediaUrl) return { tone: 'error' as const, text: 'Instagram requires an image', tag: 'IMAGE REQUIRED' };
+    if (instagramSelected && (!mediaUrl || mediaType !== 'image')) return { tone: 'error' as const, text: 'Instagram requires an image', tag: 'IMAGE REQUIRED' };
+    if (youtubeSelected && (!mediaUrl || mediaType !== 'video')) return { tone: 'error' as const, text: 'YouTube requires a video', tag: 'VIDEO REQUIRED' };
     const over = selectedTargets.filter((target) => content.length > (PLATFORM_LIMITS[target.key] ?? 3000));
     if (over.length) return { tone: 'error' as const, text: `Too long for ${over.map((t) => t.label).join(', ')}`, tag: 'OVER LIMIT' };
     return { tone: 'ok' as const, text: 'All selected platforms validated', tag: 'READY' };
-  }, [content, selectedTargets, instagramSelected, mediaUrl]);
+  }, [content, selectedTargets, instagramSelected, youtubeSelected, mediaUrl, mediaType]);
 
   function toggle(key: string) {
     setSelected((prev) => {
@@ -169,13 +181,17 @@ export function ComposeEditor({
           />
 
           <input type="hidden" name="mediaUrl" value={mediaUrl ?? ''} />
-          <input type="hidden" name="mediaType" value={mediaUrl ? 'image' : ''} />
+          <input type="hidden" name="mediaType" value={mediaType ?? ''} />
 
           <div className="mt-3 border-t border-divider pt-[18px]">
             {mediaUrl ? (
               <div className="relative inline-block">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={mediaUrl} alt="Attached" className="max-h-[180px] rounded-[12px] border border-border object-cover" />
+                {mediaType === 'video' ? (
+                  <video src={mediaUrl} controls className="max-h-[180px] rounded-[12px] border border-border object-cover" />
+                ) : (
+                  <img src={mediaUrl} alt="Attached" className="max-h-[180px] rounded-[12px] border border-border object-cover" />
+                )}
                 <button
                   type="button"
                   onClick={removeMedia}
@@ -194,14 +210,17 @@ export function ComposeEditor({
                   className="flex items-center gap-2 rounded-[10px] border border-border px-3 py-[9px] text-[13px] font-medium text-subtle transition hover:border-muted disabled:opacity-50"
                 >
                   <span>🖼</span>
-                  {uploading ? 'Uploading…' : 'Attach image'}
+                  {uploading ? 'Uploading…' : 'Attach media'}
                 </button>
                 {instagramSelected ? (
                   <span className="font-mono text-[11px] text-muted">Required for Instagram</span>
                 ) : null}
+                {youtubeSelected ? (
+                  <span className="font-mono text-[11px] text-muted">Video required for YouTube</span>
+                ) : null}
               </div>
             )}
-            <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+            <input ref={fileInputRef} type="file" accept="image/*,video/*" onChange={handleFileChange} className="hidden" />
             {uploadError ? <div className="mt-2 text-[12px] text-danger">{uploadError}</div> : null}
           </div>
         </div>

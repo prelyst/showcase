@@ -115,9 +115,12 @@ export async function publishNowAction(formData: FormData) {
     redirect('/showcase/compose?error=content-required');
   }
 
-  // Instagram cannot publish text-only — an image is required.
-  if (selectedTargets.includes('INSTAGRAM') && !mediaUrl) {
+  // Provider media requirements.
+  if (selectedTargets.includes('INSTAGRAM') && (!mediaUrl || mediaType !== 'image')) {
     redirect('/showcase/compose?error=' + encodeURIComponent('Instagram requires an image. Attach one before publishing.'));
+  }
+  if (selectedTargets.includes('YOUTUBE') && (!mediaUrl || mediaType !== 'video')) {
+    redirect('/showcase/compose?error=' + encodeURIComponent('YouTube requires a video. Attach one before publishing.'));
   }
 
   let draft = draftId ? await updateDraftPost({ postId: draftId, content, mediaUrl, mediaType }) : null;

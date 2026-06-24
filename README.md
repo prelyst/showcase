@@ -279,9 +279,9 @@ Working well now:
 - Supabase-backed forgot-password and reset-password recovery flow
 
 Still not fully production-complete:
-- publish execution is live for X, LinkedIn, Threads, Facebook, and Instagram (image posts); YouTube video upload is still unavailable in the current worker
+- real provider publishing is implemented for all offered platforms, but each external platform still requires approved OAuth apps, configured production redirect URLs, and valid user-granted scopes
 - discovery/trending/social graph is still lightweight
-- OAuth token exchange is real for X, LinkedIn, Threads, Facebook, Instagram, and YouTube; YouTube still needs the provider API delivery adapter
+- OAuth token exchange and provider API delivery adapters are real for all offered platforms: X, LinkedIn, Threads, Facebook, Instagram, and YouTube
 - some analytics/engagement numbers are still presentation-level
 - npm audit still reports moderate upstream ecosystem advisories that do not have a safe in-family auto-fix from the current dependency set
 
