@@ -46,6 +46,7 @@ This is no longer just a static frontend mock. It is now an early product founda
 ### Auth
 - sign in
 - sign up
+- forgot password and reset password via Supabase recovery links
 - sign out
 - protected `/showcase/*` routes
 - real Supabase session handling
@@ -242,6 +243,9 @@ npm run db:init
 ### Auth
 - `/auth/sign-in`
 - `/auth/sign-up`
+- `/auth/forgot-password`
+- `/auth/reset-password`
+- `/auth/callback`
 - `/auth/sign-out`
 
 ### Internal app
@@ -272,11 +276,12 @@ Working well now:
 - publish job and lane record creation
 - connected account state scaffolding
 - auth metadata sync from profile edits
+- Supabase-backed forgot-password and reset-password recovery flow
 
 Still not fully production-complete:
-- publish execution is live for X and LinkedIn (real OAuth token exchange + delivery); other platforms are still internal simulation
+- publish execution is live for X, LinkedIn, Threads, Facebook, and Instagram (image posts); YouTube video upload is still unavailable in the current worker
 - discovery/trending/social graph is still lightweight
-- OAuth token exchange is real for X and LinkedIn; the remaining providers still need their token exchange and provider API delivery adapters
+- OAuth token exchange is real for X, LinkedIn, Threads, Facebook, Instagram, and YouTube; YouTube still needs the provider API delivery adapter
 - some analytics/engagement numbers are still presentation-level
 - npm audit still reports moderate upstream ecosystem advisories that do not have a safe in-family auto-fix from the current dependency set
 

@@ -4,6 +4,7 @@ import { getConnectedAccountsForUser, upsertOAuthConnectedAccount } from '@/lib/
 import { getOAuthProviderByPlatform } from '@/lib/oauth/providers';
 import { refreshOAuthToken } from '@/lib/oauth/token-client';
 import { postToFacebook } from '@/lib/publish/adapters/facebook';
+import { postToInstagram } from '@/lib/publish/adapters/instagram';
 import { postToLinkedIn } from '@/lib/publish/adapters/linkedin';
 import { postToThreads } from '@/lib/publish/adapters/threads';
 import { postToX } from '@/lib/publish/adapters/x';
@@ -53,6 +54,7 @@ async function deliverLane(
   account: ConnectedAccount | undefined,
   text: string,
   postId: string,
+  mediaUrl: string | null,
 ): Promise<{ externalUrl: string; externalId: string; message: string }> {
   if (platform === Platform.SHOWCASE) {
     return { externalUrl: getLaneSuccessUrl(platform, postId), externalId: `showcase-${postId}`, message: 'Published directly inside Showcase.' };
@@ -88,6 +90,18 @@ async function deliverLane(
     const accessToken = await getValidAccessToken(account);
     const result = await postToThreads(accessToken, text, account.externalId);
     return { externalUrl: result.url, externalId: result.id, message: 'Published to Threads.' };
+  }
+
+  if (platform === Platform.INSTAGRAM) {
+    if (!account.externalId) {
+      throw new Error('Instagram user id missing — reconnect Instagram to enable publishing.');
+    }
+    if (!mediaUrl) {
+      throw new Error('Instagram requires an image. Attach one and publish again.');
+    }
+    const accessToken = await getValidAccessToken(account);
+    const result = await postToInstagram(accessToken, text, account.externalId, mediaUrl);
+    return { externalUrl: result.url, externalId: result.id, message: 'Published to Instagram.' };
   }
 
   if (platform === Platform.FACEBOOK) {
@@ -130,6 +144,7 @@ export async function executePublishJob(publishJobId: string) {
     connectedAccounts.filter((account) => account.status === ConnectedAccountStatus.ACTIVE).map((account) => [account.platform, account]),
   );
   const text = job.post.content;
+  const mediaUrl = job.post.mediaUrl;
 
   await prisma.publishJob.update({
     where: { id: job.id },
@@ -158,7 +173,7 @@ export async function executePublishJob(publishJobId: string) {
     });
 
     try {
-      const result = await deliverLane(lane.platform, accountsByPlatform.get(lane.platform), text, job.postId);
+      const result = await deliverLane(lane.platform, accountsByPlatform.get(lane.platform), text, job.postId, mediaUrl);
 
       await prisma.publishLaneResult.update({
         where: { id: lane.id },

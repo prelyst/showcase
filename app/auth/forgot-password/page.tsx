@@ -1,8 +1,16 @@
 import Link from 'next/link';
 
 import { AuthCard } from '@/components/auth/auth-card';
+import { PendingActionButton } from '@/components/pending-action-button';
+import { isSupabaseConfigured } from '@/lib/supabase/env';
+import { requestPasswordResetAction } from './actions';
 
-export default function ForgotPasswordPage() {
+export default async function ForgotPasswordPage({ searchParams }: { searchParams: Promise<{ error?: string; sent?: string }> }) {
+  const params = await searchParams;
+  const errorMessage = params.error ? decodeURIComponent(params.error) : null;
+  const sent = params.sent === '1';
+  const configured = isSupabaseConfigured();
+
   return (
     <AuthCard
       eyebrow="Phase 3A · password reset"
@@ -33,7 +41,11 @@ export default function ForgotPasswordPage() {
         </div>
       </div>
 
-      <form className="space-y-4">
+      {!configured ? <div className="mb-4 rounded-[12px] border border-danger-tint bg-accent-tint px-4 py-3 text-[13px] text-danger">Supabase auth is not configured yet. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY first.</div> : null}
+      {sent ? <div className="mb-4 rounded-[12px] border border-border bg-surface px-4 py-3 text-[13px] text-subtle">If that email exists, a password reset link is on its way.</div> : null}
+      {errorMessage ? <div className="mb-4 rounded-[12px] border border-danger-tint bg-accent-tint px-4 py-3 text-[13px] text-danger">{errorMessage}</div> : null}
+
+      <form action={requestPasswordResetAction} className="space-y-4">
         <div>
           <label htmlFor="email" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.08em] text-muted">
             Email
@@ -48,12 +60,12 @@ export default function ForgotPasswordPage() {
           />
         </div>
 
-        <button
-          type="submit"
+        <PendingActionButton
+          disabled={!configured}
+          idle="Send reset link"
+          pending="Sending reset link..."
           className="inline-flex w-full items-center justify-center rounded-[12px] bg-ink px-5 py-[14px] text-[15px] font-medium text-white transition hover:bg-accent"
-        >
-          Send reset link
-        </button>
+        />
       </form>
     </AuthCard>
   );

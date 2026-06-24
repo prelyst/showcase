@@ -6,10 +6,11 @@ import { PendingActionButton } from '@/components/pending-action-button';
 import { isSupabaseConfigured } from '@/lib/supabase/env';
 import { signInAction } from './actions';
 
-export default async function SignInPage({ searchParams }: { searchParams: Promise<{ error?: string; signed_out?: string }> }) {
+export default async function SignInPage({ searchParams }: { searchParams: Promise<{ error?: string; signed_out?: string; password_reset?: string }> }) {
   const params = await searchParams;
   const errorMessage = params.error ? decodeURIComponent(params.error) : null;
   const signedOut = params.signed_out === '1';
+  const passwordReset = params.password_reset === '1';
   const configured = isSupabaseConfigured();
 
   return (
@@ -44,6 +45,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
 
       {!configured ? <div className="mb-4 rounded-[12px] border border-danger-tint bg-accent-tint px-4 py-3 text-[13px] text-danger">Supabase auth is not configured yet. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY first.</div> : null}
       {signedOut ? <div className="mb-4 rounded-[12px] border border-border bg-surface px-4 py-3 text-[13px] text-subtle">You were signed out.</div> : null}
+      {passwordReset ? <div className="mb-4 rounded-[12px] border border-border bg-surface px-4 py-3 text-[13px] text-subtle">Password updated. Sign in with your new password.</div> : null}
       {errorMessage ? <div className="mb-4 rounded-[12px] border border-danger-tint bg-accent-tint px-4 py-3 text-[13px] text-danger">{errorMessage}</div> : null}
 
       <form action={signInAction} className="space-y-4">

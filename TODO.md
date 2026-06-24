@@ -10,7 +10,7 @@
   - Run `npm run db:init` for migrations + seed
   - Verify `npm run build` passes cleanly
 - [ ] **Rotate any secrets** shared during dev/debugging
-- [ ] **Forgot password flow** — `app/auth/forgot-password/page.tsx` is still a static form; wire Supabase `resetPasswordForEmail` in a server action + handle the reset-link callback
+- [x] **Forgot password flow** — Supabase `resetPasswordForEmail`, auth callback exchange, and reset-password update flow are wired
 - [x] **OAuth connections** — real token exchange + identity fetch wired for X, LinkedIn, Threads, Facebook, Instagram (Instagram upgrades to a long-lived token); token refresh handled in the publish executor
 - [ ] **Publish execution** — real provider delivery now live for X, LinkedIn, Threads, Facebook, Instagram (incl. media). Remaining:
   - [ ] **YouTube** video publishing (currently throws "not available yet")
